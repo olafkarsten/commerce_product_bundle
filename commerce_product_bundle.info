@@ -1,0 +1,5 @@
+name = Product Bundle
+description = Enables the bundeling of products.
+package = Commerce
+dependencies[] = commerce
+core = 7.x
