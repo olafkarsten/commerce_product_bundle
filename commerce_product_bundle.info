@@ -3,3 +3,7 @@ description = Enables the bundeling of products.
 package = Commerce
 dependencies[] = commerce
 core = 7.x
+
+; Rules
+files[] = commerce_product_bundle.rules.inc
+files[] = commerce_product_bundle.rules_defaults.inc
