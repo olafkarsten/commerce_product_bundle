@@ -1,7 +1,8 @@
 name = Product Bundle
 description = Enables the bundeling of products.
 package = Commerce
-dependencies[] = commerce
+dependencies[] = commerce_product
+dependencies[] = commerce_product_attributes
 core = 7.x
 
 ; Rules

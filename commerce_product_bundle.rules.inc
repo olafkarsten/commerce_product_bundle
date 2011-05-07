@@ -30,11 +30,10 @@ function commerce_product_bundle_rules_action_info() {
     ),
     'group' => t('Commerce Product Bundle'),
   );
-
-
-
+    
   return $actions;
 }
+
 
 /**
  * Rules action: Calculate the price for a bundle line item
@@ -44,52 +43,64 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
   $original_line_item = $line_item;
   
   $order_id = $line_item->order_id;
+    
+  //$unitprice = $original_line_item_wrapper->commerce_unit_price->amount->value();
   
-  $order = commerce_order_load($order_id);
-  
-  if (empty($order)) {
-    return;
-  }
-  $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
-  
-  $unitprice = $original_line_item_wrapper->commerce_unit_price->amount->value();
+  $unitprice = 0;
   
   $found_bundle = false;
   
-  foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
-    if ($line_item_wrapper->type->value() == 'bundle'
-       && isset($line_item_wrapper->commerce_parent_line_item)
-       && $line_item_wrapper->commerce_parent_line_item->line_item_id->value() == $original_line_item->line_item_id
-    ) {
-      if ($multiply_by_quantity) {
-        $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
+  
+  $sub_items = commerce_product_bundle_get_sub_line_items($line_item);
+    
+  foreach ($sub_items as $item) {
+    $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
+    
+    if ($multiply_by_quantity) {
+      $line_item_wrapper->commerce_total->amount = $item->quantity * $line_item_wrapper->commerce_unit_price->amount->value();
+      $line_item_wrapper->commerce_total->currency_code = $line_item_wrapper->commerce_unit_price->currency_code->value();
+
+      // Add the components multiplied by the quantity to the data array.
+      $data = $line_item_wrapper->commerce_unit_price->data->value();
+
+      if (empty($data['components'])) {
+        $data['components'] = array();
       }
       else {
-        $component_total = commerce_price_component_total($line_item_wrapper->commerce_unit_price->value());
+        foreach ($data['components'] as $key => $component) {
+          $data['components'][$key]['price']['amount'] *= $item->quantity;
+        }
       }
-      
-      // TODO: Implement the calculation method here (from display settings)
-      $unitprice += commerce_currency_convert(
-        $component_total['amount'],
-        $component_total['currency_code'],
-        $original_line_item_wrapper->commerce_unit_price->currency_code->value()
-      );
-      
-      // Combine the line item total's component prices into the unit price total.
-      $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
-        $original_line_item_wrapper->commerce_unit_price->value(),
-        $line_item_wrapper->commerce_total->value()
-      );
-      $found_bundle = true;
+
+      // Set the updated data array to the total price.
+      $line_item_wrapper->commerce_total->data = $data;
+
+      $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
     }
+    else {
+      $component_total = commerce_price_component_total($line_item_wrapper->commerce_unit_price->value());
+    }
+    
+    $unitprice += commerce_currency_convert(
+      $component_total['amount'],
+      $component_total['currency_code'],
+      $original_line_item_wrapper->commerce_unit_price->currency_code->value()
+    );
+    
+    // Combine the line item total's component prices into the unit price total.
+    $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
+      $original_line_item_wrapper->commerce_unit_price->value(),
+      $line_item_wrapper->commerce_total->value()
+    );
+    $found_bundle = true;
   }
+  
+
   
   if ($found_bundle) {
     $original_line_item_wrapper->commerce_unit_price->amount = $unitprice;
   }
 }
-
-
 
 /**
  * @}
