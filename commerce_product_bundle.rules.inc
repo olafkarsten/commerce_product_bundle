@@ -52,6 +52,9 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
   
   
   $sub_items = commerce_product_bundle_get_sub_line_items($line_item);
+  
+  // Reset the unit price to the product price
+  $original_line_item_wrapper->commerce_unit_price = $original_line_item_wrapper->commerce_product->commerce_price->value();
     
   foreach ($sub_items as $item) {
     $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);

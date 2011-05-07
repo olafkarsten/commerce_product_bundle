@@ -904,8 +904,7 @@ function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subp
   // Save the updated order.
   commerce_order_save($order);
 
-  
-//  entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));  
+  entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));  
 
   // Invoke the product add event with the newly saved or updated line item.
   // TODO: Implement this event see commerce_attribute_cart_product_update()
@@ -1041,7 +1040,6 @@ function commerce_product_bundle_line_item_new($product, $parent_line_item, $qua
   // Create the new line item.
   $line_item = entity_create('commerce_line_item', array(
     'type' => 'bundle',
-    'order_id' => $order_id,
     'quantity' => $quantity,
   ));
 
@@ -1185,7 +1183,7 @@ function commerce_product_bundle_configure_line_item() {
 function commerce_product_bundle_attribute_field(&$element, &$line_item) {
   
   $element['bundles'] = array();    
-  $sub_items = commerce_product_bundle_get_sub_line_items($line_item);
+  $sub_items = commerce_product_bundle_get_sub_line_items($line_item, TRUE);
   
   if (count($sub_items) > 0) {
     
@@ -1221,17 +1219,20 @@ function commerce_product_bundle_get_sub_line_items(&$parent_line_item, $reset =
   }
   
   if ($reset || !isset($parent_line_item->data['sub_line_items']) || count($parent_line_item->data['sub_line_items']) <= 0) {
-  
-    // TODO: optimize this function (dont select all line items of a given order)
-    $order_id = $parent_line_item->order_id;
-    $rs = db_select('commerce_line_item', 'item')
-      ->fields('item')
-      ->condition('type', 'bundle', '=')
-      ->condition('order_id', $order_id, '=')
-    ->execute()->fetchAllAssoc('line_item_id');
-    $items = array();
-  
-    foreach ($rs as $item) {
+    
+    $query = new EntityFieldQuery();
+    $entities = $query->entityCondition('entity_type', 'commerce_line_item')
+      ->entityCondition('bundle', 'bundle')
+      ->fieldCondition('commerce_parent_line_item', 'line_item_id', $parent_line_item->line_item_id, '=')
+      ->execute();
+    
+    
+    
+    if (!isset($entities['commerce_line_item'])) {
+      return array();
+    }
+    
+    foreach ($entities['commerce_line_item'] as $item) {
       $item = commerce_line_item_load($item->line_item_id);
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
     
@@ -1269,7 +1270,7 @@ function theme_commerce_product_bundle_attribute($variables) {
     $product_attribute_view = '<div class="commerce-product-bundle-product-attributes">' . $product_attribute_view . '</div>';
   }
   
-  $output =  '<div class="commerce-product-bundle-sub-line-item"><div class="commerce-product-bundle-sub-line-item-title">';
+  $output = '<div class="commerce-product-bundle-sub-line-item"><div class="commerce-product-bundle-sub-line-item-title">';
   
   $output .= '<span class="commerce-product-bundle-quantity">' . (float)$sub_line_item->quantity . '</span>';
   $output .= ' x ';
