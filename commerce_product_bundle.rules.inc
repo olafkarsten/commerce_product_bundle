@@ -42,62 +42,148 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
   $original_line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
   $original_line_item = $line_item;
   
-  $order_id = $line_item->order_id;
-    
-  //$unitprice = $original_line_item_wrapper->commerce_unit_price->amount->value();
-  
   $unitprice = 0;
   
   $found_bundle = false;
-  
-  
+    
   $sub_items = commerce_product_bundle_get_sub_line_items($line_item);
   
-  // Reset the unit price to the product price
-  $original_line_item_wrapper->commerce_unit_price = $original_line_item_wrapper->commerce_product->commerce_price->value();
+  // If we do not find any sub line item. So we should try to find
+  // the default sub products, to get a default price for this
+  // product. This is primarly used for the product view, where we dont
+  // get any line item with sub line items.
+  if (count($sub_items) == 0) {
     
-  foreach ($sub_items as $item) {
-    $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
+    $product = $original_line_item_wrapper->commerce_product;
     
-    if ($multiply_by_quantity) {
-      $line_item_wrapper->commerce_total->amount = $item->quantity * $line_item_wrapper->commerce_unit_price->amount->value();
-      $line_item_wrapper->commerce_total->currency_code = $line_item_wrapper->commerce_unit_price->currency_code->value();
+    foreach (field_info_instances('commerce_product', $product->type->value()) as $product_field_name => $product_field) {
+      $info = field_info_field($product_field_name);
+      
+      // If it is a product reference 
+      if ($info['type'] == 'commerce_product_reference') {
+        // Check if the refernce is potential a bundle product:
+        $form_in_full_node_display = (isset($product_field['display']['node_full']) 
+          && $product_field['display']['node_full']['type'] == 'commerce_bundle_product_add_to_cart_form');
+        $form_in_default_display = (isset($product_field['display']['default']) 
+          && $product_field['display']['default']['type'] == 'commerce_bundle_product_add_to_cart_form');
+          
+        if ($form_in_full_node_display || ($form_in_default_display && !isset($product_field['display']['node_full']))) {
+          
+          // Get first sub product of this field, we assume that this is the 
+          // default product. (reset or each does not work, so use a foreach 
+          // loop.
+          foreach ($product->{$product_field_name} as $sub_product) {
+            break;
+          }
+          
+          if ($form_in_full_node_display) {
+            $settings = $product_field['display']['node_full']['settings'];
+          }
+          elseif ($form_in_default_display) {
+            $settings = $product_field['display']['default']['settings'];
+          }
+          
+          // Use the default value from the display settings to determine
+          // the default quantity to use.
+          $quantity = $settings['default_quantity'];
+          
+          if ($multiply_by_quantity) {
+            $commerce_total = array();
+            $commerce_total['amount'] = $quantity * $sub_product->commerce_price->amount->value();
+            $commerce_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
 
-      // Add the components multiplied by the quantity to the data array.
-      $data = $line_item_wrapper->commerce_unit_price->data->value();
+            // Add the components multiplied by the quantity to the data array.
+            $data = $sub_product->commerce_price->data->value();
 
-      if (empty($data['components'])) {
-        $data['components'] = array();
-      }
-      else {
-        foreach ($data['components'] as $key => $component) {
-          $data['components'][$key]['price']['amount'] *= $item->quantity;
+            if (empty($data['components'])) {
+              $data['components'] = array();
+            }
+            else {
+              foreach ($data['components'] as $key => $component) {
+                $data['components'][$key]['price']['amount'] *= $quantity;
+              }
+            }
+
+            // Set the updated data array to the total price.
+            $commerce_total['data'] = $data;
+
+            $component_total = $commerce_total;
+          
+          }
+          else {
+            $component_total['amount'] = $sub_product->commerce_price->amount->value();
+            $component_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
+            $component_total['data'] = $sub_product->commerce_price->data->value();
+            $component_total['data']['components'] += array();
+          }
+                    
+          $unitprice += commerce_currency_convert(
+            $component_total['amount'],
+            $component_total['currency_code'],
+            $original_line_item_wrapper->commerce_unit_price->currency_code->value()
+          );
+    
+          // Combine the line item total's component prices into the unit price total.
+          $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
+            $original_line_item_wrapper->commerce_unit_price->value(),
+            $component_total
+          );
+          $found_bundle = true;
+
         }
       }
-
-      // Set the updated data array to the total price.
-      $line_item_wrapper->commerce_total->data = $data;
-
-      $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
     }
-    else {
-      $component_total = commerce_price_component_total($line_item_wrapper->commerce_unit_price->value());
-    }
-    
-    $unitprice += commerce_currency_convert(
-      $component_total['amount'],
-      $component_total['currency_code'],
-      $original_line_item_wrapper->commerce_unit_price->currency_code->value()
-    );
-    
-    // Combine the line item total's component prices into the unit price total.
-    $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
-      $original_line_item_wrapper->commerce_unit_price->value(),
-      $line_item_wrapper->commerce_total->value()
-    );
-    $found_bundle = true;
   }
   
+  
+  // This is the normal way how we determine the bundle product
+  // price.
+  else {
+    // Reset the unit price to the product price
+    $original_line_item_wrapper->commerce_unit_price = $original_line_item_wrapper->commerce_product->commerce_price->value();
+    
+    foreach ($sub_items as $item) {
+      $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
+    
+      if ($multiply_by_quantity) {
+        $line_item_wrapper->commerce_total->amount = $item->quantity * $line_item_wrapper->commerce_unit_price->amount->value();
+        $line_item_wrapper->commerce_total->currency_code = $line_item_wrapper->commerce_unit_price->currency_code->value();
+
+        // Add the components multiplied by the quantity to the data array.
+        $data = $line_item_wrapper->commerce_unit_price->data->value();
+
+        if (empty($data['components'])) {
+          $data['components'] = array();
+        }
+        else {
+          foreach ($data['components'] as $key => $component) {
+            $data['components'][$key]['price']['amount'] *= $item->quantity;
+          }
+        }
+
+        // Set the updated data array to the total price.
+        $line_item_wrapper->commerce_total->data = $data;
+
+        $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
+      }
+      else {
+        $component_total = commerce_price_component_total($line_item_wrapper->commerce_unit_price->value());
+      }
+    
+      $unitprice += commerce_currency_convert(
+        $component_total['amount'],
+        $component_total['currency_code'],
+        $original_line_item_wrapper->commerce_unit_price->currency_code->value()
+      );
+    
+      // Combine the line item total's component prices into the unit price total.
+      $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
+        $original_line_item_wrapper->commerce_unit_price->value(),
+        $line_item_wrapper->commerce_total->value()
+      );
+      $found_bundle = true;
+    }
+  }
 
   
   if ($found_bundle) {
