@@ -8,6 +8,30 @@
  * @{
  */
 
+function commerce_product_bundle_rules_event_info() {
+	$events = array();
+
+	$events['commerce_product_bundle_calc'] = array(
+		'label' => t('Sub Product Price Calculation'),
+		'group' => t('Commerce Product Bundle'),
+		'variables' => array(
+			'line_item' => array(
+				'type' => 'commerce_line_item',
+				'label' => t('sub line item')
+			),
+			'commerce_order' => array(
+				'type' => 'commerce_order',
+				'label' => t('Order'),
+			),			
+		),
+		'access callback' => 'commerce_order_rules_access',
+	);
+
+	return $events;
+}
+
+
+
 
 /**
  * Implements hook_rules_action_info().
@@ -30,8 +54,46 @@ function commerce_product_bundle_rules_action_info() {
     ),
     'group' => t('Commerce Product Bundle'),
   );
+
+  $actions['commerce_product_bundle_set_price'] = array(
+    'label' => t('Set the price of a sub bundle.'),
+    'parameter' => array(
+      'line_item' => array(
+        'type' => 'commerce_line_item',
+        'label' => t('Sub line item'),
+      ),
+      'amount' => array(
+        'type' => 'decimal',
+        'label' => t('Amount'),
+      ),
+    ),
+    'group' => t('Commerce Product Bundle'),
+  );
+
+  $actions['commerce_product_bundle_load_sub_items'] = array(
+    'label' => t('Load Sub Line Items.'),
+    'parameter' => array(
+      'line_item' => array(
+        'type' => 'commerce_line_item',
+        'label' => t('Sub line item'),
+      ),
+    ),
+    'provides' => array(
+      'sub_line_items' => array(
+        'type' => 'list<commerce_line_item>',
+        'label' => t('sub line items')
+      ),
+    ),
+    'group' => t('Commerce Product Bundle'),
+  );
     
   return $actions;
+}
+
+
+function commerce_product_bundle_load_sub_items($line_item) {
+	$sub_line_items = commerce_product_bundle_get_sub_line_items($line_item);
+	return array('sub_line_items' => $sub_line_items);
 }
 
 
@@ -70,7 +132,7 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
         if ($form_in_full_node_display || ($form_in_default_display && !isset($product_field['display']['node_full']))) {
           
           // Get first sub product of this field, we assume that this is the 
-          // default product. (reset or each does not work, so use a foreach 
+          // default product. (reset() or each() does not work, so use a foreach 
           // loop.
           foreach ($product->{$product_field_name} as $sub_product) {
             break;
@@ -144,7 +206,9 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
     
     foreach ($sub_items as $item) {
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
-    
+      
+      
+      
       if ($multiply_by_quantity) {
         $line_item_wrapper->commerce_total->amount = $item->quantity * $line_item_wrapper->commerce_unit_price->amount->value();
         $line_item_wrapper->commerce_total->currency_code = $line_item_wrapper->commerce_unit_price->currency_code->value();
@@ -164,11 +228,18 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
         // Set the updated data array to the total price.
         $line_item_wrapper->commerce_total->data = $data;
 
-        $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
+        
       }
-      else {
+      /*else {
         $component_total = commerce_price_component_total($line_item_wrapper->commerce_unit_price->value());
-      }
+      }*/
+
+      $line_item = $line_item_wrapper->value();
+      rules_invoke_event('commerce_product_bundle_calc', $line_item, commerce_order_load($original_line_item->order_id));
+            
+      $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+           
+      $component_total = commerce_price_component_total($line_item_wrapper->commerce_total->value());
     
       $unitprice += commerce_currency_convert(
         $component_total['amount'],
@@ -190,6 +261,46 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
     $original_line_item_wrapper->commerce_unit_price->amount = $unitprice;
   }
 }
+
+
+function commerce_product_bundle_set_price($line_item, $amount) {
+  if (is_numeric($amount)) {
+    $wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+
+    // Calculate the updated amount and create a price array representing the
+    // difference between it and the current amount.
+    $current_amount = $wrapper->commerce_unit_price->amount->value();
+    $updated_amount = $amount;
+     
+    $wrapper->commerce_unit_price->data = commerce_price_component_delete(
+      $wrapper->commerce_unit_price->value(),
+      'base_price'
+    );
+       
+    $difference = array(
+      'amount' => $updated_amount,
+      'currency_code' => $wrapper->commerce_unit_price->currency_code->value(),
+      'data' => array(),
+    );
+
+    // Set the amount of the unit price and add the difference as a component.
+    $wrapper->commerce_unit_price->amount = $updated_amount;
+    
+    $wrapper->commerce_unit_price->data = array();
+
+    $wrapper->commerce_unit_price->data = commerce_price_component_add(
+      $wrapper->commerce_unit_price->value(),
+      'base_price',
+      $difference,
+      TRUE
+    );
+        
+  }
+	
+}
+
+
+
 
 /**
  * @}
