@@ -142,10 +142,11 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
           $product_ids = array();
           foreach ($field[$lang_code] as $product) {
             $product_ids[] = $product['product_id'];
-          }    
-          $context = $form_state['build_info']['args'][3];
-          $display_uri = $form_state['build_info']['args'][4];
-          commerce_product_bundle_add_to_cart_form($form, $form_state, $parent_product_id, $product_ids, $field_instance, $field_instance['settings'], $context, $display_uri);
+          }   
+          //dpm($form_state['build_info']);
+         // $context = $form_state['build_info']['args'][3];
+         // $display_uri = $form_state['build_info']['args'][4];
+          commerce_product_bundle_add_to_cart_form($form, $form_state, $parent_product_id, $product_ids, $field_instance, $field_instance['settings']); //$context, $display_uri
         }
 
 
@@ -221,7 +222,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   
   // Load data from line item id:
   if (isset($form_state['line_item']) && !isset($form_state['values']['bundle'][$id]['product_id'])) {
-    $sub_line_items = commerce_product_bundle_get_sub_line_items($form_state['line_item']->value());
+    $sub_line_items = commerce_product_bundle_get_sub_line_items($form_state['line_item']);
     
     // We assume that we have never the same product in one bundle. 
     // This means that we let the customer never choose the same product
@@ -612,7 +613,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
 
 function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
   $product_id = $form_state['values']['product_id'];
-  $product = $form_state['products'][$product_id];
 
   
   $subproducts = array();
@@ -630,8 +630,8 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
       $product_id,
       $form_state['values']['quantity'],
       $subproducts,
-      $form_state['values']['display_uri'],
-      $form_state['line_item']->line_item_id->value()
+      NULL,
+      $form_state['line_item']->line_item_id
     );
     
     drupal_goto('cart');
@@ -643,8 +643,7 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
       $form_state['values']['uid'],
       $product_id,
       $form_state['values']['quantity'],
-      $subproducts,
-      $form_state['values']['display_uri']
+      $subproducts
     );
     $form_state['line_item'] = $response['line_item'];
     $form_state['bundle_product_line_items'] = $response['sub_line_items'];
