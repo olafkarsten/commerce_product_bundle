@@ -42,7 +42,7 @@ function commerce_product_bundle_rules_action_info() {
   $actions['commerce_product_bundle_calculate_price'] = array(
     'label' => t('Calculate the price of a bundle product'),
     'parameter' => array(
-      'line_item' => array(
+      'commerce_line_item' => array(
         'type' => 'commerce_line_item',
         'label' => t('Line item'),
       ),

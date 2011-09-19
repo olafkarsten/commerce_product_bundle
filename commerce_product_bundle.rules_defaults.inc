@@ -20,7 +20,7 @@ function commerce_product_bundle_default_rules_configuration() {
   $rule
   ->event('commerce_product_calculate_sell_price')
   ->action('commerce_product_bundle_calculate_price', array(
-    'line_item:select' => 'line_item',
+    'commerce_line_item:select' => 'commerce-line-item',
     'multiply_by_quantity' => '1',
   ));
   
