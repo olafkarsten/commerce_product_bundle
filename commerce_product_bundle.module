@@ -623,7 +623,7 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
     $subproducts[] = $bundled_item;
   }
   
-  if (isset($form_state['line_item'])) {
+  if(!empty($form_state['line_item']->line_item_id)) {
     // Update the product to the specified shopping cart.
     $form_state['line_item'] = commerce_product_bundle_update_cart(
       $form_state['values']['uid'],
@@ -648,10 +648,11 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
     $form_state['line_item'] = $response['line_item'];
     $form_state['bundle_product_line_items'] = $response['sub_line_items'];
     
-
     // TODO: Accommodate multiple product Add to Cart forms better; i.e. should it
     // display the product title or the product display node title?
-    drupal_set_message(t('%title added to <a href="!cart-url">your cart</a>.', array('%title' => $product->title, '!cart-url' => url('cart'))));
+     // the $title is more a placeholder until we have a better solution
+    $title = t('product added to cart');
+    drupal_set_message(t('%title added to <a href="!cart-url">your cart</a>.', array('%title' => $title, '!cart-url' => url('cart'))));
   
   }
     
@@ -735,7 +736,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
       
     // Save the line item now so we get its ID.
-    $line_item = commerce_line_item_save($line_item);
+    commerce_line_item_save($line_item);
     
     //$line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
     //$unitprice = $line_item_wrapper->commerce_unit_price->amount->value();
@@ -775,11 +776,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
       
     // Save the line item now so we get its ID.
-    $line_item = commerce_line_item_save($line_item);
-
-      
-    // Save the line item now so we get its ID.
-    $line_item = commerce_line_item_save($line_item);
+    commerce_line_item_save($line_item);
     
     //print_r($line_item->commerce_unit_price);
 
