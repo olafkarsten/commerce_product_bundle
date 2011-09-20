@@ -265,7 +265,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       '#type' => 'hidden',
       '#value' => key($products),
     );
-    return;
   }
   
   if ($settings['show_fieldset']) {
