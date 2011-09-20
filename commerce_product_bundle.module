@@ -651,7 +651,7 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
     // TODO: Accommodate multiple product Add to Cart forms better; i.e. should it
     // display the product title or the product display node title?
      // the $title is more a placeholder until we have a better solution
-    $title = t('product added to cart');
+    $title = t('product');
     drupal_set_message(t('%title added to <a href="!cart-url">your cart</a>.', array('%title' => $title, '!cart-url' => url('cart'))));
   
   }
@@ -1300,8 +1300,7 @@ function commerce_product_bundle_commerce_cart_attributes_refresh_alter(&$comman
     $subproducts = array();
     // Add sub products to the cart:
     foreach ($form_state['values']['bundle'] as $id => $item_values) {
-      $subproduct = $form_state['bundle'][$id]['default_product'];
-      
+      $subproduct = $form_state['bundle'][$id]['default_product'];      
       
       $sub_line_item = commerce_product_bundle_line_item_new($subproduct, $line_item, $item_values['quantity']);
       $sub_line_items[] = $sub_line_item;
@@ -1319,8 +1318,3 @@ function commerce_product_bundle_commerce_cart_attributes_refresh_alter(&$comman
 
   }
 }
-
-
-
-
-
