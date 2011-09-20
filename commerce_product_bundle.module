@@ -766,7 +766,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
       rules_invoke_event('commerce_product_calculate_sell_price', $sub_line_item);
       
       // Save the line item
-      $sub_line_item = commerce_line_item_save($sub_line_item);
+      commerce_line_item_save($sub_line_item);
       
       $sub_line_items[$item_values['product_id']] = $sub_line_item;  
     }
@@ -889,7 +889,7 @@ function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subp
     rules_invoke_event('commerce_product_calculate_sell_price', $sub_line_item);
     
     // Save the line item
-    $sub_line_item = commerce_line_item_save($sub_line_item);
+    commerce_line_item_save($sub_line_item);
     
     $sub_line_items[] = $sub_line_item;  
   }
