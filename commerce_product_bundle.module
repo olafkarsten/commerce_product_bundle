@@ -114,7 +114,8 @@ function commerce_product_bundle_field_formatter_view($entity_type, $entity, $fi
  */
 function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
     
-  if (strstr($form_id, 'commerce_cart_add_to_cart_form')) {    
+  if (strstr($form_id, 'commerce_cart_add_to_cart_form')) { 
+    
     if (isset($form_state['default_product'])) {
       $current_product = $form_state['default_product'];
     }
@@ -144,14 +145,15 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
             $product_ids[] = $product['product_id'];
           }   
           //dpm($form_state['build_info']);
-         // $context = $form_state['build_info']['args'][3];
+          $context = (isset($form_state['build_info']['args'][2])) ? $form_state['build_info']['args'][2] : array();
          // $display_uri = $form_state['build_info']['args'][4];
-          commerce_product_bundle_add_to_cart_form($form, $form_state, $parent_product_id, $product_ids, $field_instance, $field_instance['settings']); //$context, $display_uri
+          commerce_product_bundle_add_to_cart_form($form, $form_state, $parent_product_id, $product_ids, $field_instance, $field_instance['settings'], $context); //, $display_uri
         }
 
 
       }
     }
+    
   }
   
   // Add action to allow to remove bundle line items
@@ -181,8 +183,7 @@ function commerce_product_bundle_line_item_delete_form_submit($form, &$form_stat
 
 
 function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array(), $display_uri = NULL) {
-  global $user;
-  
+  global $user;  
   
   // Load all the products intended for sale on this form.
   $products = commerce_product_load_multiple($product_ids, array('status' => 1));
@@ -1288,7 +1289,8 @@ function theme_commerce_product_bundle_attribute($variables) {
 /**
  * Implementation of hook_attribute_product_field_alter()
  */
-function commerce_product_bundle_commerce_cart_attributes_refresh_alter(&$commands, &$form, &$form_state) {
+function commerce_product_bundle_attribute_product_field_alter(&$element, $product, $product_field_name, $form, $form_state) {
+  
   if ($product_field_name == 'commerce_price') {
     
     // First create a pseudo product line item that we will pass to Rules.
@@ -1312,7 +1314,7 @@ function commerce_product_bundle_commerce_cart_attributes_refresh_alter(&$comman
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
 
     $price = entity_metadata_wrapper('commerce_line_item', $line_item)->commerce_unit_price->value();
-
+    
     $element[0]['#markup'] = commerce_currency_format($price['amount'], $element['#items'][0]['currency_code'], $product);
 
   }
