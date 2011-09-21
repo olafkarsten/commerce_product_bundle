@@ -101,6 +101,7 @@ function commerce_product_bundle_load_sub_items($line_item) {
  * Rules action: Calculate the price for a bundle line item
  */
 function commerce_product_bundle_calculate_price($line_item, $multiply_by_quantity) {
+  
   $original_line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
   $original_line_item = $line_item;
   
@@ -109,7 +110,7 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
   $found_bundle = false;
     
   $sub_items = commerce_product_bundle_get_sub_line_items($line_item);
-  
+    
   // If we do not find any sub line item. So we should try to find
   // the default sub products, to get a default price for this
   // product. This is primarly used for the product view, where we dont
@@ -120,10 +121,9 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
     
     foreach (field_info_instances('commerce_product', $product->type->value()) as $product_field_name => $product_field) {
       $info = field_info_field($product_field_name);
-      
       // If it is a product reference 
       if ($info['type'] == 'commerce_product_reference') {
-        // Check if the refernce is potential a bundle product:
+        // Check if the reference is potential a bundle product:
         $form_in_full_node_display = (isset($product_field['display']['node_full']) 
           && $product_field['display']['node_full']['type'] == 'commerce_bundle_product_add_to_cart_form');
         $form_in_default_display = (isset($product_field['display']['default']) 
@@ -133,10 +133,21 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
           
           // Get first sub product of this field, we assume that this is the 
           // default product. (reset() or each() does not work, so use a foreach 
-          // loop.
-          foreach ($product->{$product_field_name} as $sub_product) {
-            break;
-          }
+          // loop.      
+            foreach ($product->{$product_field_name} as $sub_product) {
+              break;
+            }
+                     
+         // For single value product reference field, we got no commerce_product
+         // object. This checks, if we have the correct objects and create one
+         // if not.
+         if($sub_product->type() !== 'commerce_product' && is_numeric($sub_product->value())) {
+           //load the product
+           $product = commerce_product_load($sub_product->value());
+           // Create commerce_product object instance
+           $sub_product = entity_metadata_wrapper('commerce_product', $product);
+         }
+         
           
           if ($form_in_full_node_display) {
             $settings = $product_field['display']['node_full']['settings'];
@@ -152,10 +163,10 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
           if ($multiply_by_quantity) {
             $commerce_total = array();
             $commerce_total['amount'] = $quantity * $sub_product->commerce_price->amount->value();
-            $commerce_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
+            $commerce_total['currency_code'] = $sub_product->commerce_price->currency_code->value();            
 
             // Add the components multiplied by the quantity to the data array.
-            $data = $sub_product->commerce_price->data->value();
+            $data = $sub_product->commerce_price->data->value();          
 
             if (empty($data['components'])) {
               $data['components'] = array();
@@ -207,8 +218,6 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
     foreach ($sub_items as $item) {
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
       
-      
-      
       if ($multiply_by_quantity) {
         $line_item_wrapper->commerce_total->amount = $item->quantity * $line_item_wrapper->commerce_unit_price->amount->value();
         $line_item_wrapper->commerce_total->currency_code = $line_item_wrapper->commerce_unit_price->currency_code->value();
@@ -227,7 +236,6 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
 
         // Set the updated data array to the total price.
         $line_item_wrapper->commerce_total->data = $data;
-
         
       }
       /*else {
