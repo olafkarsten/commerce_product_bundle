@@ -134,7 +134,7 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
           // Get first sub product of this field, we assume that this is the 
           // default product. (reset() or each() does not work, so use a foreach 
           // loop.      
-          $product = $original_line_item_wrapper->commerce_product;
+           $product = $original_line_item_wrapper->commerce_product;
             foreach ($product->{$product_field_name} as $sub_product) {
               break;
             }
