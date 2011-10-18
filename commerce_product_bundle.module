@@ -1180,8 +1180,8 @@ function commerce_product_bundle_configure_line_item() {
  */
 function commerce_product_bundle_attribute_field(&$element, &$line_item) {
   
-  // Check if we have a commerce_product 
-  if ($line_item->type != 'product') {
+  // Check if we have a commerce product line item 
+  if (!in_array($line_item->type, commerce_product_line_item_types())) {
     return;
   }
   
