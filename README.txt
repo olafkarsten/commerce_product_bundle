@@ -45,4 +45,18 @@ created in Step 4)
 
 You're done.
 
+-----
+
+Some technical Details explained. A rough impression of how this module work.
+
+- We add a new field to the product entity (reference field).
+- On render the add to cart form, we check if there exists any product reference field with the 
+  bundle product formatter.
+- Then we render inside of the add to cart a form that is nearly equivalent to the original add to 
+   the card form for each sub product.
+- On a selection of the product (ajax call), we update the price by rules.
+- On a add to cart action we add a new line item for the product reference field. We relate the sub 
+  product line items to this parent line item. We do not relate them to the order, 
+  because then in the order total they were counted twice.
+
 Sponsored by www.customweb.ch
