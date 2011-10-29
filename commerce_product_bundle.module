@@ -113,7 +113,7 @@ function commerce_product_bundle_field_formatter_view($entity_type, $entity, $fi
  * Here we modify the add to cart form. 
  */
 function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
-    
+   
   if (strstr($form_id, 'commerce_cart_add_to_cart_form')) { 
     
     if (isset($form_state['default_product'])) {
@@ -166,7 +166,6 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
       }
     }
   }
-  
 
 
 }
@@ -177,9 +176,6 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
 function commerce_product_bundle_line_item_delete_form_submit($form, &$form_state) {
   // TODO: Check if we need to do something here
 }
-
-
-
 
 
 function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array(), $display_uri = NULL) {
@@ -215,8 +211,8 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
     $display['settings'] = array();
   }
   $settings = $display['settings'] + commerce_product_bundle_field_formatter_default_settings();
+  $weight =  $display['weight'];
 
-  
   $field_name = $field_instance['field_name'];
   $id = $parent_product_id . '__' . $field_name;
 
@@ -257,6 +253,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
     '#tree' => TRUE,
     '#prefix' => '<div class="bundle-widgets">',
     '#suffix' => '</div>',
+    '#weight' => $weight,
   );
 
   // If the form is for a single product, store the product_id in a hidden
@@ -295,7 +292,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   
     
   foreach ($products as $product_id => $product) {
-    
     $product_wrapper = entity_metadata_wrapper('commerce_product', $product);
 
     // Store the first product type.
@@ -606,7 +602,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   // form with form IDs based on the $product_ids.
   $form['#validate'][] = 'commerce_product_bundle_add_to_cart_form_validate';
   $form['#submit'][] = 'commerce_product_bundle_add_to_cart_form_submit';
-
 
   return $form;
 }
