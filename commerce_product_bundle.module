@@ -644,13 +644,7 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
     $form_state['line_item'] = $response['line_item'];
     $form_state['bundle_product_line_items'] = $response['sub_line_items'];
 
-    // The $form_state['default_product']->title is the title of the bundle
-    // product.
-    // @TODO: Accommodate multiple product Add to Cart forms better
-    $title = $form_state['default_product']->title;
-    drupal_set_message(t('%title added to <a href="!cart-url">your cart</a>.', array('%title' => $title, '!cart-url' => url('cart'))));
-
-  }
+    }
 
 }
 
