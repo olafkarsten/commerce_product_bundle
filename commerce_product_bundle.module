@@ -1,13 +1,13 @@
 <?php
 
-/** 
+/**
  * @file
  * Allows the bundling of products in Drupal Commerce.
  */
 
 /**
  * Implements hook_field_formatter_info().
- * 
+ *
  * Provide an option for the user to add this as a product kit item
  */
 function commerce_product_bundle_field_formatter_info() {
@@ -56,7 +56,7 @@ function commerce_product_bundle_field_formatter_settings_form($field, $instance
       '#element_validate' => array('commerce_cart_field_formatter_settings_form_quantity_validate'),
       '#size' => 16,
     );
-    
+
     $element['show_fieldset'] = array(
       '#type' => 'checkbox',
       '#title' => t('Display the options in a fieldset.'),
@@ -77,12 +77,12 @@ function commerce_product_bundle_field_formatter_settings_summary($field, $insta
   $settings = $display['settings'] + commerce_product_bundle_field_formatter_default_settings();
 
   $summary = array();
-  
+
 
   if ($display['type'] == 'commerce_bundle_product_add_to_cart_form') {
     $calculation = '';
 
-    
+
     $summary = array(
       t('Quantity widget: !status', array('!status' => $settings['show_quantity'] ? t('Enabled') : t('Disabled'))),
       t('Default quantity: @quantity', array('@quantity' => $settings['default_quantity'])),
@@ -108,14 +108,14 @@ function commerce_product_bundle_field_formatter_view($entity_type, $entity, $fi
 }
 
 /**
- * Implementation of hook_form_alter()
+ * Implementation of hook_bundle_form_alter().
  *
- * Here we modify the add to cart form. 
+ * Here we modify the add to cart form.
  */
 function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
-   
-  if (strstr($form_id, 'commerce_cart_add_to_cart_form')) { 
-    
+
+  if (strstr($form_id, 'commerce_cart_add_to_cart_form')) {
+
     if (isset($form_state['default_product'])) {
       $current_product = $form_state['default_product'];
     }
@@ -127,11 +127,11 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
       return;
     }
 
-    $someFieldIsAdded = false;
+    $someFieldIsAdded = FALSE;
     $parent_product_id = $current_product->product_id;
-    
+
     foreach ($current_product as $field_name => $field) {
-    
+
       $field_info = field_info_field($field_name);
       $type = $field_info['type'];
 
@@ -139,23 +139,20 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
         $field_instance = field_read_instance('commerce_product', $field_name, $current_product->type);
         // Check if the field is enabled for sub products display:
         if (isset($field_instance['display']['default']['type']) && $field_instance['display']['default']['type'] == 'commerce_bundle_product_add_to_cart_form') {
-         $lang_code = field_language('commerce_product', $current_product, $field_name);
+          $lang_code = field_language('commerce_product', $current_product, $field_name);
           $product_ids = array();
           foreach ($field[$lang_code] as $product) {
             $product_ids[] = $product['product_id'];
-          }   
+          }
           //dpm($form_state['build_info']);
           $context = (isset($form_state['build_info']['args'][2])) ? $form_state['build_info']['args'][2] : array();
-         // $display_uri = $form_state['build_info']['args'][4];
+          // $display_uri = $form_state['build_info']['args'][4];
           commerce_product_bundle_add_to_cart_form($form, $form_state, $parent_product_id, $product_ids, $field_instance, $field_instance['settings'], $context); //, $display_uri
-        }
+       }
+     }
+   }
+ }
 
-
-      }
-    }
-    
-  }
-  
   // Add action to allow to remove bundle line items
   elseif (strpos($form_id, 'commerce_line_item_views_form_commerce_cart_form_') === 0) {
 
@@ -166,46 +163,39 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
       }
     }
   }
-
-
 }
-
-
-
 
 function commerce_product_bundle_line_item_delete_form_submit($form, &$form_state) {
   // TODO: Check if we need to do something here
 }
 
-
 function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array(), $display_uri = NULL) {
-  global $user;  
-  
+  global $user;
+
   // Load all the products intended for sale on this form.
   $products = commerce_product_load_multiple($product_ids, array('status' => 1));
-  
+
   //print_r($products);
 
   // If no products were returned...
   if (count($products) == 0) {
     return;
   }
-  
-  // Get display settings 
+
+  // Get display settings
   if (isset($field_instance['display']['node_full'])) {
     $display = $field_instance['display']['node_full'];
   }
   elseif (isset($field_instance['display']['default'])) {
     $display = $field_instance['display']['default'];
   }
-  
-  // skip if we are not using the commerce_bundle_product_add_to_cart_form 
+
+  // skip if we are not using the commerce_bundle_product_add_to_cart_form
   // display:
   if ($display['type'] != 'commerce_bundle_product_add_to_cart_form') {
     return;
   }
-  
-  
+
   // Get settings:
   if (!isset($display['settings'])) {
     $display['settings'] = array();
@@ -216,14 +206,14 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   $field_name = $field_instance['field_name'];
   $id = $parent_product_id . '__' . $field_name;
 
-  
+
   // Load data from line item id:
   if (isset($form_state['line_item']) && !isset($form_state['values']['bundle'][$id]['product_id'])) {
     $sub_line_items = commerce_product_bundle_get_sub_line_items($form_state['line_item']);
-    
-    // We assume that we have never the same product in one bundle. 
+
+    // We assume that we have never the same product in one bundle.
     // This means that we let the customer never choose the same product
-    // in the same bundle. 
+    // in the same bundle.
     foreach ($sub_line_items as $sub_line_item) {
       $sub_line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $sub_line_item);
       $sub_product_id = $sub_line_item_wrapper->commerce_product->product_id->value();
@@ -232,23 +222,21 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
         $settings['default_quantity'] = (float)$sub_line_item_wrapper->quantity->value();
         break;
       }
-      
     }
-    
   }
 
-  
+
   if (!isset($form['bundle'])) {
     $form['bundle'] = array();
   }
   if (!isset($form['bundle'][$id])) {
     $form['bundle'][$id] = array();
   }
-  
+
   $form['bundle'] += array(
     '#tree' => TRUE,
   );
-  
+
   $form['bundle'][$id] += array(
     '#tree' => TRUE,
     '#prefix' => '<div class="bundle-widgets">',
@@ -264,7 +252,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       '#value' => key($products),
     );
   }
-  
+
   if ($settings['show_fieldset']) {
     $form['bundle'][$id] += array(
       '#type' => 'fieldset',
@@ -273,7 +261,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   }
 
   $form_state['bundle_products'][$id] = $products;
-    
+
   // However, if more than one products are represented on it, attempt to
   // use smart select boxes for the product selection. If the products are
   // all of the same type and there are qualifying fields on that product
@@ -289,8 +277,8 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   $default_product = NULL;
   $attribute_names = array();
   $unchanged_attributes = array();
-  
-    
+
+
   foreach ($products as $product_id => $product) {
     $product_wrapper = entity_metadata_wrapper('commerce_product', $product);
 
@@ -363,7 +351,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       }
     }
   }
-  
+
   // Set the default product now if it isn't already set.
   if (empty($matching_products)) {
     // If a product ID value was passed in, use that product if it exists.
@@ -388,14 +376,13 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       $default_product = $matching_products[key($matching_products)];
     }
   }
-  
+
 
   // Wrap the default product for later use.
   $default_product_wrapper = entity_metadata_wrapper('commerce_product', $default_product);
 
   $form_state['bundle'][$id]['default_product'] = $default_product;
   $form_state['context'] = $context;
-  
 
   // If all the products are of the same type...
   if ($same_type) {
@@ -405,7 +392,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       // with a definite set of options. For the sake of simplicity, this is
       // currently restricted to fields defined by the options module.
       $field = field_info_field($instance['field_name']);
-      
+
       if ($field['cardinality'] == 1 && $instance['required'] && $instance['widget']['module'] == 'options') {
         // Get the options properties from the options module and store the
         // options for the instance in select list format in the array of
@@ -421,8 +408,8 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       }
     }
   }
-  
-  // Generate the select form items if we have only one product type, 
+
+  // Generate the select form items if we have only one product type,
   // which implies that all products has the same fields / attributes.
   if (!empty($qualifying_fields)) {
     $used_options = array();
@@ -475,8 +462,8 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
         );
       }
     }
-    
-    
+
+
     if (!empty($form['bundle'][$id]['attributes'])) {
       $form['bundle'][$id]['attributes'] += array(
         '#tree' => 'TRUE',
@@ -580,18 +567,18 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
     );
   }
 
-  
+
   // Remove the default submit handler, we need our own handler
   foreach ($form['#submit'] as $handler_id => $handler) {
     if ($handler == 'commerce_cart_add_to_cart_form_submit') {
       unset($form['#submit'][$handler_id]);
     }
-    
+
     // Ensure that the attributes submit handler is removed
     elseif ($handler == 'commerce_product_attributes_add_to_cart_form_submit') {
       unset($form['#submit'][$handler_id]);
     }
-    
+
     // Ensure that our handler is only assign once
     elseif ($handler == 'commerce_product_bundle_add_to_cart_form_submit') {
       unset($form['#submit'][$handler_id]);
@@ -606,18 +593,31 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   return $form;
 }
 
+/**
+ * Submit function to add product bundles to the cart.
+ *
+ * @param array $form
+ *   The entire add to cart form array.
+ * @param array $form_state
+ *   The actual state of the form.
+ *
+ * @see commerce_product_bundle_update_cart()
+ * @see commerce_product_bundle_add_to_cart_form()
+ */
 function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
+
+  // The product id of the product we want to add.
   $product_id = $form_state['values']['product_id'];
 
-  
+  // Add sub products to the cart.
   $subproducts = array();
-  // Add sub products to the cart:
   foreach ($form_state['values']['bundle'] as $id => $bundled_item) {
     //$subproduct = $form_state['bundle'][$id]['default_product'];
     //$bundled_item['product_id'] = $subproduct->product_id;
     $subproducts[] = $bundled_item;
   }
-  
+  // If we have a line_item_id, then the product is alway in the cart and we
+  // we have to update the cart.
   if(!empty($form_state['line_item']->line_item_id)) {
     // Update the product to the specified shopping cart.
     $form_state['line_item'] = commerce_product_bundle_update_cart(
@@ -628,10 +628,11 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
       NULL,
       $form_state['line_item']->line_item_id
     );
-    
+
     drupal_goto('cart');
-  
+
   }
+  // Otherwise we freshly add the bundle product to the cart.
   else {
     // Add the product to the specified shopping cart.
     $response = commerce_product_bundle_add_to_cart(
@@ -642,15 +643,15 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
     );
     $form_state['line_item'] = $response['line_item'];
     $form_state['bundle_product_line_items'] = $response['sub_line_items'];
-    
-    // TODO: Accommodate multiple product Add to Cart forms better; i.e. should it
-    // display the product title or the product display node title?
-     // the $title is more a placeholder until we have a better solution
-    $title = t('product');
+
+    // The $form_state['default_product']->title is the title of the bundle
+    // product.
+    // @TODO: Accommodate multiple product Add to Cart forms better
+    $title = $form_state['default_product']->title;
     drupal_set_message(t('%title added to <a href="!cart-url">your cart</a>.', array('%title' => $title, '!cart-url' => url('cart'))));
-  
+
   }
-    
+
 }
 
 
@@ -673,10 +674,10 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
  *   The new or updated line item object or FALSE on failure.
  */
 function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subproducts, $display_uri = NULL) {
-  
+
   // Most of the code is copied from commerce_cart_product_add,
-  // we need to copy to reorder the rules invokations. 
-  
+  // we need to copy to reorder the rules invokations.
+
   // Load and validate the specified product ID.
   $product = commerce_product_load($product_id);
 
@@ -703,12 +704,12 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
   // quantity instead of adding a new line if it does.
   $line_item = NULL;
 
-  
+
   // TODO: Find a way to identify same bundles. A possible approach can be a
   // nested loop. Additionally we need to put this in a separate method with
   // a hook, because the commerce_option modules need to change this and other
   // modules also.
-  
+
   /*
   // Loop through the line items looking for products.
   foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
@@ -729,50 +730,50 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
     // Process the unit price through Rules so it reflects the user's actual
     // purchase price.
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
-      
+
     // Save the line item now so we get its ID.
     commerce_line_item_save($line_item);
-    
+
     //$line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
     //$unitprice = $line_item_wrapper->commerce_unit_price->amount->value();
     $sub_line_items = array();
-    
-    
+
+
     // Iterates over all sub products:
     foreach ($subproducts as $item_values) {
-      
+
       // Check product
       $subproduct = commerce_product_load($item_values['product_id']);
       if (empty($subproduct) || !$subproduct->status) {
         // Skip this item, because it is not a valid one.
         continue;
       }
-      
+
       // Check quantity
       if ($item_values['quantity'] < 0) {
         // Skip, because it is not a valid quantity.
         continue;
       }
-      
+
       $sub_line_item = commerce_product_bundle_line_item_new($subproduct, $line_item, $item_values['quantity'], $order->order_id);
-      
+
       // Process the unit price through Rules so it reflects the user's actual
       // purchase price.
       rules_invoke_event('commerce_product_calculate_sell_price', $sub_line_item);
-      
+
       // Save the line item
       commerce_line_item_save($sub_line_item);
-      
-      $sub_line_items[$item_values['product_id']] = $sub_line_item;  
+
+      $sub_line_items[$item_values['product_id']] = $sub_line_item;
     }
 
     // Process the unit price through Rules so it reflects the user's actual
     // purchase price.
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
-      
+
     // Save the line item now so we get its ID.
     commerce_line_item_save($line_item);
-    
+
     //print_r($line_item->commerce_unit_price);
 
     // Add it to the order's line item reference value.
@@ -787,7 +788,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
     // the ensuing load instead of the original quantity as loaded above.
     entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));
   }
-  
+
 
   // Save the updated order.
   commerce_order_save($order);
@@ -795,7 +796,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
   // Invoke the product add event with the newly saved or updated line item.
   rules_invoke_all('commerce_cart_product_add', $order, $product, $quantity, $line_item);
 
-  
+
   // Return the line item.
   return array('line_item' => $line_item, 'sub_line_items' =>  $sub_line_items);
 }
@@ -819,10 +820,10 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
  *   The new or updated line item object or FALSE on failure.
  */
 function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subproducts, $display_uri = NULL, $line_item_id) {
-  
+
   // Most of the code is copied from commerce_cart_product_add,
-  // we need to copy to reorder the rules invokations. 
-  
+  // we need to copy to reorder the rules invokations.
+
   // Load and validate the specified product ID.
   $product = commerce_product_load($product_id);
 
@@ -844,65 +845,65 @@ function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subp
 
   $line_item = commerce_line_item_load($line_item_id);
   $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
-  
+
   if (empty($line_item_wrapper)) {
     return;
   }
-  
+
 
   // Invoke the product prepare event with the shopping cart order.
   rules_invoke_all('commerce_cart_product_prepare', $order, $product, $quantity);
 
-  
+
   $line_item_wrapper->quantity = $quantity;
   $line_item_wrapper->commerce_product = $product_id;
-  
+
   // Remove all current line items
   $sub_line_items = commerce_product_bundle_get_sub_line_items($line_item, TRUE);
   commerce_line_item_delete_multiple(array_keys($sub_line_items));
 
   // Iterates over all sub products:
   foreach ($subproducts as $item_values) {
-    
+
     // Check product
     $subproduct = commerce_product_load($item_values['product_id']);
     if (empty($subproduct) || !$subproduct->status) {
       // Skip this item, because it is not a valid one.
       continue;
     }
-    
+
     // Check quantity
     if ($item_values['quantity'] < 0) {
       // Skip, because it is not a valid quantity.
       continue;
     }
-    
+
     $sub_line_item = commerce_product_bundle_line_item_new($subproduct, $line_item, $item_values['quantity'], $order->order_id);
-    
+
     // Process the unit price through Rules so it reflects the user's actual
     // purchase price.
     rules_invoke_event('commerce_product_calculate_sell_price', $sub_line_item);
-    
+
     // Save the line item
     commerce_line_item_save($sub_line_item);
-    
-    $sub_line_items[] = $sub_line_item;  
+
+    $sub_line_items[] = $sub_line_item;
   }
-  
+
   rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
-  
+
   commerce_line_item_save($line_item);
 
 
   // Save the updated order.
   commerce_order_save($order);
 
-  entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));  
+  entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));
 
   // Invoke the product add event with the newly saved or updated line item.
   // TODO: Implement this event see commerce_attribute_cart_product_update()
   //rules_invoke_all('commerce_cart_product_update', $order, $product, $quantity, $line_item);
-  
+
   // Return the line item.
   return $line_item;
 }
@@ -939,6 +940,9 @@ function commerce_product_bundle_commerce_line_item_type_info() {
 
 /**
  * Returns an appropriate title for this line item.
+ *
+ * @Todo If this function do something other than returning a title, use it in
+ * commerce_product_bundle_add_to_cart_form_submit().
  */
 function commerce_product_bundle_line_item_title($line_item) {
   // Currently, just return the product's title.  However, in the future replace
@@ -955,7 +959,7 @@ function commerce_product_bundle_line_item_title($line_item) {
  */
 function commerce_product_bundle_line_item_add_form($form_state) {
   // TODO: Implement this method correct
-  
+
   $order = $form_state['commerce_order'];
   $form = array();
 
@@ -1001,12 +1005,12 @@ function commerce_product_bundle_line_item_add_form($form_state) {
  */
 function commerce_product_bundle_line_item_add_form_submit(&$line_item, $element, &$form_state, $form) {
   // TODO: Implement this method correct
-  
+
   $order = $form_state['commerce_order'];
 
   // Populate the line item with the product data.
   $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
-  
+
   $line_item_wrapper->commerce_unit_price->amount = $element['actions']['amount']['#value'];
   $line_item_wrapper->commerce_unit_price->currency_code = $element['actions']['currency_code']['#value'];
   $line_item_wrapper->commerce_unit_price->data = commerce_price_component_add(
@@ -1068,10 +1072,10 @@ function commerce_product_bundle_line_item_new($product, $parent_line_item, $qua
       TRUE
     );
   }
-  
+
   // Add the parent line item
   $line_item_wrapper->commerce_parent_line_item = $parent_line_item->line_item_id;
-  
+
   // Return the line item.
   return $line_item;
 }
@@ -1086,7 +1090,7 @@ function commerce_product_bundle_line_item_new($product, $parent_line_item, $qua
  */
 function commerce_product_bundle_configure_line_item() {
   commerce_product_reference_create_instance('commerce_product', 'commerce_line_item', 'bundle', t('Bundled Product'));
-  
+
   // Look for or add a display path textfield to the product line item type.
   $field_name = 'commerce_display_path';
   $field = field_info_field($field_name);
@@ -1174,32 +1178,32 @@ function commerce_product_bundle_configure_line_item() {
  * Implements hook_attribute_field()
  */
 function commerce_product_bundle_attribute_field(&$element, &$line_item) {
-  
-  // Check if we have a commerce product line item 
+
+  // Check if we have a commerce product line item
   if (!in_array($line_item->type, commerce_product_line_item_types())) {
     return;
   }
-  
-  
-  $element['bundles'] = array();    
+
+
+  $element['bundles'] = array();
   $sub_items = commerce_product_bundle_get_sub_line_items($line_item, TRUE);
-  
+
   if (count($sub_items) > 0) {
-    
+
     $element['#attached']['css'][] = drupal_get_path('module', 'commerce_product_bundle') . '/theme/commerce_product_bundle_cart.css';
-    
+
     foreach ($sub_items as $item) {
-      
-      
+
+
       $item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
       $product_attribute_view = field_attach_view('commerce_product', $item_wrapper->commerce_product->value(), 'attribute_view');
-      
+
       $element['bundles'][] = array(
         '#markup' => theme('commerce_product_bundle_attribute', array('sub_line_item' => $item, 'product_attribute_view' => drupal_render($product_attribute_view))),
       );
     }
   }
-  
+
 }
 
 /**
@@ -1212,36 +1216,36 @@ function commerce_product_bundle_attribute_field(&$element, &$line_item) {
  *   List of children line items.
  */
 function commerce_product_bundle_get_sub_line_items(&$parent_line_item, $reset = FALSE) {
-  
+
   if (!is_object($parent_line_item)) {
     return array();
   }
-  
+
   if ($reset || !isset($parent_line_item->data['sub_line_items']) || count($parent_line_item->data['sub_line_items']) <= 0) {
-    
+
     $query = new EntityFieldQuery();
     $entities = $query->entityCondition('entity_type', 'commerce_line_item')
       ->entityCondition('bundle', 'bundle')
       ->fieldCondition('commerce_parent_line_item', 'line_item_id', $parent_line_item->line_item_id, '=')
       ->execute();
-    
-    
-    
+
+
+
     if (!isset($entities['commerce_line_item'])) {
       return array();
     }
-    
+
     foreach ($entities['commerce_line_item'] as $item) {
       $item = commerce_line_item_load($item->line_item_id);
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
-    
+
       if (is_object($line_item_wrapper->commerce_parent_line_item->value()) && $line_item_wrapper->commerce_parent_line_item->line_item_id->value() == $parent_line_item->line_item_id) {
         $items[$item->line_item_id] = $item;
       }
     }
     $parent_line_item->data['sub_line_items'] = $items;
   }
-  
+
   return $parent_line_item->data['sub_line_items'];
 }
 
@@ -1264,19 +1268,19 @@ function theme_commerce_product_bundle_attribute($variables) {
   $sub_line_item = $variables['sub_line_item'];
   $product_attribute_view = $variables['product_attribute_view'];
   //return print_r($sub_line_item, true);
-  
+
   if (!empty($product_attribute_view)) {
     $product_attribute_view = '<div class="commerce-product-bundle-product-attributes">' . $product_attribute_view . '</div>';
   }
-  
+
   $output = '<div class="commerce-product-bundle-sub-line-item"><div class="commerce-product-bundle-sub-line-item-title">';
-  
+
   $output .= '<span class="commerce-product-bundle-quantity">' . (float)$sub_line_item->quantity . '</span>';
   $output .= ' x ';
   $output .= '<span class="commerce-product-bundle-title">' . commerce_line_item_title($sub_line_item) . '</span></div>';
   $output .= $product_attribute_view;
   $output .= '</div>';
-  
+
   return $output;
 }
 
@@ -1285,31 +1289,31 @@ function theme_commerce_product_bundle_attribute($variables) {
  * Implementation of hook_attribute_product_field_alter()
  */
 function commerce_product_bundle_attribute_product_field_alter(&$element, $product, $product_field_name, $form, $form_state) {
-  
+
   if ($product_field_name == 'commerce_price') {
-    
+
     // First create a pseudo product line item that we will pass to Rules.
     $line_item = commerce_product_line_item_new($product);
-    
+
     $line_item->line_item_id = 0;
-        
+
     $subproducts = array();
     // Add sub products to the cart:
     foreach ($form_state['values']['bundle'] as $id => $item_values) {
-      $subproduct = $form_state['bundle'][$id]['default_product'];      
-      
+      $subproduct = $form_state['bundle'][$id]['default_product'];
+
       $sub_line_item = commerce_product_bundle_line_item_new($subproduct, $line_item, $item_values['quantity']);
       $sub_line_items[] = $sub_line_item;
     }
-    
+
     $line_item->data['sub_line_items'] = $sub_line_items;
-    
-            
+
+
     // Pass the line item to Rules.
     rules_invoke_event('commerce_product_calculate_sell_price', $line_item);
 
     $price = entity_metadata_wrapper('commerce_line_item', $line_item)->commerce_unit_price->value();
-    
+
     $element[0]['#markup'] = commerce_currency_format($price['amount'], $element['#items'][0]['currency_code'], $product);
 
   }
