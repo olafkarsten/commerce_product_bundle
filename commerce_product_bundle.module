@@ -77,10 +77,8 @@ function commerce_product_bundle_field_formatter_settings_summary($field, $insta
 
   $summary = array();
 
-
   if ($display['type'] == 'commerce_bundle_product_add_to_cart_form') {
     $calculation = '';
-
 
     $summary = array(
       t('Quantity widget: !status', array('!status' => $settings['show_quantity'] ? t('Enabled') : t('Disabled'))),
@@ -237,7 +235,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   $field_name = $field_instance['field_name'];
   $id = $parent_product_id . '__' . $field_name;
 
-
   // Load data from line item id:
   if (isset($form_state['line_item']) && !isset($form_state['values']['bundle'][$id]['product_id'])) {
     $sub_line_items = commerce_product_bundle_get_sub_line_items($form_state['line_item']);
@@ -255,7 +252,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       }
     }
   }
-
 
   if (!isset($form['bundle'])) {
     $form['bundle'] = array();
@@ -492,7 +488,6 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       }
     }
 
-
     if (!empty($form['bundle'][$id]['attributes'])) {
       $form['bundle'][$id]['attributes'] += array(
         '#tree' => 'TRUE',
@@ -723,7 +718,6 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
   // quantity instead of adding a new line if it does.
   $line_item = NULL;
 
-
   // TODO: Find a way to identify same bundles. A possible approach can be a
   // nested loop. Additionally we need to put this in a separate method with
   // a hook, because the commerce_option modules need to change this and other
@@ -805,13 +799,11 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
     entity_get_controller('commerce_line_item')->resetCache(array($line_item->line_item_id));
   }
 
-
   // Save the updated order.
   commerce_order_save($order);
 
   // Invoke the product add event with the newly saved or updated line item.
   rules_invoke_all('commerce_cart_product_add', $order, $product, $quantity, $line_item);
-
 
   // Return the line item.
   return array('line_item' => $line_item, 'sub_line_items' =>  $sub_line_items);
@@ -1185,9 +1177,7 @@ function commerce_product_bundle_configure_line_item() {
     );
     field_create_instance($instance);
   }
-
 }
-
 
 /**
  * Implements hook_attribute_field().
@@ -1198,7 +1188,6 @@ function commerce_product_bundle_attribute_field(&$element, &$line_item) {
   if (!in_array($line_item->type, commerce_product_line_item_types())) {
     return;
   }
-
 
   $element['bundles'] = array();
   $sub_items = commerce_product_bundle_get_sub_line_items($line_item, TRUE);
@@ -1218,7 +1207,6 @@ function commerce_product_bundle_attribute_field(&$element, &$line_item) {
       );
     }
   }
-
 }
 
 /**
