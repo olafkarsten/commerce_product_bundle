@@ -204,7 +204,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
   global $user;
 
   // Load all the products intended for sale on this form.
-  $products = commerce_product_load_multiple($product_ids, array('status' => 1));
+ $products = ($product_ids) ? commerce_product_load_multiple($product_ids, array('status' => 1)) : array();
 
   // If no products were returned.
   if (count($products) == 0) {
