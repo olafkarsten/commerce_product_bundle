@@ -132,6 +132,11 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
 
     foreach ($current_product as $field_name => $field) {
 
+      // If the field is empty, we have nothing to do here, so we skip this
+      // round. This prevents errors as in http://drupal.org/node/1450970 .
+      if(empty($field)){
+        continue;
+      }
       $field_info = field_info_field($field_name);
       $type = $field_info['type'];
 
