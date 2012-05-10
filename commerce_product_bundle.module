@@ -772,6 +772,8 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
         continue;
       }
 
+      // Set the incoming line item's order_id.
+      $line_item->order_id = $order->order_id;
       $sub_line_item = commerce_product_bundle_line_item_new($subproduct, $line_item, $item_values['quantity'], $order->order_id);
 
       // Process the unit price through Rules so it reflects the user's actual
@@ -1054,6 +1056,9 @@ function commerce_product_bundle_line_item_new($product, $parent_line_item, $qua
 
   // Set the label to be the product SKU.
   $line_item->line_item_label = $product->sku;
+
+  // Set the incoming parents line item's order_id.
+  $line_item->order_id = $parent_line_item->order_id;
 
   // Wrap the line item and product to easily set field information.
   $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
