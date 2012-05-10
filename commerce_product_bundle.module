@@ -432,7 +432,7 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
         $qualifying_fields[$name] = array(
           'field' => $field,
           'instance' => $instance,
-          'options' => _options_get_options($field, $instance, $properties),
+          'options' => _options_get_options($field, $instance, $properties, 'commerce_product', $default_product),
           'weight' => $instance['widget']['weight'],
         );
       }
