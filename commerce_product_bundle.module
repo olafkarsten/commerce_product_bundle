@@ -44,7 +44,7 @@ function commerce_product_bundle_field_formatter_settings_form($field, $instance
   if ($display['type'] == 'commerce_bundle_product_add_to_cart_form') {
     $element['show_quantity'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Display a textfield quantity widget on the add to cart form for this bundle set.'),
+      '#title' => t('Display a textfield quantity widget on the add to cart form for this bundle.'),
       '#default_value' => $settings['show_quantity'],
     );
 
@@ -78,7 +78,6 @@ function commerce_product_bundle_field_formatter_settings_summary($field, $insta
   $summary = array();
 
   if ($display['type'] == 'commerce_bundle_product_add_to_cart_form') {
-    $calculation = '';
 
     $summary = array(
       t('Quantity widget: !status', array('!status' => $settings['show_quantity'] ? t('Enabled') : t('Disabled'))),
@@ -93,6 +92,9 @@ function commerce_product_bundle_field_formatter_settings_summary($field, $insta
 
 /**
  * Implements hook_field_formatter_view().
+ *
+ * @ToDo: 'This code do nothing. I'm unsure if we can use the hook for something
+ *  useful. Have a closer look, do something with it or remove it.'
  */
 function commerce_product_bundle_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $result = array();
@@ -123,11 +125,7 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
     else {
       return;
     }
-    // @ToDo hunziker: seems that this is an unused variable, but I'm not
-    // sure. The Code Sniffer complains:
-    // Drupal Code Sniffer: Variable "someFieldIsAdded" is camel caps format.
-    // do not use mixed case (camelCase), use lower case and _
-    $someFieldIsAdded = FALSE;
+
     $parent_product_id = $current_product->product_id;
 
     foreach ($current_product as $field_name => $field) {
@@ -176,7 +174,7 @@ function commerce_product_bundle_form_alter(&$form, &$form_state, $form_id) {
  * @see http://drupal.org/node/1378072
  */
 function commerce_product_bundle_line_item_delete_form_submit($form, &$form_state) {
-  // TODO: Check if we need to do something here.
+
 }
 
 /**
@@ -1000,7 +998,7 @@ function commerce_product_bundle_line_item_add_form($form_state) {
 }
 
 /**
- * Adds the selected shippng information to a line item added via a line item
+ * Adds the selected shipping information to a line item added via a line item
  *   manager widget.
  *
  * @param obj $line_item
