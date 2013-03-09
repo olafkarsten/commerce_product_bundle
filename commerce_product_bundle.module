@@ -14,7 +14,7 @@ function commerce_product_bundle_field_formatter_info() {
   return array(
     'commerce_bundle_product_add_to_cart_form' => array(
       'label' => t('Product Bundle: Add to cart form'),
-      'description' => t('Render the product bundle form. This view should be applied to the sub products. The main product (node) should use the default form formatter.'),
+      'description' => t('Render the product bundle add to cart form. This formatter should be applied to the sub products of hte bundle. You must not set this on a display node.'),
       'field types' => array('commerce_product_reference'),
       'settings' => commerce_product_bundle_field_formatter_default_settings(),
     ),
