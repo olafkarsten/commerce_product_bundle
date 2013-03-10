@@ -197,8 +197,6 @@ function commerce_product_bundle_line_item_delete_form_submit($form, &$form_stat
  *   Settings for this instance of the field.
  * @param array $context
  *   Document Context array.
- * @param null $display_uri
- *   Document Display array.
  *
  * @return array
  *   The add to cart form with the bundle product.
@@ -206,7 +204,7 @@ function commerce_product_bundle_line_item_delete_form_submit($form, &$form_stat
  * @ToDo This are tons of duplicated code from 'commerce_cart_add_to_cart_form'.
  *    We should find a way to reduce code duplication.
  */
-function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array(), $display_uri = NULL) {
+function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array()) {
   global $user;
 
   // Store the context in the form state for use during AJAX refreshes.
@@ -768,16 +766,13 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
  *   The quantity of this product to add to the cart.
  * @param array $subproducts
  *   An array of products that relates to this bundle.
- * @param null $display_uri
- *   A URI array as returned by entity_uri() indicating the display to link the
- *     product line item to; defaults to NULL for no display.
  *
  * @return array|FALSE
  *   Returns FALSE if we can't load a product from the provided $product_id.
  *   Returns an array of new or updated line item objects for the
  *   bundle_line_item and the sub_line_items
  */
-function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subproducts, $display_uri = NULL) {
+function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subproducts) {
 
   // Load and validate the specified product ID.
   $product = commerce_product_load($product_id);
@@ -824,7 +819,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
   // If no matching line item was found.
   if (empty($line_item)) {
     // Create the new product line item.
-    $line_item = commerce_product_line_item_new($product, $quantity, $order->order_id, $display_uri);
+    $line_item = commerce_product_line_item_new($product, $quantity, $order->order_id);
 
     // Process the unit price through Rules so it reflects the user's actual
     // purchase price.
@@ -914,15 +909,12 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
  *   An array of products that relates to this bundle.
  * @param int $line_item_id
  *   The id of the line item.
- * @param null|string $display_uri
- *   A URI array as returned by entity_uri() indicating the display to link the
- *   product line item to; defaults to NULL for no display.
  *
  * @return obj|FALSE
  *   Returns FALSE if we can't load a product from the provided $product_id.
  *   Returns updated line item object.
  */
-function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subproducts, $line_item_id, $display_uri = NULL) {
+function commerce_product_bundle_update_cart($uid, $product_id, $quantity, $subproducts, $line_item_id) {
 
   // Load and validate the specified product ID.
   $product = commerce_product_load($product_id);
@@ -1123,13 +1115,11 @@ function commerce_product_bundle_line_item_add_form_submit(&$line_item, $element
  *   The quantity of the subproduct.
  * @param int $order_id
  *   The id of the order to which the product belongs to.
- * @param null $display_uri
- *   The display uri as returned by entity_uri().
  *
  * @return obj
  *   Line item object with default values.
  */
-function commerce_product_bundle_line_item_new($product, $parent_line_item, $quantity = 1, $order_id = 0, $display_uri = NULL) {
+function commerce_product_bundle_line_item_new($product, $parent_line_item, $quantity = 1, $order_id = 0) {
   // Create the new line item.
   $line_item = entity_create('commerce_line_item', array(
     'type' => 'bundle',
@@ -1150,13 +1140,11 @@ function commerce_product_bundle_line_item_new($product, $parent_line_item, $qua
   $line_item_wrapper->commerce_product = $product->product_id;
 
   // Add the display URI if specified.
-  if (is_array($display_uri) && !empty($display_uri['path'])) {
-    $line_item_wrapper->commerce_display_path = $display_uri['path'];
-    $line_item->data['display_uri'] = $display_uri;
+  if (!empty($line_item->data['context']['display_path'])) {
+    $line_item_wrapper->commerce_display_path = $line_item->data['context']['display_path'];
   }
   else {
     $line_item_wrapper->commerce_display_path = '';
-    $line_item->data['display_uri'] = NULL;
   }
 
   // Set the unit price on the line item object.
