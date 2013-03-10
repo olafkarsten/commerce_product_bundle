@@ -733,7 +733,6 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
       $product_id,
       $form_state['values']['quantity'],
       $subproducts,
-      NULL,
       $form_state['line_item']->line_item_id
     );
     drupal_goto('cart');
