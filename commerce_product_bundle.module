@@ -744,7 +744,9 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
       $form_state['values']['uid'],
       $product_id,
       $form_state['values']['quantity'],
-      $subproducts
+      $subproducts,
+      $form_state['line_item']->data,
+      $form_state['line_item']->type
     );
     $form_state['line_item'] = $response['line_item'];
     $form_state['bundle_product_line_items'] = $response['sub_line_items'];
@@ -765,13 +767,23 @@ function commerce_product_bundle_add_to_cart_form_submit($form, &$form_state) {
  *   The quantity of this product to add to the cart.
  * @param array $subproducts
  *   An array of products that relates to this bundle.
+ * @param array $data
+ *   A data array to set on the new line item. The following information in the
+ *   data array may be used on line item creation:
+ *   - $data['context']['display_path']: if present will be used to set the line
+ *     item's display_path field value.
+ * @param string $type
+ *   The type of product line item to create. Must be a product line item as
+ *   defined in the line item type info array, and the line item type must
+ *   include the expected product related fields. Defaults to the base product
+ *   line item type defined by the Product Reference module.
  *
  * @return array|FALSE
  *   Returns FALSE if we can't load a product from the provided $product_id.
  *   Returns an array of new or updated line item objects for the
  *   bundle_line_item and the sub_line_items
  */
-function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subproducts) {
+function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subproducts, $data = array(), $type = 'product') {
 
   // Load and validate the specified product ID.
   $product = commerce_product_load($product_id);
@@ -818,7 +830,7 @@ function commerce_product_bundle_add_to_cart($uid, $product_id, $quantity, $subp
   // If no matching line item was found.
   if (empty($line_item)) {
     // Create the new product line item.
-    $line_item = commerce_product_line_item_new($product, $quantity, $order->order_id);
+    $line_item = commerce_product_line_item_new($product, $quantity, $order->order_id, $data, $type);
 
     // Process the unit price through Rules so it reflects the user's actual
     // purchase price.
@@ -1114,15 +1126,21 @@ function commerce_product_bundle_line_item_add_form_submit(&$line_item, $element
  *   The quantity of the subproduct.
  * @param int $order_id
  *   The id of the order to which the product belongs to.
+ * @param array $data
+ *   A data array to set on the new line item. The following information in the
+ *   data array may be used on line item creation:
+ *   - $data['context']['display_path']: if present will be used to set the line
+ *     item's display_path field value.
  *
  * @return obj
  *   Line item object with default values.
  */
-function commerce_product_bundle_line_item_new($product, $parent_line_item, $quantity = 1, $order_id = 0) {
+function commerce_product_bundle_line_item_new($product, $parent_line_item, $quantity = 1, $order_id = 0, $data = array()) {
   // Create the new line item.
   $line_item = entity_create('commerce_line_item', array(
     'type' => 'bundle',
     'quantity' => $quantity,
+    'data' => $data,
   ));
 
   // Set the label to be the product SKU.
