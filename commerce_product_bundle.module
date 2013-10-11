@@ -202,7 +202,7 @@ function commerce_product_bundle_line_item_delete_form_submit($form, &$form_stat
  *   The add to cart form with the bundle product.
  *
  * @ToDo This are tons of duplicated code from 'commerce_cart_add_to_cart_form'.
- *    We should find a way to reduce code duplication.
+ *    We should finde a way to reduce code duplication.
  */
 function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_product_id, $product_ids, $field_instance, $settings = array(), $context = array()) {
   global $user;
@@ -438,10 +438,22 @@ function commerce_product_bundle_add_to_cart_form(&$form, &$form_state, $parent_
       $commerce_cart_settings = commerce_cart_field_instance_attribute_settings($instance);
 
       if (commerce_cart_field_attribute_eligible($field) && $commerce_cart_settings['attribute_field']) {
-        // Get the options properties from the options module and store the
-        // options for the instance in select list format in the array of
-        // qualifying fields.
-        $properties = _options_properties('select', FALSE, TRUE, TRUE);
+          // Get the options properties from the options module for the
+          // attribute widget type selected for the field, defaulting to the
+          // select list options properties.
+
+          switch ($commerce_cart_settings['attribute_widget']) {
+              case 'checkbox':
+                  $widget_type = 'onoff';
+                  break;
+              case 'radios':
+                  $widget_type = 'buttons';
+                  break;
+              default:
+                  $widget_type = 'select';
+          }
+
+          $properties = _options_properties($widget_type, FALSE, TRUE, TRUE);
 
         // Try to fetch localized names.
         $allowed_values = NULL;
