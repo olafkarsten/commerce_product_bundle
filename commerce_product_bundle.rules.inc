@@ -137,6 +137,8 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
     $product = $original_line_item_wrapper->commerce_product;
 
     foreach (field_info_instances('commerce_product', $product->type->value()) as $product_field_name => $product_field) {
+      // Set sub_product to false so that data does not carry over from the previous loop.
+      $sub_product = FALSE;
       $info = field_info_field($product_field_name);
       // If it is a product reference.
       if ($info['type'] == 'commerce_product_reference') {
@@ -155,72 +157,74 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
           foreach ($product->{$product_field_name} as $sub_product) {
             break;
           }
+          
+          // Check there is actually a value for $sub_product.
+          if ($sub_product) {
+            // For single value product reference field, we got no
+            // commerce_product object. This checks, if we have the correct
+            // objects and create one if not.
+            if ($sub_product->type() !== 'commerce_product' && is_numeric($sub_product->value())) {
+              // Load the product.
+              $product = commerce_product_load($sub_product->value());
+              // Create commerce_product object instance.
+              $sub_product = entity_metadata_wrapper('commerce_product', $product);
+            }
 
-          // For single value product reference field, we got no
-          // commerce_product object. This checks, if we have the correct
-          // objects and create one if not.
-          if ($sub_product->type() !== 'commerce_product' && is_numeric($sub_product->value())) {
-            // Load the product.
-            $product = commerce_product_load($sub_product->value());
-            // Create commerce_product object instance.
-            $sub_product = entity_metadata_wrapper('commerce_product', $product);
-          }
+            if ($form_in_full_node_display) {
+              $settings = $product_field['display']['node_full']['settings'];
+            }
+            elseif ($form_in_default_display) {
+              $settings = $product_field['display']['default']['settings'];
+            }
 
-          if ($form_in_full_node_display) {
-            $settings = $product_field['display']['node_full']['settings'];
-          }
-          elseif ($form_in_default_display) {
-            $settings = $product_field['display']['default']['settings'];
-          }
+            // Use the default value from the display settings to determine
+            // the default quantity to use.
+            $quantity = $settings['default_quantity'];
 
-          // Use the default value from the display settings to determine
-          // the default quantity to use.
-          $quantity = $settings['default_quantity'];
+            if ($multiply_by_quantity) {
+              $commerce_total = array();
+              $commerce_total['amount'] = $quantity * $sub_product->commerce_price->amount->value();
+              $commerce_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
 
-          if ($multiply_by_quantity) {
-            $commerce_total = array();
-            $commerce_total['amount'] = $quantity * $sub_product->commerce_price->amount->value();
-            $commerce_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
+              // Add the components multiplied by the quantity to the data array.
+              $data = $sub_product->commerce_price->data->value();
 
-            // Add the components multiplied by the quantity to the data array.
-            $data = $sub_product->commerce_price->data->value();
+              if (empty($data['components'])) {
+                $data['components'] = array();
+              }
+              else {
+                foreach ($data['components'] as $key => $component) {
+                  $data['components'][$key]['price']['amount'] *= $quantity;
+                }
+              }
 
-            if (empty($data['components'])) {
-              $data['components'] = array();
+              // Set the updated data array to the total price.
+              $commerce_total['data'] = $data;
+
+              $component_total = $commerce_total;
+
             }
             else {
-              foreach ($data['components'] as $key => $component) {
-                $data['components'][$key]['price']['amount'] *= $quantity;
-              }
+              $component_total['amount'] = $sub_product->commerce_price->amount->value();
+              $component_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
+              $component_total['data'] = $sub_product->commerce_price->data->value();
+              $component_total['data']['components'] += array();
             }
 
-            // Set the updated data array to the total price.
-            $commerce_total['data'] = $data;
+            $unitprice += commerce_currency_convert(
+              $component_total['amount'],
+              $component_total['currency_code'],
+              $original_line_item_wrapper->commerce_unit_price->currency_code->value()
+            );
 
-            $component_total = $commerce_total;
-
+            // Combine the line item total's component prices into the
+            // unit price total.
+            $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
+              $original_line_item_wrapper->commerce_unit_price->value(),
+              $component_total
+            );
+            $found_bundle = TRUE;
           }
-          else {
-            $component_total['amount'] = $sub_product->commerce_price->amount->value();
-            $component_total['currency_code'] = $sub_product->commerce_price->currency_code->value();
-            $component_total['data'] = $sub_product->commerce_price->data->value();
-            $component_total['data']['components'] += array();
-          }
-
-          $unitprice += commerce_currency_convert(
-            $component_total['amount'],
-            $component_total['currency_code'],
-            $original_line_item_wrapper->commerce_unit_price->currency_code->value()
-          );
-
-          // Combine the line item total's component prices into the
-          // unit price total.
-          $original_line_item_wrapper->commerce_unit_price->data = commerce_price_components_combine(
-            $original_line_item_wrapper->commerce_unit_price->value(),
-            $component_total
-          );
-          $found_bundle = TRUE;
-
         }
       }
     }
