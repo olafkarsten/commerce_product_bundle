@@ -134,6 +134,13 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
   // get any line item with sub line items.
   if (count($sub_items) == 0) {
 
+    // Save the currency_code before resetting the unit price.
+    $original_line_item_currency_code = $original_line_item_wrapper->commerce_unit_price->currency_code->value();
+    // Reset the unit price to the product price - This will reset the price components.
+    $original_line_item_wrapper->commerce_unit_price = $original_line_item_wrapper->commerce_product->commerce_price->value();
+    // Restore the currency_code after resetting the unit price.
+    $original_line_item_wrapper->commerce_unit_price->currency_code = $original_line_item_currency_code;
+
     $product = $original_line_item_wrapper->commerce_product;
 
     foreach (field_info_instances('commerce_product', $product->type->value()) as $product_field_name => $product_field) {
@@ -232,8 +239,12 @@ function commerce_product_bundle_calculate_price($line_item, $multiply_by_quanti
 
   // This is the normal way how we determine the bundle product price.
   else {
-    // Reset the unit price to the product price.
+    // Save the currency_code before resetting the unit price.
+    $original_line_item_currency_code = $original_line_item_wrapper->commerce_unit_price->currency_code->value();
+    // Reset the unit price to the product price - This will reset the price components.
     $original_line_item_wrapper->commerce_unit_price = $original_line_item_wrapper->commerce_product->commerce_price->value();
+    // Restore the currency_code after resetting the unit price.
+    $original_line_item_wrapper->commerce_unit_price->currency_code = $original_line_item_currency_code;
 
     foreach ($sub_items as $item) {
       $line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $item);
