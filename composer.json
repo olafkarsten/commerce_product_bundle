@@ -1,0 +1,15 @@
+{
+  "name": "drupal/commerce_product_bundle",
+  "type": "drupal-module",
+  "description": "Extends Drupal Commerce with a product bundle functionality.",
+  "keywords": ["Drupal", "Drupal Commerce 2.0"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/commerce_product_bundle",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/commerce_product_bundle"
+  },
+  "require": {
+    "drupal/commerce": "~8.2.x-dev"
+  },
+  "minimum-stability": "dev"
+}
