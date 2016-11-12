@@ -1,0 +1,7 @@
+name: Commerce Static Product Bundle
+type: module
+description: Provides a static product bundle
+core: 8.x
+package: Commerce Product Bundle
+dependencies:
+  - commerce_product_bundle

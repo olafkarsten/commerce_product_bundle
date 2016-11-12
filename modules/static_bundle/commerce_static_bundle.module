@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains commerce_static_bundle.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function commerce_static_bundle_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the commerce_static_bundle module.
+    case 'help.page.commerce_static_bundle':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a static product bundle') . '</p>';
+      return $output;
+
+    default:
+  }
+}
