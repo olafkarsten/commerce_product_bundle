@@ -1,0 +1,22 @@
+{#
+/**
+ * @file static_bundle.html.twig
+ * Default theme implementation to present Static bundle data.
+ *
+ * This template is used when viewing Static bundle pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_static_bundle()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('static_bundle') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

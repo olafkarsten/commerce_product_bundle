@@ -1,0 +1,16 @@
+entity.static_bundle.add_form:
+  route_name: 'entity.static_bundle.add_page'
+  title: 'Add Static bundle'
+  appears_on:
+    - entity.static_bundle.collection
+entity.static_bundle_type.add_form:
+  route_name: 'entity.static_bundle_type.add_form'
+  title: 'Add Static bundle type'
+  appears_on:
+    - entity.static_bundle_type.collection
+
+entity.static_bundle_item.add_form:
+  route_name: entity.static_bundle_item.add_form
+  title: 'Add Static bundle item'
+  appears_on:
+    - entity.static_bundle_item.collection

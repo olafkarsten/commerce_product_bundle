@@ -22,3 +22,37 @@ function commerce_static_bundle_help($route_name, RouteMatchInterface $route_mat
     default:
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_static_bundle_theme() {
+  $theme = [];
+  $theme['static_bundle'] = array(
+    'render element' => 'elements',
+    'file' => 'static_bundle.page.inc',
+    'template' => 'static_bundle',
+  );
+  $theme['static_bundle_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'static_bundle.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function commerce_static_bundle_theme_suggestions_static_bundle(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#static_bundle'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'static_bundle__' . $sanitized_view_mode;
+  $suggestions[] = 'static_bundle__' . $entity->bundle();
+  $suggestions[] = 'static_bundle__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'static_bundle__' . $entity->id();
+  $suggestions[] = 'static_bundle__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
