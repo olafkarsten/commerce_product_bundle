@@ -118,7 +118,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param int $uid
    *   The user ID of the revision author.
    *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
+   * @return  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called Static bundle entity.
    */
   public function setRevisionAuthorId($uid);
@@ -126,20 +126,40 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
   /**
    * Returns the bundle items of that bundle.
    *
-   * @return array of \Drupal\commerce_product_bundle\BundleItemInterface
+   * @return array of  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *    Array of the bundle items.
    */
-  public function getItems();
+  public function getBundleItems();
 
   /**
    * Sets the bundle items of that bundle.
    *
-   * @return array of \Drupal\commerce_product_bundle\BundleItemInterface
-   *    Array of the bundle items.
+   * @param array $bundleItems
+   *    Array of  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
+   *    The called bundle entity.
    */
-  public function setItems();
+  public function setBundleItems(array $bundleItems);
 
+  /**
+   * Adds a bunde item to the bundle
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem
+   *
+   * @return  \Drupal\commerce_product_bundle\Entity\BundleInterface
+   *    The called bundle entity.
+   */
+  public function addBundleItem(BundleItemInterface $bundleItem);
 
-
+  /**
+   * Adds a bunde item to the bundle
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
+   *    The called bundle entity.
+   */
+  public function removeBundleItem(BundleItemInterface $bundleItem);
 
 }
