@@ -3,15 +3,15 @@ status: true
 dependencies:
   module:
     - commerce_static_bundle
-id: commerce_static_bundle.bundle_item
-field_name: purchasable_entity
+id: commerce_static_bundle.bundle_items
+field_name: bundle_items
 entity_type: commerce_static_bundle
 type: entity_reference
 settings:
-  target_type: commerce_product_variation
+  target_type: commerce_static_bundle_item
 module: core
 locked: true
-cardinality: 1
+cardinality: -1
 translatable: false
 indexes: {  }
 persist_with_no_fields: false

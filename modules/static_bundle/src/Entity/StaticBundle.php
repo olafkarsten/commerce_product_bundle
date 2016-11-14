@@ -3,6 +3,7 @@
 namespace Drupal\commerce_static_bundle\Entity;
 
 use Drupal\commerce_product_bundle\Entity\BundleInterface;
+use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
@@ -47,9 +48,9 @@ use Drupal\user\UserInterface;
  *     "id" = "id",
  *     "revision" = "vid",
  *     "bundle" = "type",
- *     "label" = "name",
+ *     "label" = "title",
  *     "uuid" = "uuid",
- *     "uid" = "user_id",
+ *     "uid" = "uid",
  *     "langcode" = "langcode",
  *     "status" = "status",
  *   },
@@ -80,7 +81,7 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
     $values += array(
-      'user_id' => \Drupal::currentUser()->id(),
+      'uid' => \Drupal::currentUser()->id(),
     );
   }
 
@@ -116,15 +117,15 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
   /**
    * {@inheritdoc}
    */
-  public function getName() {
-    return $this->get('name')->value;
+  public function getTitle() {
+    return $this->get('title')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
-    $this->set('name', $name);
+  public function setTitle($title) {
+    $this->set('title', $title);
     return $this;
   }
 
@@ -147,21 +148,21 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
    * {@inheritdoc}
    */
   public function getOwner() {
-    return $this->get('user_id')->entity;
+    return $this->get('uid')->entity;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId() {
-    return $this->get('user_id')->target_id;
+    return $this->get('uid')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setOwnerId($uid) {
-    $this->set('user_id', $uid);
+    $this->set('uid', $uid);
     return $this;
   }
 
@@ -169,7 +170,7 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
    * {@inheritdoc}
    */
   public function setOwner(UserInterface $account) {
-    $this->set('user_id', $account->id());
+    $this->set('uid', $account->id());
     return $this;
   }
 
@@ -224,9 +225,9 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Static bundle entity.'))
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Author'))
+      ->setDescription(t('The user ID of author of the static bundle entity.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -249,9 +250,9 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Static bundle entity.'))
+    $fields['title'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Title'))
+      ->setDescription(t('The title of the Static bundle entity.'))
       ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
@@ -259,7 +260,7 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
       ))
       ->setDefaultValue('')
       ->setDisplayOptions('view', array(
-        'label' => 'above',
+        'label' => 'hidden',
         'type' => 'string',
         'weight' => -4,
       ))
@@ -267,6 +268,24 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
         'type' => 'string_textfield',
         'weight' => -4,
       ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    // The price is not required because it's not guaranteed to be used
+    // for storage. We may use the price of the referenced purchasable
+    // entity.
+    $fields['bundle_base_price'] = BaseFieldDefinition::create('commerce_price')
+      ->setLabel(t('The base price of a the bundle'))
+      ->setDescription(t('The bundle base price. If set, the prices of  the bundle items will be ignored. Set only, if you want a global price per bundle, independent from its items.'))
+      ->setDisplayOptions('view', [
+        'label'  => 'above',
+        'type'   => 'commerce_price_default',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type'   => 'commerce_price_default',
+        'weight' => 0,
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -308,7 +327,8 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
   }
 
   public function getStores() {
-    // TODO: Implement getStores() method.
+    // TODO: Collect the stores of the bundleItems.
+
   }
 
   public function getOrderItemTypeId() {
@@ -323,4 +343,19 @@ class StaticBundle extends RevisionableContentEntityBase implements BundleInterf
     // TODO: Implement getPrice() method.
   }
 
+  public function getBundleItems() {
+    // TODO: Implement getBundleItems() method.
+  }
+
+  public function setBundleItems(array $bundleItems) {
+    // TODO: Implement setBundleItems() method.
+  }
+
+  public function addBundleItem(BundleItemInterface $bundleItem) {
+    // TODO: Implement addBundleItem() method.
+  }
+
+  public function removeBundleItem(BundleItemInterface $bundleItem) {
+    // TODO: Implement removeBundleItem() method.
+  }
 }

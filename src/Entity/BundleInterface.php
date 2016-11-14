@@ -27,23 +27,23 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
   public function getType();
 
   /**
-   * Gets the Static bundle name.
+   * Gets the Static bundle title.
    *
    * @return string
-   *   Name of the Static bundle.
+   *   Title of the Static bundle.
    */
-  public function getName();
+  public function getTitle();
 
   /**
-   * Sets the Static bundle name.
+   * Sets the Static bundle title.
    *
-   * @param string $name
-   *   The Static bundle name.
+   * @param string $title
+   *   The Static bundle title.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
-  public function setName($name);
+  public function setTitle($title);
 
   /**
    * Gets the Static bundle creation timestamp.

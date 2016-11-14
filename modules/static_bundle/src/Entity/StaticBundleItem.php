@@ -110,7 +110,7 @@ class StaticBundleItem extends RevisionableContentEntityBase implements BundleIt
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Author'))
-      ->setDescription(t('The user ID of author of the Static bundle item entity.'))
+      ->setDescription(t('The user ID of author of the static bundle item entity.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -471,5 +471,18 @@ class StaticBundleItem extends RevisionableContentEntityBase implements BundleIt
 
     return $this;
   }
+
+  /**
+   * Try to forward calls on non existing methods to the
+   * referenced purchasable entity.
+   *
+   * Really not sure if this is a good idea? Maybe to much
+   * magic.
+   */
+  public function __call(){
+    //ToDo write that stuff
+  }
+
+
 
 }
