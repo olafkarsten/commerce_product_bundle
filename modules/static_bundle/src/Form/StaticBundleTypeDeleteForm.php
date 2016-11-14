@@ -22,7 +22,7 @@ class StaticBundleTypeDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.static_bundle_type.collection');
+    return new Url('entity.commerce_static_bundle_type.collection');
   }
 
   /**

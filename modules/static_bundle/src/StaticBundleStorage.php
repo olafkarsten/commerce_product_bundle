@@ -22,7 +22,7 @@ class StaticBundleStorage extends SqlContentEntityStorage implements StaticBundl
    */
   public function revisionIds(BundleInterface $entity) {
     return $this->database->query(
-      'SELECT vid FROM {static_bundle_revision} WHERE id=:id ORDER BY vid',
+      'SELECT vid FROM {commerce_static_bundle_revision} WHERE id=:id ORDER BY vid',
       array(':id' => $entity->id())
     )->fetchCol();
   }
@@ -32,7 +32,7 @@ class StaticBundleStorage extends SqlContentEntityStorage implements StaticBundl
    */
   public function userRevisionIds(AccountInterface $account) {
     return $this->database->query(
-      'SELECT vid FROM {static_bundle_field_revision} WHERE uid = :uid ORDER BY vid',
+      'SELECT vid FROM {commerce_static_bundle_field_revision} WHERE uid = :uid ORDER BY vid',
       array(':uid' => $account->id())
     )->fetchCol();
   }
@@ -41,7 +41,7 @@ class StaticBundleStorage extends SqlContentEntityStorage implements StaticBundl
    * {@inheritdoc}
    */
   public function countDefaultLanguageRevisions(BundleInterface $entity) {
-    return $this->database->query('SELECT COUNT(*) FROM {static_bundle_field_revision} WHERE id = :id AND default_langcode = 1', array(':id' => $entity->id()))
+    return $this->database->query('SELECT COUNT(*) FROM {commerce_static_bundle_field_revision} WHERE id = :id AND default_langcode = 1', array(':id' => $entity->id()))
       ->fetchField();
   }
 
@@ -49,7 +49,7 @@ class StaticBundleStorage extends SqlContentEntityStorage implements StaticBundl
    * {@inheritdoc}
    */
   public function clearRevisionsLanguage(LanguageInterface $language) {
-    return $this->database->update('static_bundle_revision')
+    return $this->database->update('commerce_static_bundle_revision')
       ->fields(array('langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED))
       ->condition('langcode', $language->getId())
       ->execute();

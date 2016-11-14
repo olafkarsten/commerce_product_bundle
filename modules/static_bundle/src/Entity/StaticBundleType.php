@@ -9,7 +9,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * Defines the Static bundle type entity.
  *
  * @ConfigEntityType(
- *   id = "static_bundle_type",
+ *   id = "commerce_static_bundle_type",
  *   label = @Translation("Static bundle type"),
  *   handlers = {
  *     "list_builder" = "Drupal\commerce_static_bundle\StaticBundleTypeListBuilder",
@@ -22,19 +22,19 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "html" = "Drupal\commerce_static_bundle\StaticBundleTypeHtmlRouteProvider",
  *     },
  *   },
- *   config_prefix = "static_bundle_type",
+ *   config_prefix = "commerce_static_bundle_type",
  *   admin_permission = "Administer Static bundle types",
- *   bundle_of = "static_bundle",
+ *   bundle_of = "commerce_static_bundle",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundle/static_bundle_type/{static_bundle_type}",
+ *     "canonical" = "/admin/commerce/config/product-bundle/static_bundle_type/{commerce_static_bundle_type}",
  *     "add-form" = "/admin/commerce/config/product-bundle/static_bundle_type/add",
- *     "edit-form" = "/admin/commerce/config/product-bundle/static_bundle_type/{static_bundle_type}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundle/static_bundle_type/{static_bundle_type}/delete",
+ *     "edit-form" = "/admin/commerce/config/product-bundle/static_bundle_type/{commerce_static_bundle_type}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundle/static_bundle_type/{commerce_static_bundle_type}/delete",
  *     "collection" = "/admin/commerce/config/product-bundle/static-bundle/static-bundle-types/static_bundle_type"
  *   }
  * )

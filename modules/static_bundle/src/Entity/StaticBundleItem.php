@@ -17,7 +17,7 @@ use Drupal\user\UserInterface;
  * @ingroup commerce_static_bundle
  *
  * @ContentEntityType(
- *   id = "static_bundle_item",
+ *   id = "commerce_static_bundle_item",
  *   label = @Translation("Static bundle item"),
  *   bundle_label = @Translation("Static bundle item type"),
  *   handlers = {
@@ -26,7 +26,6 @@ use Drupal\user\UserInterface;
  *     "list_builder" = "Drupal\commerce_static_bundle\StaticBundleItemListBuilder",
  *     "views_data" = "Drupal\commerce_static_bundle\Entity\StaticBundleItemViewsData",
  *     "translation" = "Drupal\commerce_static_bundle\StaticBundleItemTranslationHandler",
- *
  *     "form" = {
  *       "default" = "Drupal\commerce_static_bundle\Form\StaticBundleItemForm",
  *       "add" = "Drupal\commerce_static_bundle\Form\StaticBundleItemForm",
@@ -38,10 +37,8 @@ use Drupal\user\UserInterface;
  *       "html" = "Drupal\commerce_static_bundle\StaticBundleItemHtmlRouteProvider",
  *     },
  *   },
- *   base_table = "static_bundle_item",
- *   data_table = "static_bundle_item_field_data",
- *   revision_table = "static_bundle_item_revision",
- *   revision_data_table = "static_bundle_item_field_revision",
+ *   base_table = "commerce_static_bundle_item",
+ *   data_table = "commerce_static_bundle_item_field_data",
  *   translatable = TRUE,
  *   admin_permission = "administer static bundle item entities",
  *   entity_keys = {
@@ -56,20 +53,16 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}",
+ *     "canonical" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{commerce_static_bundle_item}",
  *     "add-page" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/add",
- *     "add-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/add/{static_bundle_item_type}",
- *     "edit-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/edit",
- *     "delete-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/delete",
- *     "version-history" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/revisions",
- *     "revision" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/revisions/{static_bundle_item_revision}/view",
- *     "revision_revert" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/revisions/{static_bundle_item_revision}/revert",
- *     "translation_revert" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/revisions/{static_bundle_item_revision}/revert/{langcode}",
- *     "revision_delete" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{static_bundle_item}/revisions/{static_bundle_item_revision}/delete",
+ *     "add-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/add/{commerce_static_bundle_item_type}",
+ *     "edit-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{commerce_static_bundle_item}/edit",
+ *     "delete-form" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{commerce_static_bundle_item}/delete",
+ *     "translation_revert" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item/{commerce_static_bundle_item}/revisions/{commerce_static_bundle_item_revision}/revert/{langcode}",
  *     "collection" = "/admin/commerce/product-bundle/static-bundle/static_bundle_item",
  *   },
- *   bundle_entity_type = "static_bundle_item_type",
- *   field_ui_base_route = "entity.static_bundle_item_type.edit_form"
+ *   bundle_entity_type = "commerce_static_bundle_item_type",
+ *   field_ui_base_route = "entity.commerce_static_bundle_item_type.edit_form"
  * )
  */
 class StaticBundleItem extends RevisionableContentEntityBase implements BundleItemInterface {

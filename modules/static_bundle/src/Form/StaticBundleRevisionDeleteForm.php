@@ -57,7 +57,7 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
   public static function create(ContainerInterface $container) {
     $entity_manager = $container->get('entity.manager');
     return new static(
-      $entity_manager->getStorage('static_bundle'),
+      $entity_manager->getStorage('commerce_static_bundle'),
       $container->get('database')
     );
   }
@@ -66,7 +66,7 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'static_bundle_revision_delete_confirm';
+    return 'commerce_static_bundle_revision_delete_confirm';
   }
 
   /**
@@ -80,7 +80,7 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.static_bundle.version_history', array('static_bundle' => $this->revision->id()));
+    return new Url('entity.commerce_static_bundle.version_history', array('static_bundle' => $this->revision->id()));
   }
 
   /**
@@ -109,12 +109,12 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
     $this->logger('content')->notice('Static bundle: deleted %title revision %revision.', array('%title' => $this->revision->label(), '%revision' => $this->revision->getRevisionId()));
     drupal_set_message(t('Revision from %revision-date of Static bundle %title has been deleted.', array('%revision-date' => format_date($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label())));
     $form_state->setRedirect(
-      'entity.static_bundle.canonical',
+      'entity.commerce_static_bundle.canonical',
        array('static_bundle' => $this->revision->id())
     );
     if ($this->connection->query('SELECT COUNT(DISTINCT vid) FROM {static_bundle_field_revision} WHERE id = :id', array(':id' => $this->revision->id()))->fetchField() > 1) {
       $form_state->setRedirect(
-        'entity.static_bundle.version_history',
+        'entity.commerce_static_bundle.version_history',
          array('static_bundle' => $this->revision->id())
       );
     }

@@ -16,7 +16,7 @@ class StaticBundleViewsData extends EntityViewsData implements EntityViewsDataIn
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['static_bundle']['table']['base'] = array(
+    $data['commerce_static_bundle']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Static bundle'),
       'help' => $this->t('The Static bundle ID.'),
