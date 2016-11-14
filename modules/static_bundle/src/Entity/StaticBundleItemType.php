@@ -38,11 +38,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundle/static_bundle_item_type/{commerce_static_bundle_item_type}",
- *     "add-form" = "/admin/commerce/config/product-bundle/static_bundle_item_type/add",
- *     "edit-form" = "/admin/commerce/config/product-bundle/static_bundle_item_type/{commerce_static_bundle_item_type}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundle/static_bundle_item_type/{commerce_static_bundle_item_type}/delete",
- *     "collection" = "/admin/commerce/config/product-bundle/static_bundle_item_type"
+ *     "canonical" = "/admin/commerce/config/product-bundles/static/item-types/{commerce_static_bundle_item_type}",
+ *     "add-form" = "/admin/commerce/config/product-bundles/static/item-types/add",
+ *     "edit-form" = "/admin/commerce/config/product-bundles/static/item-types/{commerce_static_bundle_item_type}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundles/static/item-types/{commerce_static_bundle_item_type}/delete",
+ *     "collection" = "/admin/commerce/config/product-bundles/static/item-types"
  *   }
  * )
  */
