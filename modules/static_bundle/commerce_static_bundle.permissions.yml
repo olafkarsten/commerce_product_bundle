@@ -64,3 +64,46 @@ revert all static bundle item revisions:
 delete all static bundle item revisions:
   title: 'Delete all revisions'
   description: 'Role requires permission to <em>view Static bundle item revisions</em> and <em>delete rights</em> for static bundle item entities in question or <em>administer static bundle item entities</em>.'
+add static bundle item entities:
+  title: 'Create new Static bundle item entities'
+
+administer static bundle item entities:
+  title: 'Administer Static bundle item entities'
+  description: 'Allow to access the administration form to configure Static bundle item entities.'
+  restrict access: true
+
+delete static bundle item entities:
+  title: 'Delete Static bundle item entities'
+
+edit static bundle item entities:
+  title: 'Edit Static bundle item entities'
+
+access static bundle item overview:
+  title: 'Access the Static bundle item overview page'
+
+view published static bundle item entities:
+  title: 'View published Static bundle item entities'
+
+view unpublished static bundle item entities:
+  title: 'View unpublished Static bundle item entities'
+
+view all static bundle item revisions:
+  title: 'View all Static bundle item revisions'
+
+revert all static bundle item revisions:
+  title: 'Revert all Static bundle item revisions'
+  description: 'Role requires permission <em>view Static bundle item revisions</em> and <em>edit rights</em> for static bundle item entities in question or <em>administer static bundle item entities</em>.'
+
+delete all static bundle item revisions:
+  title: 'Delete all revisions'
+  description: 'Role requires permission to <em>view Static bundle item revisions</em> and <em>delete rights</em> for static bundle item entities in question or <em>administer static bundle item entities</em>.'
+
+administer static bundle item types:
+  title: 'Administer Static bundle item types'
+  description: 'Allow to access the administration form to configure Static bundle item types.'
+  restrict access: true
+
+  administer static bundle types:
+    title: 'Administer Static bundle types'
+    description: 'Allow to access the administration form to configure Static bundle types.'
+    restrict access: true

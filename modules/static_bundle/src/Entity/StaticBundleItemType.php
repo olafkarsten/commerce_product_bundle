@@ -1,7 +1,9 @@
 <?php
 
-namespace Drupal\commerc_static_bundle\Entity;
+namespace Drupal\commerce_static_bundle\Entity;
 
+
+use Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 
 /**
@@ -10,6 +12,12 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * @ConfigEntityType(
  *   id = "static_bundle_item_type",
  *   label = @Translation("Static bundle item type"),
+ *   label_singular = @Translation("static bundle item type"),
+ *   label_plural = @Translation("static bundle item types"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count static bundle item type",
+ *     plural = "@count static bundle item types",
+ *   ),
  *   handlers = {
  *     "list_builder" = "Drupal\commerce_static_bundle\StaticBundleItemTypeListBuilder",
  *     "form" = {
@@ -22,7 +30,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     },
  *   },
  *   config_prefix = "static_bundle_item_type",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "Administer Static bundle item types",
  *   bundle_of = "static_bundle_item",
  *   entity_keys = {
  *     "id" = "id",
@@ -38,7 +46,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   }
  * )
  */
-class StaticBundleItemType extends ConfigEntityBundleBase implements StaticBundleItemTypeInterface {
+class StaticBundleItemType extends ConfigEntityBundleBase implements BundleItemTypeInterface {
 
   /**
    * The Static bundle item type ID.
@@ -53,5 +61,45 @@ class StaticBundleItemType extends ConfigEntityBundleBase implements StaticBundl
    * @var string
    */
   protected $label;
+
+  /**
+   * The order item type ID.
+   *
+   * @var string
+   */
+  protected $orderItemType;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOrderItemTypeId() {
+    return $this->orderItemType;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOrderItemTypeId($order_item_type_id) {
+    $this->orderItemType = $order_item_type_id;
+    return $this;
+  }
+
+  /**
+   * Get the referenced purchasable entity.
+   *
+   * @return \Drupal\commerce\PurchasableEntityInterface;
+   */
+  public function getReferencedEntity(){
+      return $this->get('purchasable_entity')->getTarget();
+  }
+
+  /**
+   * Get the Id of the referenced purchasable entity.
+   *
+   * @return int
+   */
+  public function getReferencedEntityId(){
+    $this->get('purchasable_entity')->getTargetIdentifier();
+  }
 
 }

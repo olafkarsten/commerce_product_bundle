@@ -4,8 +4,17 @@
  * @file
  * Contains commerce_static_bundle.module..
  */
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Render\Element;
+use Drupal\commerce_product\Entity\ProductType;
 
-use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
@@ -55,4 +64,66 @@ function commerce_static_bundle_theme_suggestions_static_bundle(array $variables
   $suggestions[] = 'static_bundle__' . $entity->id();
   $suggestions[] = 'static_bundle__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function commerce_static_bundle_theme_suggestions_static_bundle_item(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#static_bundle_item'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'static_bundle_item__' . $sanitized_view_mode;
+  $suggestions[] = 'static_bundle_item__' . $entity->bundle();
+  $suggestions[] = 'static_bundle_item__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'static_bundle_item__' . $entity->id();
+  $suggestions[] = 'static_bundle_item__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
+
+/**
+ * Adds the entity reference field to a bundle item.
+ *
+ * Variations can't be a base field because the
+ * it requires a entity type to be set. We would loose
+ * the possibility to reference each Entity that implements
+ * PurchasableEntityInterface. Instead, the fiels
+ * is created as a configurable field for each bundle item type.
+ *
+ * @param $bundle_item_type
+ *
+ * @ToDo We may have to adjust the static_bundle_forms
+ * @see commerce_product_add_stores_field()
+ */
+function commerce_static_bundle_add_purchasable_entity_reference_field($bundle_item_type){
+  $field_storage = FieldStorageConfig::loadByName('commerce_static_bundle', 'bundle_item');
+  $field = FieldConfig::loadByName('commerce_static_bundle', $bundle_item_type->Id(), 'bundle_item');
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'purchasable_entity',
+      'entity_type' => 'commerce_product_variation',
+      'type' => 'entity_reference',
+      'cardinality' => 1,
+      'locked' => TRUE,
+      'translatable' => FALSE,
+    ]);
+    $field_storage->save();
+  }
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => $bundle_item_type->id(),
+      'label' => 'Purchasable Entity Reference',
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default',
+        'handler_settings' => [],
+      ],
+      'translatable' => FALSE,
+    ]);
+    $field->save();
+
+  }
+
 }

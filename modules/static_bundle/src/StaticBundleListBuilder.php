@@ -11,6 +11,8 @@ use Drupal\Core\Url;
  * Defines a class to build a listing of Static bundle entities.
  *
  * @ingroup commerce_static_bundle
+ *
+ * @ToDo Replace the LinkGeneratorTrait with \Drupal\Core\Link
  */
 class StaticBundleListBuilder extends EntityListBuilder {
 

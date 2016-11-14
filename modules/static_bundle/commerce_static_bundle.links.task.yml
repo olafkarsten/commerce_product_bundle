@@ -48,3 +48,26 @@ entity.static_bundle_item.delete_form:
   title: Delete
   weight: 10
 
+# Static bundle item routing definition
+
+entity.static_bundle_item.canonical:
+  route_name: entity.static_bundle_item.canonical
+  base_route: entity.static_bundle_item.canonical
+  title: 'View'
+
+entity.static_bundle_item.edit_form:
+  route_name: entity.static_bundle_item.edit_form
+  base_route: entity.static_bundle_item.canonical
+  title: 'Edit'
+
+entity.static_bundle_item.version_history:
+  route_name: entity.static_bundle_item.version_history
+  base_route: entity.static_bundle_item.canonical
+  title: 'Revisions'
+
+entity.static_bundle_item.delete_form:
+  route_name:  entity.static_bundle_item.delete_form
+  base_route:  entity.static_bundle_item.canonical
+  title: Delete
+  weight: 10
+

@@ -14,3 +14,14 @@ entity.static_bundle_item.add_form:
   title: 'Add Static bundle item'
   appears_on:
     - entity.static_bundle_item.collection
+entity.static_bundle_item.add_form:
+  route_name: 'entity.static_bundle_item.add_page'
+  title: 'Add Static bundle item'
+  appears_on:
+    - entity.static_bundle_item.collection
+entity.static_bundle_item_type.add_form:
+  route_name: 'entity.static_bundle_item_type.add_form'
+  title: 'Add Static bundle item type'
+  appears_on:
+    - entity.static_bundle_item_type.collection
+

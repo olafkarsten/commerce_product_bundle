@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_static_bundle\Entity;
 
+use Drupal\commerce_product_bundle\Entity\BundleTypeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 
 /**
@@ -22,7 +23,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     },
  *   },
  *   config_prefix = "static_bundle_type",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "Administer Static bundle types",
  *   bundle_of = "static_bundle",
  *   entity_keys = {
  *     "id" = "id",
@@ -38,7 +39,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   }
  * )
  */
-class StaticBundleType extends ConfigEntityBundleBase implements StaticBundleTypeInterface {
+class StaticBundleType extends ConfigEntityBundleBase implements BundleTypeInterface {
 
   /**
    * The Static bundle type ID.

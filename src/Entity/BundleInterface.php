@@ -40,7 +40,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param string $name
    *   The Static bundle name.
    *
-   * @return \Drupal\commerce_static_bundle\Entity\StaticBundleInterface
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
   public function setName($name);
@@ -59,7 +59,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param int $timestamp
    *   The Static bundle creation timestamp.
    *
-   * @return \Drupal\commerce_static_bundle\Entity\StaticBundleInterface
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
   public function setCreatedTime($timestamp);
@@ -80,7 +80,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param bool $published
    *   TRUE to set this Static bundle to published, FALSE to set it to unpublished.
    *
-   * @return \Drupal\commerce_static_bundle\Entity\StaticBundleInterface
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
   public function setPublished($published);
@@ -99,7 +99,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param int $timestamp
    *   The UNIX timestamp of when this revision was created.
    *
-   * @return \Drupal\commerce_static_bundle\Entity\StaticBundleInterface
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
   public function setRevisionCreationTime($timestamp);
@@ -118,10 +118,28 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    * @param int $uid
    *   The user ID of the revision author.
    *
-   * @return \Drupal\commerce_static_bundle\Entity\StaticBundleInterface
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called Static bundle entity.
    */
   public function setRevisionAuthorId($uid);
+
+  /**
+   * Returns the bundle items of that bundle.
+   *
+   * @return array of \Drupal\commerce_product_bundle\BundleItemInterface
+   *    Array of the bundle items.
+   */
+  public function getItems();
+
+  /**
+   * Sets the bundle items of that bundle.
+   *
+   * @return array of \Drupal\commerce_product_bundle\BundleItemInterface
+   *    Array of the bundle items.
+   */
+  public function setItems();
+
+
 
 
 }

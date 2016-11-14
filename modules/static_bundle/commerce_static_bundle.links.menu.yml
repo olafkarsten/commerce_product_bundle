@@ -30,3 +30,21 @@ static_bundle_item.admin.structure.settings:
   description: 'Configure Static bundle item entities'
   route_name: static_bundle_item.settings
   parent: system.admin_structure
+
+# Static bundle item menu items definition
+entity.static_bundle_item.collection:
+  title: 'Static bundle item list'
+  route_name: entity.static_bundle_item.collection
+  description: 'List Static bundle item entities'
+  parent: system.admin_structure
+  weight: 100
+
+
+# Static bundle item type menu items definition
+entity.static_bundle_item_type.collection:
+  title: 'Static bundle item type'
+  route_name: entity.static_bundle_item_type.collection
+  description: 'List Static bundle item type (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

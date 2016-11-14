@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_static_bundle
+id: commerce_static_bundle.bundle_item
+field_name: purchasable_entity
+entity_type: commerce_static_bundle
+type: entity_reference
+settings:
+  target_type: commerce_product_variation
+module: core
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
