@@ -1,4 +1,4 @@
-commerce_static_bundle.static_bundle_item_type.*:
+commerce_static_bundle.commerce_static_bundle_item_type.*:
   type: config_entity
   label: 'Static bundle item type config'
   mapping:

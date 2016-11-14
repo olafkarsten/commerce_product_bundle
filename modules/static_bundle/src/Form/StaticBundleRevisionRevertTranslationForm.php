@@ -51,7 +51,7 @@ class StaticBundleRevisionRevertTranslationForm extends StaticBundleRevisionReve
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')->getStorage('static_bundle'),
+      $container->get('entity.manager')->getStorage('commerce_static_bundle'),
       $container->get('date.formatter'),
       $container->get('language_manager')
     );
@@ -61,7 +61,7 @@ class StaticBundleRevisionRevertTranslationForm extends StaticBundleRevisionReve
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'static_bundle_revision_revert_translation_confirm';
+    return 'commerce_static_bundle_revision_revert_translation_confirm';
   }
 
   /**

@@ -1,49 +1,43 @@
 
 # Static bundle menu items definition
-entity.static_bundle.collection:
+entity.commerce_static_bundle.collection:
   title: 'Static bundle list'
-  route_name: entity.static_bundle.collection
+  route_name: entity.commerce_static_bundle.collection
   description: 'List Static bundle entities'
   parent: system.admin_structure
   weight: 100
 
 
 # Static bundle type menu items definition
-entity.static_bundle_type.collection:
+entity.commerce_static_bundle_type.collection:
   title: 'Static bundle type'
-  route_name: entity.static_bundle_type.collection
+  route_name: entity.commerce_static_bundle_type.collection
   description: 'List Static bundle type (bundles)'
   parent: system.admin_structure
   weight: 99
 
 
 # Static bundle item menu items definition
-entity.static_bundle_item.collection:
+entity.commerce_static_bundle_item.collection:
   title: 'Static bundle item list'
-  route_name: entity.static_bundle_item.collection
+  route_name: entity.commerce_static_bundle_item.collection
   description: 'List Static bundle item entities'
   parent: system.admin_structure
   weight: 100
 
-static_bundle_item.admin.structure.settings:
-  title: Static bundle item settings
-  description: 'Configure Static bundle item entities'
-  route_name: static_bundle_item.settings
-  parent: system.admin_structure
-
 # Static bundle item menu items definition
-entity.static_bundle_item.collection:
+entity.commerce_static_bundle_item.collection:
   title: 'Static bundle item list'
-  route_name: entity.static_bundle_item.collection
+  route_name: entity.commerce_static_bundle_item.collection
   description: 'List Static bundle item entities'
   parent: system.admin_structure
   weight: 100
 
 
 # Static bundle item type menu items definition
-entity.static_bundle_item_type.collection:
+entity.commerce_static_bundle_item_type.collection:
   title: 'Static bundle item type'
-  route_name: entity.static_bundle_item_type.collection
+  route_name: entity.commerce_static_bundle_item_type.collection
   description: 'List Static bundle item type (bundles)'
   parent: system.admin_structure
   weight: 99

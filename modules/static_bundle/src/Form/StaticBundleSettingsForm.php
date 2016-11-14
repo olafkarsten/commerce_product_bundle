@@ -21,7 +21,7 @@ class StaticBundleSettingsForm extends FormBase {
    *   The unique string identifying the form.
    */
   public function getFormId() {
-    return 'StaticBundle_settings';
+    return 'commerce_static_bundle_settings';
   }
 
   /**
@@ -48,7 +48,7 @@ class StaticBundleSettingsForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['StaticBundle_settings']['#markup'] = 'Settings form for Static bundle entities. Manage field settings here.';
+    $form['commerce_static_bundle_settings']['#markup'] = 'Settings form for Static bundle entities. Manage field settings here.';
     return $form;
   }
 

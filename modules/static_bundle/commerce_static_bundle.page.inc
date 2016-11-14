@@ -14,16 +14,16 @@ use Drupal\Core\Url;
 /**
  * Prepares variables for Static bundle templates.
  *
- * Default template: static_bundle.html.twig.
+ * Default template: commerce_static_bundle.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
  *   - elements: An associative array containing the user information and any
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_static_bundle(array &$variables) {
+function template_preprocess_commerce_static_bundle(array &$variables) {
   // Fetch StaticBundle Entity Object.
-  $static_bundle = $variables['elements']['#static_bundle'];
+  $static_bundle = $variables['elements']['#commerce_static_bundle'];
 
   // Helpful $content variable for templates.
   foreach (Element::children($variables['elements']) as $key) {

@@ -1,27 +1,27 @@
-entity.static_bundle.add_form:
-  route_name: 'entity.static_bundle.add_page'
+entity.commerce_static_bundle.add_form:
+  route_name: 'entity.commerce_static_bundle.add_page'
   title: 'Add Static bundle'
   appears_on:
-    - entity.static_bundle.collection
-entity.static_bundle_type.add_form:
-  route_name: 'entity.static_bundle_type.add_form'
+    - entity.commerce_static_bundle.collection
+entity.commerce_static_bundle_type.add_form:
+  route_name: 'entity.commerce_static_bundle_type.add_form'
   title: 'Add Static bundle type'
   appears_on:
-    - entity.static_bundle_type.collection
+    - entity.commerce_static_bundle_type.collection
 
-entity.static_bundle_item.add_form:
-  route_name: entity.static_bundle_item.add_form
+entity.commerce_static_bundle_item.add_form:
+  route_name: entity.commerce_static_bundle_item.add_form
   title: 'Add Static bundle item'
   appears_on:
-    - entity.static_bundle_item.collection
-entity.static_bundle_item.add_form:
-  route_name: 'entity.static_bundle_item.add_page'
+    - entity.commerce_static_bundle_item.collection
+entity.commerce_static_bundle_item.add_form:
+  route_name: 'entity.commerce_static_bundle_item.add_page'
   title: 'Add Static bundle item'
   appears_on:
-    - entity.static_bundle_item.collection
-entity.static_bundle_item_type.add_form:
-  route_name: 'entity.static_bundle_item_type.add_form'
+    - entity.commerce_static_bundle_item.collection
+entity.commerce_static_bundle_item_type.add_form:
+  route_name: 'entity.commerce_static_bundle_item_type.add_form'
   title: 'Add Static bundle item type'
   appears_on:
-    - entity.static_bundle_item_type.collection
+    - entity.commerce_static_bundle_item_type.collection
 
