@@ -138,7 +138,7 @@ class StaticBundleItem extends RevisionableContentEntityBase implements BundleIt
         ->setLabel(t('Title'))
         ->setDescription(t('The title of the Static bundle item entity.'))
         ->setRequired(TRUE)
-      > setTranslatable(TRUE)
+        ->setTranslatable(TRUE)
         ->setRevisionable(TRUE)
         ->setSettings(array(
           'max_length'      => 50,
@@ -479,9 +479,9 @@ class StaticBundleItem extends RevisionableContentEntityBase implements BundleIt
    * Really not sure if this is a good idea? Maybe to much
    * magic.
    */
-  public function __call(){
-    //ToDo write that stuff
-  }
+//  public function __call(){
+//    //ToDo write that stuff
+//  }
 
 
 
