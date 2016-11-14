@@ -6,6 +6,7 @@
  */
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,7 +19,7 @@ use Drupal\commerce_product\Entity\ProductType;
 /**
  * Implements hook_help().
  */
-function commerce_static_bundle_help($route_name, RouteMatchInterface $route_match) {
+function commerce_static_bundle_help($route_name, CurrentRouteMatch $route_match) {
   switch ($route_name) {
     // Main module help for the commerce_static_bundle module.
     case 'help.page.commerce_static_bundle':
