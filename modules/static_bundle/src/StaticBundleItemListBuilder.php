@@ -35,7 +35,7 @@ class StaticBundleItemListBuilder extends EntityListBuilder {
       $entity->label(),
       new Url(
         'entity.commerce_static_bundle_item.edit_form', array(
-          'static_bundle_item' => $entity->id(),
+          'commerce_static_bundle_item' => $entity->id(),
         )
       )
     );

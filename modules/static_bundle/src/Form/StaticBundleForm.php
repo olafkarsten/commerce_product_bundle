@@ -65,7 +65,7 @@ class StaticBundleForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.commerce_static_bundle.canonical', ['static_bundle' => $entity->id()]);
+    $form_state->setRedirect('entity.commerce_static_bundle.canonical', ['commerce_static_bundle' => $entity->id()]);
   }
 
 }

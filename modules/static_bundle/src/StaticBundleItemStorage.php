@@ -20,6 +20,40 @@ class StaticBundleItemStorage extends SqlContentEntityStorage implements StaticB
   /**
    * {@inheritdoc}
    */
+  public function loadRevision($revision_id) {
+    $revision = $this->doLoadRevisionFieldItems($revision_id);
+
+    if ($revision) {
+      $entities = [$revision->id() => $revision];
+      $this->invokeStorageLoadHook($entities);
+      $this->postLoad($entities);
+    }
+
+    return $revision;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function doLoadRevisionFieldItems($revision_id) {
+    $revision = NULL;
+
+    // Build and execute the query.
+    $query_result = $this->buildQuery(array(), $revision_id)->execute();
+    $records = $query_result->fetchAllAssoc($this->idKey);
+
+    if (!empty($records)) {
+      // Convert the raw records to entity objects.
+      $entities = $this->mapFromStorageRecords($records, TRUE);
+      $revision = reset($entities) ?: NULL;
+    }
+
+    return $revision;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function revisionIds(BundleItemInterface $entity) {
     return $this->database->query(
       'SELECT vid FROM {commerce_static_bundle_item_revision} WHERE id=:id ORDER BY vid',
