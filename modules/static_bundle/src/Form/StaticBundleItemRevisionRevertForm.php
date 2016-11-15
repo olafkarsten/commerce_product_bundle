@@ -80,7 +80,7 @@ class StaticBundleItemRevisionRevertForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.commerce_static_bundle_item.version_history', array('static_bundle_item' => $this->revision->id()));
+    return new Url('entity.commerce_static_bundle_item.version_history', array('commerce_static_bundle_item' => $this->revision->id()));
   }
 
   /**
@@ -123,7 +123,7 @@ class StaticBundleItemRevisionRevertForm extends ConfirmFormBase {
     drupal_set_message(t('Static bundle item %title has been reverted to the revision from %revision-date.', ['%title' => $this->revision->label(), '%revision-date' => $this->dateFormatter->format($original_revision_timestamp)]));
     $form_state->setRedirect(
       'entity.commerce_static_bundle_item.version_history',
-      array('static_bundle_item' => $this->revision->id())
+      array('commerce_static_bundle_item' => $this->revision->id())
     );
   }
 

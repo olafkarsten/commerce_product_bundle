@@ -80,7 +80,7 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.commerce_static_bundle.version_history', array('static_bundle' => $this->revision->id()));
+    return new Url('entity.commerce_static_bundle.version_history', array('commerce_static_bundle' => $this->revision->id()));
   }
 
   /**
@@ -110,12 +110,12 @@ class StaticBundleRevisionDeleteForm extends ConfirmFormBase {
     drupal_set_message(t('Revision from %revision-date of Static bundle %title has been deleted.', array('%revision-date' => format_date($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label())));
     $form_state->setRedirect(
       'entity.commerce_static_bundle.canonical',
-       array('static_bundle' => $this->revision->id())
+       array('commerce_static_bundle' => $this->revision->id())
     );
     if ($this->connection->query('SELECT COUNT(DISTINCT vid) FROM {static_bundle_field_revision} WHERE id = :id', array(':id' => $this->revision->id()))->fetchField() > 1) {
       $form_state->setRedirect(
         'entity.commerce_static_bundle.version_history',
-         array('static_bundle' => $this->revision->id())
+         array('commerce_static_bundle' => $this->revision->id())
       );
     }
   }
