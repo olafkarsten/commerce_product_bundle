@@ -22,3 +22,48 @@ function commerce_product_bundle_help($route_name, RouteMatchInterface $route_ma
     default:
   }
 }
+
+
+/**
+ * Adds the default description field to a product bundle type.
+ *
+ * @param \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type
+ *   The product bundle type.
+ * @param string $label
+ *   (optional) The label for the description instance. Defaults to 'Description'.
+ */
+function commerce_product_bundle_add_description_field($product_bundle_type, $label = 'Description') {
+  $field_storage = FieldStorageConfig::loadByName('commerce_product', 'description');
+  $field = FieldConfig::loadByName('commerce_product_bundle', $product_bundle_type->id(), 'description');
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create([
+      'field_name' => 'description',
+      'entity_type' => 'commerce_product_bundle',
+      'type' => 'text_with_summary',
+    ]);
+    $field_storage->save();
+  }
+  if (empty($field)) {
+    $field = FieldConfig::create([
+      'field_storage' => $field_storage,
+      'bundle' => $product_bundle_type->id(),
+      'label' => $label,
+      'settings' => ['display_summary' => FALSE],
+    ]);
+    $field->save();
+
+    $view_display = commerce_get_entity_display('commerce_product_bundle', $product_bundle_type->id(), 'view');
+    $view_display->setComponent('description', [
+      'label' => 'hidden',
+      'type' => 'text_default',
+    ]);
+    $view_display->save();
+
+    $form_display = commerce_get_entity_display('commerce_product_bundle', $product_bundle_type->id(), 'form');
+    $form_display->setComponent('description', [
+      'type' => 'text_textarea_with_summary',
+      'weight' => 1,
+    ]);
+    $form_display->save();
+  }
+}
