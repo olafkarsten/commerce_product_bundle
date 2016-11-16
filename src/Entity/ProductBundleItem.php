@@ -3,6 +3,10 @@
 namespace Drupal\commerce_product_bundle\Entity;
 
 use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\commerce_product\Form\ProductVariationInlineForm;
 use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -73,20 +77,37 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   use EntityChangedTrait;
 
   /**
-   * The quantity. How many units of the purchasable
-   * entity the bundle item contains.
+   * The minimum quantity.
    *
-   * @var float
+   * @var int
    */
-  protected $quantity;
+  protected $min_quantity = 1;
 
   /**
-   * The unit price for one unit of the referenced
-   * purchasable entity.
+   * The minimum quantity.
+   *
+   * @var int
+   */
+  protected $max_quantity = 1;
+
+  /**
+   * The unit price for one unit of the bundle item
    *
    * @var  \Drupal\commerce_price\Price
    */
   protected $unit_price;
+
+  /**
+   * @var \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   *   The variations that bundle items
+   *    belongs to.
+   */
+  protected $variations = [];
+
+  /**
+   * @var \Drupal\commerce_product\Entity\ProductInterface
+   */
+  protected $product;
 
   /**
    * {@inheritdoc}
@@ -131,27 +152,27 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['title'] = BaseFieldDefinition::create('string')
-        ->setLabel(t('Title'))
-        ->setDescription(t('The title of the product bundle item entity.'))
-        ->setRequired(TRUE)
-        ->setTranslatable(TRUE)
-        ->setRevisionable(TRUE)
-        ->setSettings(array(
-          'max_length'      => 50,
-          'text_processing' => 0,
-        ))
-        ->setDefaultValue('')
-        ->setDisplayOptions('view', array(
-          'label'  => 'hidden',
-          'type'   => 'string',
-          'weight' => -4,
-        ))
-        ->setDisplayOptions('form', array(
-          'type'   => 'string_textfield',
-          'weight' => -4,
-        ))
-        ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);
+      ->setLabel(t('Title'))
+      ->setDescription(t('The title of the product bundle item entity.'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE)
+      ->setSettings(array(
+        'max_length'      => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label'  => 'hidden',
+        'type'   => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type'   => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
@@ -160,7 +181,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setDefaultValue(TRUE);
 
     // The price is not required because it's not guaranteed to be used
-    // for storage. We may use the price of the referenced purchasable
+    // for storage. We may use the price of the referenced variations.
     // entity.
     $fields['bundle_item_price'] = BaseFieldDefinition::create('commerce_price')
       ->setLabel(t('The price of a Single Bundle Item'))
@@ -177,9 +198,48 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['quantity'] = BaseFieldDefinition::create('decimal')
-      ->setLabel(t('Quantity'))
-      ->setDescription(t('The number of purchasable entities this item contains.'))
+    $fields['product_reference'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Product Reference'))
+      ->setDescription(t('Reference to a product.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'commerce_product')
+      ->setSetting('handler', 'default')
+      //@ToDo Not sure wether to set to true or false
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'entity_reference_label',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Minimum Quantity'))
+      ->setDescription(t('The minimum quantity.'))
+      ->setSetting('unsigned', TRUE)
+      ->setRequired(TRUE)
+      ->setDefaultValue(1)
+      ->setDisplayOptions('form', [
+        'type'   => 'number',
+        'weight' => 1,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['max_quantity'] = BaseFieldDefinition::create('decimal')
+      ->setLabel(t('Maximum Quantity'))
+      ->setDescription(t('The maximum quantity.'))
       ->setSetting('unsigned', TRUE)
       ->setRequired(TRUE)
       ->setDefaultValue(1)
@@ -378,85 +438,16 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
    * {@inheritdoc}
    */
   public function getStores() {
-    // TODO: Proxy the referenced purchasable entity
+    // TODO: Proxy the referenced variations.
   }
 
   /**
    * {@inheritdoc}
-   */
-  public function getOrderItemTypeId() {
-    // The order item type is a bundle-level setting.
-    $type_storage = $this->entityTypeManager()->getStorage('commerce_product_bundle_item_type');
-    $type_entity = $type_storage->load($this->bundle());
-
-    return $type_entity->getOrderItemTypeId();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOrderItemTitle() {
-    $label = $this->label();
-    if (!$label) {
-      // TODO: Proxy the referenced purchasable entity
-      $label = '';
-    }
-
-    return $label;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPrice() {
-    $qty = $this->getQuantity();
-    if (!$this->get('unit_price')->isEmpty()) {
-      $unit_price = $this->get('unit_price')->first()->toPrice();
-
-      return $unit_price->mulitiply($qty);
-    }
-    $entity = $this->getReferencedEntity();
-
-    return $entity->getPrice()->multiply($qty);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getQuantity() {
-    return $this->get('quantity')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setQuantity($quantity) {
-    $this->set('quantity', (string) $quantity);
-    return $this;
-  }
-
-  /**
-   * Get the referenced purchasable entity.
-   */
-  public function getReferencedEntity() {
-
-    // The purchasable entity is reference in the bundle type.
-    $type_storage = $this->entityTypeManager()->getStorage('commerce_product_bundle_item_type');
-    $bundle_item_type = $type_storage->load($this->bundle());
-
-    return $bundle_item_type->getReferencedEntity();
-  }
-
-  /**
-   * @inheritdoc
    */
   public function getUnitPrice() {
     if (!$this->get('unit_price')->isEmpty()) {
       return $this->get('unit_price')->first()->toPrice();
     }
-    $entity = $this->getReferencedEntity();
-
-    return $entity->getPrice();
   }
 
   /**
@@ -469,16 +460,205 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   }
 
   /**
-   * Try to forward calls on non existing methods to the
-   * referenced purchasable entity.
-   *
-   * Really not sure if this is a good idea? Maybe to much
-   * magic.
+   * {@inheritdoc}
    */
-//  public function __call(){
-//    //ToDo write that stuff
-//  }
+  public function setQuantity($quantity) {
+    $this->setMinimumQuantity($quantity)
+            ->setMaximumQuantity($quantity);
 
+    return $this;
+  }
 
+  /**
+   * @inheritdoc
+   */
+  public function setMinimumQuantity($minimum_quantity) {
+    $this->set('min_quantity', $minimum_quantity);
+
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setMaximumQuantity($maximum_quantity) {
+    $this->set('max_quantity', $maximum_quantity);
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getProductId() {
+    return $this->getProduct()->target_id;
+  }
+
+  /**
+   * Get the referenced product.
+   */
+  public function getProduct() {
+    $product = $this->get('product')->referencedEntities();
+
+    return $product[0];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setProduct(ProductInterface $product) {
+     $this->set('product', $product);
+    return $this;
+  }
+
+  /**
+   * Gets whether the product has variations.
+   *
+   * A product must always have at least one variation, but a newly initialized
+   * (or invalid) product entity might not have any.
+   *
+   * @return bool
+   *   TRUE if the product has variations, FALSE otherwise.
+   */
+  public function hasVariations() {
+    return !$this->get('variations')->isEmpty();
+  }
+
+  /**
+   * Adds a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function addVariation(ProductVariationInterface $variation) {
+    if (!$this->hasVariation($variation)) {
+      $this->get('variations')->appendItem($variation);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Checks if the bundle item has a given variation
+   *
+   * @param ProductVariationInterface $variation
+   *
+   * @return bool
+   */
+  public function hasVariation(ProductVariationInterface $variation) {
+    return in_array($variation->id(), $this->getVariationIds());
+  }
+
+  /**
+   * Gets the variation IDs.
+   *
+   * @return int[]
+   *   The variation IDs.
+   */
+  public function getVariationIds() {
+    $variation_ids = [];
+    foreach ($this->get('variations') as $field_item) {
+      $variation_ids[] = $field_item->target_id;
+    }
+
+    return $variation_ids;
+  }
+
+  /**
+   * Removes a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function removeVariation(ProductVariationInterface $variation) {
+    $index = $this->getVariationIndex($variation);
+    if ($index !== FALSE) {
+      $this->get('variations')->offsetUnset($index);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Gets the index of the given variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return int|bool
+   *   The index of the given variation, or FALSE if not found.
+   */
+  protected function getVariationIndex(ProductVariationInterface $variation) {
+    return array_search($variation->id(), $this->getVariationIds());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultVariation() {
+    foreach ($this->getVariations() as $variation) {
+      // Return the first active variation.
+      if ($variation->isActive()) {
+        return $variation;
+      }
+    }
+  }
+
+  /**
+   * Gets the variations.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   *   The variations.
+   */
+  public function getVariations() {
+    $variations = $this->get('variations')->referencedEntities();
+
+    return $this->ensureTranslations($variations);
+  }
+
+  /**
+   * Sets the variations.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
+   *   The variations.
+   *
+   * @return $this
+   */
+  public function setVariations(array $variations) {
+    $this->set('variations', $variations);
+
+    return $this;
+  }
+
+  /**
+   * Ensures that the provided entities are in the current entity's language.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+   *   The entities to process.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface[]
+   *   The processed entities.
+   */
+  protected function ensureTranslations(array $entities) {
+    $langcode = $this->language()->getId();
+    foreach ($entities as $index => $entity) {
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      if ($entity->hasTranslation($langcode)) {
+        $entities[$index] = $entity->getTranslation($langcode);
+      }
+    }
+
+    return $entities;
+  }
+
+  public function getMinimumQuantity() {
+    return $this->get('min_quantity');
+  }
+
+  public function getMaximumQuantity() {
+    return $this->get('max_quantity');
+  }
 
 }

@@ -90,7 +90,7 @@ class ProductBundleItemType extends ConfigEntityBundleBase implements BundleItem
    * @return \Drupal\commerce\PurchasableEntityInterface;
    */
   public function getReferencedEntity(){
-      return $this->get('purchasable_entity')->getTarget();
+      return $this->get('variations')->getTarget();
   }
 
   /**
@@ -99,7 +99,7 @@ class ProductBundleItemType extends ConfigEntityBundleBase implements BundleItem
    * @return int
    */
   public function getReferencedEntityId(){
-    $this->get('purchasable_entity')->getTargetIdentifier();
+    $this->get('variations')->getTargetIdentifier();
   }
 
 }

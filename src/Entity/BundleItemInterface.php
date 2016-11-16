@@ -2,11 +2,10 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
-use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -15,9 +14,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup commerce_product_bundle
  */
-interface BundleItemInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface, PurchasableEntityInterface  {
-
-  // @ToDo Add get/set methods for your configuration properties here.
+interface BundleItemInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
    * Gets the product bundle item type.
@@ -125,12 +122,11 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function setRevisionAuthorId($uid);
 
   /**
-   * Sets the quantity  of the referenced
-   * purchasable entity.
-   * Sets the order item quantity.
+   * Sets the quantity for the referenced variations
+   * as a whole. This is somewhat sugar to preven
    *
    * @param string $quantity
-   *   The order item quantity.
+   *   The referenced product quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called product bundle item entity.
@@ -138,23 +134,101 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function setQuantity($quantity);
 
   /**
-   * Get the quantity of the purchasable entity.
+   * Sets the minimum quantity of the product variations.
    *
-   * @return float
+   * @param int $minimum_quantity
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    */
-  public function getQuantity();
+  public function setMinimumQuantity($minimum_quantity);
 
   /**
-   * Get the referenced purchasable entity.
+   * Gets the minimum quantity of the product variations.
    *
-   * @return PurchasableEntityInterface
-   *    The referenced purchasable entity.
+   * @return int
    */
-  public function getReferencedEntity();
+  public function getMinimumQuantity();
+
+  /**
+   * Sets the maximum quantity of the product variations
+   *
+   * @param $minimum_quantity
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   */
+  public function setMaximumQuantity($minimum_quantity);
+
+  /**
+   * Gets the maximum quantity of the product variations.
+   *
+   * @return int
+   */
+  public function getMaximumQuantity();
+
+  /**
+   * Get the referenced product.
+   *
+   * @return null | \Drupal\commerce_product\Entity\ProductInterface
+   *    The referenced commerce product.
+   */
+  public function getProduct();
+
+  /**
+   * Set the referenced product.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductInterface $product
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   */
+  public function setProduct(ProductInterface $product);
+
+  /**
+   * Sets the variations.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
+   *   The variations.
+   *
+   * @return $this
+   */
+  public function setVariations(array $variations);
+
+  /**
+   * Get the referenced product variations.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   */
+  public function getVariations();
+
+  /**
+   * Get the default variation.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface
+   */
+  public function getDefaultVariation();
+
+  /**
+   * Adds a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function addVariation(ProductVariationInterface $variation);
+
+  /**
+   * Removes a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function removeVariation(ProductVariationInterface $variation);
 
   /**
    * Sets the price of one unit of the referenced
-   * purchasable entity.
+   * product variations
    *
    * @param Price $unit_price
    *
@@ -165,7 +239,7 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
 
   /**
    * Gets the price of one unit of the referenced
-   * purchasable entity.
+   * product variations.
    *
    * @return Price $unit_price
    */
