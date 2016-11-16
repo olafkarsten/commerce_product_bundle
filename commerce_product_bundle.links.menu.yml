@@ -1,0 +1,44 @@
+
+# Product bundle menu items definition
+entity.commerce_product_bundle.collection:
+  title: 'Product bundle list'
+  route_name: entity.commerce_product_bundle.collection
+  description: 'List Product bundle entities'
+  parent: 'commerce.configuration'
+  weight: 100
+
+
+# Product bundle type menu items definition
+entity.commerce_product_bundle_type.collection:
+  title: 'Product bundle type'
+  route_name: entity.commerce_product_bundle_type.collection
+  description: 'List Product bundle type (bundles)'
+  parent: 'commerce.configuration'
+  weight: 99
+
+
+# Product bundle item menu items definition
+entity.commerce_product_bundle_item.collection:
+  title: 'Product bundle item list'
+  route_name: entity.commerce_product_bundle_item.collection
+  description: 'List Product bundle item entities'
+  parent: 'commerce.configuration'
+  weight: 100
+
+# Product bundle item menu items definition
+entity.commerce_product_bundle_item.collection:
+  title: 'Product bundle item list'
+  route_name: entity.commerce_product_bundle_item.collection
+  description: 'List Product bundle item entities'
+  parent: 'commerce.configuration'
+  weight: 100
+
+
+# Product bundle item type menu items definition
+entity.commerce_product_bundle_item_type.collection:
+  title: 'Product bundle item type'
+  route_name: entity.commerce_product_bundle_item_type.collection
+  description: 'List Product bundle item type (bundles)'
+  parent: 'commerce.configuration'
+  weight: 99
+
