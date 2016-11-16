@@ -1,0 +1,22 @@
+{#
+/**
+ * @file commerce_product_bundle_item.html.twig
+ * Default theme implementation to present Product bundle item data.
+ *
+ * This template is used when viewing Product bundle item pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_commerce_product_bundle_item()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('product_bundle_item') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

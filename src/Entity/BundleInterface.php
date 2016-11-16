@@ -10,83 +10,83 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
- * Provides an interface for defining Static bundle entities.
+ * Provides an interface for defining Product bundle entities.
  *
- * @ingroup commerce_static_bundle
+ * @ingroup commerce_product_bundle
  */
 interface BundleInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface, PurchasableEntityInterface {
 
   // Add get/set methods for your configuration properties here.
 
   /**
-   * Gets the Static bundle type.
+   * Gets the Product bundle type.
    *
    * @return string
-   *   The Static bundle type.
+   *   The Product bundle type.
    */
   public function getType();
 
   /**
-   * Gets the Static bundle title.
+   * Gets the Product bundle title.
    *
    * @return string
-   *   Title of the Static bundle.
+   *   Title of the Product bundle.
    */
   public function getTitle();
 
   /**
-   * Sets the Static bundle title.
+   * Sets the Product bundle title.
    *
    * @param string $title
-   *   The Static bundle title.
+   *   The Product bundle title.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *   The called Static bundle entity.
+   *   The called Product bundle entity.
    */
   public function setTitle($title);
 
   /**
-   * Gets the Static bundle creation timestamp.
+   * Gets the Product bundle creation timestamp.
    *
    * @return int
-   *   Creation timestamp of the Static bundle.
+   *   Creation timestamp of the Product bundle.
    */
   public function getCreatedTime();
 
   /**
-   * Sets the Static bundle creation timestamp.
+   * Sets the Product bundle creation timestamp.
    *
    * @param int $timestamp
-   *   The Static bundle creation timestamp.
+   *   The Product bundle creation timestamp.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *   The called Static bundle entity.
+   *   The called Product bundle entity.
    */
   public function setCreatedTime($timestamp);
 
   /**
-   * Returns the Static bundle published status indicator.
+   * Returns the Product bundle published status indicator.
    *
-   * Unpublished Static bundle are only visible to restricted users.
+   * Unpublished Product bundle are only visible to restricted users.
    *
    * @return bool
-   *   TRUE if the Static bundle is published.
+   *   TRUE if the Product bundle is published.
    */
   public function isPublished();
 
   /**
-   * Sets the published status of a Static bundle.
+   * Sets the published status of a Product bundle.
    *
    * @param bool $published
-   *   TRUE to set this Static bundle to published, FALSE to set it to unpublished.
+   *   TRUE to set this Product bundle to published, FALSE to set it to unpublished.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *   The called Static bundle entity.
+   *   The called Product bundle entity.
    */
   public function setPublished($published);
 
   /**
-   * Gets the Static bundle revision creation timestamp.
+   * Gets the Product bundle revision creation timestamp.
    *
    * @return int
    *   The UNIX timestamp of when this revision was created.
@@ -94,18 +94,18 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
   public function getRevisionCreationTime();
 
   /**
-   * Sets the Static bundle revision creation timestamp.
+   * Sets the Product bundle revision creation timestamp.
    *
    * @param int $timestamp
    *   The UNIX timestamp of when this revision was created.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *   The called Static bundle entity.
+   *   The called Product bundle entity.
    */
   public function setRevisionCreationTime($timestamp);
 
   /**
-   * Gets the Static bundle revision author.
+   * Gets the Product bundle revision author.
    *
    * @return \Drupal\user\UserInterface
    *   The user entity for the revision author.
@@ -113,13 +113,13 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
   public function getRevisionAuthor();
 
   /**
-   * Sets the Static bundle revision author.
+   * Sets the Product bundle revision author.
    *
    * @param int $uid
    *   The user ID of the revision author.
    *
    * @return  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle entity.
+   *   The called Product bundle entity.
    */
   public function setRevisionAuthorId($uid);
 
