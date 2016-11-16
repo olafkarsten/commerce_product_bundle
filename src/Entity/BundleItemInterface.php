@@ -2,92 +2,89 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
-use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\ProductInterface;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
- * Provides an interface for defining Static bundle item entities.
+ * Provides an interface for defining product bundle item entities.
  *
- * @ingroup commerce_static_bundle
+ * @ingroup commerce_product_bundle
  */
-interface BundleItemInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface, PurchasableEntityInterface  {
-
-  // @ToDo Add get/set methods for your configuration properties here.
+interface BundleItemInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
-   * Gets the Static bundle item type.
+   * Gets the product bundle item type.
    *
    * @return string
-   *   The Static bundle item type.
+   *   The product bundle item type.
    */
   public function getType();
 
   /**
-   * Gets the Static bundle item title.
+   * Gets the product bundle item title.
    *
    * @return string
-   *   Title of the Static bundle item.
+   *   Title of the product bundle item.
    */
   public function getTitle();
 
   /**
-   * Sets the Static bundle item title.
+   * Sets the product bundle item title.
    *
    * @param string $title
-   *   The Static bundle item title.
+   *   The product bundle item title.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setTitle($title);
 
   /**
-   * Gets the Static bundle item creation timestamp.
+   * Gets the product bundle item creation timestamp.
    *
    * @return int
-   *   Creation timestamp of the Static bundle item.
+   *   Creation timestamp of the product bundle item.
    */
   public function getCreatedTime();
 
   /**
-   * Sets the Static bundle item creation timestamp.
+   * Sets the product bundle item creation timestamp.
    *
    * @param int $timestamp
-   *   The Static bundle item creation timestamp.
+   *   The product bundle item creation timestamp.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setCreatedTime($timestamp);
 
   /**
-   * Returns the Static bundle item published status indicator.
+   * Returns the product bundle item published status indicator.
    *
-   * Unpublished Static bundle item are only visible to restricted users.
+   * Unpublished product bundle item are only visible to restricted users.
    *
    * @return bool
-   *   TRUE if the Static bundle item is published.
+   *   TRUE if the product bundle item is published.
    */
   public function isPublished();
 
   /**
-   * Sets the published status of a Static bundle item.
+   * Sets the published status of a product bundle item.
    *
    * @param bool $published
-   *   TRUE to set this Static bundle item to published, FALSE to set it to unpublished.
+   *   TRUE to set this product bundle item to published, FALSE to set it to unpublished.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setPublished($published);
 
   /**
-   * Gets the Static bundle item revision creation timestamp.
+   * Gets the product bundle item revision creation timestamp.
    *
    * @return int
    *   The UNIX timestamp of when this revision was created.
@@ -95,18 +92,18 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function getRevisionCreationTime();
 
   /**
-   * Sets the Static bundle item revision creation timestamp.
+   * Sets the product bundle item revision creation timestamp.
    *
    * @param int $timestamp
    *   The UNIX timestamp of when this revision was created.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setRevisionCreationTime($timestamp);
 
   /**
-   * Gets the Static bundle item revision author.
+   * Gets the product bundle item revision author.
    *
    * @return \Drupal\user\UserInterface
    *   The user entity for the revision author.
@@ -114,58 +111,135 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function getRevisionAuthor();
 
   /**
-   * Sets the Static bundle item revision author.
+   * Sets the product bundle item revision author.
    *
    * @param int $uid
    *   The user ID of the revision author.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setRevisionAuthorId($uid);
 
   /**
-   * Sets the quantity  of the referenced
-   * purchasable entity.
-   * Sets the order item quantity.
+   * Sets the quantity for the referenced variations
+   * as a whole. This is somewhat sugar to preven
    *
    * @param string $quantity
-   *   The order item quantity.
+   *   The referenced product quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setQuantity($quantity);
 
   /**
-   * Get the quantity of the purchasable entity.
+   * Sets the minimum quantity of the product variations.
    *
-   * @return float
+   * @param int $minimum_quantity
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    */
-  public function getQuantity();
+  public function setMinimumQuantity($minimum_quantity);
 
   /**
-   * Get the referenced purchasable entity.
+   * Gets the minimum quantity of the product variations.
    *
-   * @return PurchasableEntityInterface
-   *    The referenced purchasable entity.
+   * @return int
    */
-  public function getReferencedEntity();
+  public function getMinimumQuantity();
+
+  /**
+   * Sets the maximum quantity of the product variations
+   *
+   * @param $minimum_quantity
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   */
+  public function setMaximumQuantity($minimum_quantity);
+
+  /**
+   * Gets the maximum quantity of the product variations.
+   *
+   * @return int
+   */
+  public function getMaximumQuantity();
+
+  /**
+   * Get the referenced product.
+   *
+   * @return null | \Drupal\commerce_product\Entity\ProductInterface
+   *    The referenced commerce product.
+   */
+  public function getProduct();
+
+  /**
+   * Set the referenced product.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductInterface $product
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   */
+  public function setProduct(ProductInterface $product);
+
+  /**
+   * Sets the variations.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
+   *   The variations.
+   *
+   * @return $this
+   */
+  public function setVariations(array $variations);
+
+  /**
+   * Get the referenced product variations.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   */
+  public function getVariations();
+
+  /**
+   * Get the default variation.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface
+   */
+  public function getDefaultVariation();
+
+  /**
+   * Adds a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function addVariation(ProductVariationInterface $variation);
+
+  /**
+   * Removes a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function removeVariation(ProductVariationInterface $variation);
 
   /**
    * Sets the price of one unit of the referenced
-   * purchasable entity.
+   * product variations
    *
    * @param Price $unit_price
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Static bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setUnitPrice(Price $unit_price);
 
   /**
    * Gets the price of one unit of the referenced
-   * purchasable entity.
+   * product variations.
    *
    * @return Price $unit_price
    */

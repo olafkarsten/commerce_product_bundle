@@ -1,0 +1,27 @@
+entity.commerce_product_bundle.add_form:
+  route_name: 'entity.commerce_product_bundle.add_page'
+  title: 'Add Product bundle'
+  appears_on:
+    - entity.commerce_product_bundle.collection
+entity.commerce_product_bundle_type.add_form:
+  route_name: 'entity.commerce_product_bundle_type.add_form'
+  title: 'Add Product bundle type'
+  appears_on:
+    - entity.commerce_product_bundle_type.collection
+
+entity.commerce_product_bundle_item.add_form:
+  route_name: entity.commerce_product_bundle_item.add_form
+  title: 'Add Product bundle item'
+  appears_on:
+    - entity.commerce_product_bundle_item.collection
+entity.commerce_product_bundle_item.add_form:
+  route_name: 'entity.commerce_product_bundle_item.add_page'
+  title: 'Add Product bundle item'
+  appears_on:
+    - entity.commerce_product_bundle_item.collection
+entity.commerce_product_bundle_item_type.add_form:
+  route_name: 'entity.commerce_product_bundle_item_type.add_form'
+  title: 'Add Product bundle item type'
+  appears_on:
+    - entity.commerce_product_bundle_item_type.collection
+
