@@ -126,19 +126,17 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
   /**
    * Returns the bundle items of that bundle.
    *
-   * @return array of  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *    Array of the bundle items.
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface[]
    */
   public function getBundleItems();
 
   /**
    * Sets the bundle items of that bundle.
    *
-   * @param array $bundleItems
-   *    Array of  \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface[] $bundleItems
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *    The called bundle entity.
+   *   The called bundle entity.
    */
   public function setBundleItems(array $bundleItems);
 
@@ -147,7 +145,7 @@ interface BundleInterface extends RevisionableInterface, EntityChangedInterface,
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem
    *
-   * @return  \Drupal\commerce_product_bundle\Entity\BundleInterface
+   * @return  \Drupal\commerce_product_bundle\Entity\BundleInterface[]
    *    The called bundle entity.
    */
   public function addBundleItem(BundleItemInterface $bundleItem);

@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
+use Drupal\commerce_price\Price;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
@@ -362,24 +363,113 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
     // TODO: Implement getOrderItemTitle() method.
   }
 
+  /**
+   * Get the bundle price.
+   *
+   * @return \Drupal\commerce_price\Price
+   */
   public function getPrice() {
-    // TODO: Implement getPrice() method.
+     if (!$this->get('product_bundle_base_price')->isEmpty()) {
+       return $this->get('product_bundle_base_price')->first()->toPrice();
+     }
   }
 
+  /**
+   * @inheritdoc
+   */
   public function getBundleItems() {
-    // TODO: Implement getBundleItems() method.
+    $variations = $this->get('bundle_items')->referencedEntities();
+
+    return $this->ensureTranslations($variations);
   }
 
-  public function setBundleItems(array $bundleItems) {
-    // TODO: Implement setBundleItems() method.
+  /**
+   * @inheritdoc
+   */
+  public function setBundleItems(array $bundle_items) {
+    $this->set('bundle_items', $bundle_items);
+
+    return $this;
   }
 
-  public function addBundleItem(BundleItemInterface $bundleItem) {
-    // TODO: Implement addBundleItem() method.
+  public function addBundleItem(BundleItemInterface $bundle_item) {
+    if (!$this->hasBundleItem($bundle_item)) {
+      $this->get('variations')->appendItem($bundle_item);
+    }
+
+    return $this;
   }
 
-  public function removeBundleItem(BundleItemInterface $bundleItem) {
-    // TODO: Implement removeBundleItem() method.
+  /**
+   * Removes a bundle item.
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *
+   * @return $this
+   */
+  public function removeBundleItem(BundleItemInterface $bundle_item) {
+    $index = $this->getBundleItemIndex($bundle_item);
+    if ($index !== FALSE) {
+      $this->get('bundle_items')->offsetUnset($index);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Checks wether the bundle has any bundle items.
+   *
+   * @return bool
+   */
+  public function hasBundleItems(){
+    return !$this->get('bundle_items')->isEmpty();
+  }
+
+  /**
+   * Checks wether the bundle has a given bundle item
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *
+   * @return bool
+   */
+  public function hasBundleItem(BundleItemInterface $bundle_item){
+    return in_array($bundle_item->id(), $this->getBundleItemIds());
+  }
+
+  /**
+   * Gets the bundle item IDs.
+   *
+   * @return int[]
+   *   The variation IDs.
+   */
+  public function getBundleItemIds() {
+    $item_ids = [];
+    foreach ($this->get('bundle_items') as $field_item) {
+      $item_ids[] = $field_item->target_id;
+    }
+
+    return $item_ids;
+  }
+
+  /**
+   * Ensures that the provided entities are in the current entity's language.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+   *   The entities to process.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface[]
+   *   The processed entities.
+   */
+  protected function ensureTranslations(array $entities) {
+    $langcode = $this->language()->getId();
+    foreach ($entities as $index => $entity) {
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      if ($entity->hasTranslation($langcode)) {
+        $entities[$index] = $entity->getTranslation($langcode);
+      }
+    }
+
+    return $entities;
   }
 
 }
