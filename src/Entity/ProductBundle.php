@@ -7,6 +7,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\UserInterface;
 
 /**
@@ -270,8 +271,7 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
       ->setDisplayConfigurable('view', TRUE);
 
     // The price is not required because it's not guaranteed to be used
-    // for storage. We may use the price of the referenced purchasable
-    // entity.
+    // for storage. We may use the price of the referenced bundle items.
     $fields['product_bundle_base_price'] = BaseFieldDefinition::create('commerce_price')
       ->setLabel(t('The base price of a the product bundle'))
       ->setDescription(t('The product bundle base price. If set, the prices of  the product bundle items will be ignored. Set only, if you want a global price per product bundle, independent from its items.'))
@@ -284,6 +284,32 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
         'type'   => 'commerce_price_default',
         'weight' => 0,
       ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['bundle_items'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Product Bundle Items'))
+      ->setDescription(t('Reference to the product bundle items.'))
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'commerce_product_bundle_item')
+      ->setSetting('handler', 'default')
+      ->setTranslatable(FALSE)
+      ->setCardinality(FieldStorageConfig::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'entity_reference_label',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -355,4 +381,5 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
   public function removeBundleItem(BundleItemInterface $bundleItem) {
     // TODO: Implement removeBundleItem() method.
   }
+
 }
