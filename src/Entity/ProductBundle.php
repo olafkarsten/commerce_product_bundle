@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Product bundle entity.
+ * Defines the product bundle entity.
  *
  * @ingroup commerce_product_bundle
  *
@@ -274,7 +274,7 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
     // entity.
     $fields['product_bundle_base_price'] = BaseFieldDefinition::create('commerce_price')
       ->setLabel(t('The base price of a the product bundle'))
-      ->setDescription(t('The produbt bundle base price. If set, the prices of  the product bundle items will be ignored. Set only, if you want a global price per product bundle, independent from its items.'))
+      ->setDescription(t('The product bundle base price. If set, the prices of  the product bundle items will be ignored. Set only, if you want a global price per product bundle, independent from its items.'))
       ->setDisplayOptions('view', [
         'label'  => 'above',
         'type'   => 'commerce_price_default',
@@ -289,7 +289,7 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Product bundle is published.'))
+      ->setDescription(t('A boolean indicating whether the product bundle is published.'))
       ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
 
