@@ -5,12 +5,23 @@
  * Contains commerce_product_bundle.module.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Render\Element;
+use Drupal\commerce_product\Entity\ProductType;
+use Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface;
 
 /**
  * Implements hook_help().
  */
-function commerce_product_bundle_help($route_name, RouteMatchInterface $route_match) {
+function commerce_product_bundle_help($route_name, CurrentRouteMatch $route_match) {
   switch ($route_name) {
     // Main module help for the commerce_product_bundle module.
     case 'help.page.commerce_product_bundle':
@@ -21,6 +32,60 @@ function commerce_product_bundle_help($route_name, RouteMatchInterface $route_ma
 
     default:
   }
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_product_bundle_theme() {
+  $theme = [];
+  $theme['commerce_product_bundle'] = array(
+    'render element' => 'elements',
+    'file'           => 'commerce_product_bundle.page.inc',
+    'template'       => 'commerce_product_bundle',
+  );
+  $theme['commerce_product_bundle_content_add_list'] = [
+    'render element' => 'content',
+    'variables'      => ['content' => NULL],
+    'file'           => 'commerce_product_bundle.page.inc',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function commerce_product_bundle_theme_suggestions_product_bundle(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#commerce_product_bundle'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'commerce_product_bundle__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_product_bundle__' . $entity->bundle();
+  $suggestions[] = 'commerce_product_bundle__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_product_bundle__' . $entity->id();
+  $suggestions[] = 'commerce_product_bundle__' . $entity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function commerce_product_bundle_theme_suggestions_product_bundle_item(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#commerce_product_bundle_item'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'commerce_product_bundle_item__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_product_bundle_item__' . $entity->bundle();
+  $suggestions[] = 'commerce_product_bundle_item__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'commerce_product_bundle_item__' . $entity->id();
+  $suggestions[] = 'commerce_product_bundle_item__' . $entity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
 }
 
 
@@ -66,4 +131,70 @@ function commerce_product_bundle_add_description_field($product_bundle_type, $la
     ]);
     $form_display->save();
   }
+
+  /**
+   * Adds the default variations field to a bundle item type.
+   *
+   * Variations can't be a base field because the Views integration is broken.
+   * Instead, it is created as a configurable field for each bundle item type.
+   * @ToDo Find and reference the issue in d.o.
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type
+   */
+  function commerce_product_bundle_add_variations_field(BundleItemTypeInterface $bundle_item_type) {
+    $field_storage = FieldStorageConfig::loadByName('commerce_product_bundle_item', 'variations');
+    $field = FieldConfig::loadByName('commerce_product_bundle_Item', $bundle_item_type->id(), 'variations');
+    if (empty($field_storage)) {
+      $field_storage = FieldStorageConfig::create([
+        'field_name' => 'variations',
+        'entity_type' => 'commerce_product_bundle_item',
+        'type' => 'entity_reference',
+        'cardinality' => FieldStorageConfig::CARDINALITY_UNLIMITED,
+        'settings' => [
+          'target_type' => 'commerce_product_variation',
+        ],
+        'locked' => TRUE,
+        'translatable' => FALSE,
+      ]);
+      $field_storage->save();
+    }
+    if (empty($field)) {
+      $field = FieldConfig::create([
+        'field_storage' => $field_storage,
+        'bundle' => $bundle_item_type->id(),
+        'label' => 'Variations',
+        'required' => FALSE,
+        'settings' => [
+          'handler' => 'default',
+          'handler_settings' => [],
+        ],
+        'translatable' => FALSE,
+      ]);
+      $field->save();
+
+      $view_display = commerce_get_entity_display('commerce_product_bundle_Item', $bundle_item_type->id(), 'view');
+      $view_display->setComponent('variations', [
+        'type' => 'commerce_add_to_cart',
+        'weight' => 10,
+      ]);
+      $view_display->save();
+
+      $form_display = commerce_get_entity_display('commerce_product_bundle_item', $bundle_item_type->id(), 'form');
+      $form_display->setComponent('variations', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 10,
+        'settings' => [
+          'override_labels' => TRUE,
+          'label_singular' => 'variation',
+          'label_plural' => 'variations',
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => '',
+        ],
+      ]);
+      $form_display->save();
+    }
+  }
+
+
 }
