@@ -90,19 +90,19 @@ function commerce_product_bundle_theme_suggestions_product_bundle_item(array $va
 
 
 /**
- * Adds the default description field to a product bundle type.
+ * Adds the default body field to a product bundle type.
  *
  * @param \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type
  *   The product bundle type.
  * @param string $label
- *   (optional) The label for the description instance. Defaults to 'Description'.
+ *   (optional) The label for the body instance. Defaults to 'Body'.
  */
-function commerce_product_bundle_add_description_field($product_bundle_type, $label = 'Description') {
-  $field_storage = FieldStorageConfig::loadByName('commerce_product', 'description');
-  $field = FieldConfig::loadByName('commerce_product_bundle', $product_bundle_type->id(), 'description');
+function commerce_product_bundle_add_body_field($product_bundle_type, $label = 'Body') {
+  $field_storage = FieldStorageConfig::loadByName('commerce_product', 'body');
+  $field = FieldConfig::loadByName('commerce_product_bundle', $product_bundle_type->id(), 'body');
   if (empty($field_storage)) {
     $field_storage = FieldStorageConfig::create([
-      'field_name' => 'description',
+      'field_name' => 'body',
       'entity_type' => 'commerce_product_bundle',
       'type' => 'text_with_summary',
     ]);
@@ -118,14 +118,14 @@ function commerce_product_bundle_add_description_field($product_bundle_type, $la
     $field->save();
 
     $view_display = commerce_get_entity_display('commerce_product_bundle', $product_bundle_type->id(), 'view');
-    $view_display->setComponent('description', [
+    $view_display->setComponent('body', [
       'label' => 'hidden',
       'type' => 'text_default',
     ]);
     $view_display->save();
 
     $form_display = commerce_get_entity_display('commerce_product_bundle', $product_bundle_type->id(), 'form');
-    $form_display->setComponent('description', [
+    $form_display->setComponent('body', [
       'type' => 'text_textarea_with_summary',
       'weight' => 1,
     ]);
