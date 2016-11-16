@@ -11,7 +11,7 @@ use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for reverting a Product bundle item revision.
+ * Provides a form for reverting a product bundle item revision.
  *
  * @ingroup commerce_product_bundle
  */
@@ -19,14 +19,14 @@ class ProductBundleItemRevisionRevertForm extends ConfirmFormBase {
 
 
   /**
-   * The Product bundle item revision.
+   * The product bundle item revision.
    *
    * @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    */
   protected $revision;
 
   /**
-   * The Product bundle item storage.
+   * The product bundle item storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
@@ -43,7 +43,7 @@ class ProductBundleItemRevisionRevertForm extends ConfirmFormBase {
    * Constructs a new ProductBundleItemRevisionRevertForm.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The Product bundle item storage.
+   *   The product bundle item storage.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    */

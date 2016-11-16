@@ -24,7 +24,7 @@ class ProductBundleTypeForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $product_bundle_type->label(),
-      '#description' => $this->t("Label for the Product bundle type."),
+      '#description' => $this->t("Label for the product bundle type."),
       '#required' => TRUE,
     ];
 
@@ -51,13 +51,13 @@ class ProductBundleTypeForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Product bundle type.', [
+        drupal_set_message($this->t('Created the %label product bundle type.', [
           '%label' => $product_bundle_type->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Product bundle type.', [
+        drupal_set_message($this->t('Saved the %label product bundle type.', [
           '%label' => $product_bundle_type->label(),
         ]));
     }

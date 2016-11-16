@@ -37,7 +37,7 @@ class ProductBundleSettingsForm extends FormBase {
   }
 
   /**
-   * Defines the settings form for Product bundle entities.
+   * Defines the settings form for product bundle entities.
    *
    * @param array $form
    *   An associative array containing the structure of the form.
@@ -48,7 +48,7 @@ class ProductBundleSettingsForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['commerce_product_bundle_settings']['#markup'] = 'Settings form for Product bundle entities. Manage field settings here.';
+    $form['commerce_product_bundle_settings']['#markup'] = 'Settings form for product bundle entities. Manage field settings here.';
     return $form;
   }
 

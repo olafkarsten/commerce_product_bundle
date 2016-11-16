@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
- * Provides an interface for defining Product bundle item entities.
+ * Provides an interface for defining product bundle item entities.
  *
  * @ingroup commerce_product_bundle
  */
@@ -20,74 +20,74 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   // @ToDo Add get/set methods for your configuration properties here.
 
   /**
-   * Gets the Product bundle item type.
+   * Gets the product bundle item type.
    *
    * @return string
-   *   The Product bundle item type.
+   *   The product bundle item type.
    */
   public function getType();
 
   /**
-   * Gets the Product bundle item title.
+   * Gets the product bundle item title.
    *
    * @return string
-   *   Title of the Product bundle item.
+   *   Title of the product bundle item.
    */
   public function getTitle();
 
   /**
-   * Sets the Product bundle item title.
+   * Sets the product bundle item title.
    *
    * @param string $title
-   *   The Product bundle item title.
+   *   The product bundle item title.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setTitle($title);
 
   /**
-   * Gets the Product bundle item creation timestamp.
+   * Gets the product bundle item creation timestamp.
    *
    * @return int
-   *   Creation timestamp of the Product bundle item.
+   *   Creation timestamp of the product bundle item.
    */
   public function getCreatedTime();
 
   /**
-   * Sets the Product bundle item creation timestamp.
+   * Sets the product bundle item creation timestamp.
    *
    * @param int $timestamp
-   *   The Product bundle item creation timestamp.
+   *   The product bundle item creation timestamp.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setCreatedTime($timestamp);
 
   /**
-   * Returns the Product bundle item published status indicator.
+   * Returns the product bundle item published status indicator.
    *
-   * Unpublished Product bundle item are only visible to restricted users.
+   * Unpublished product bundle item are only visible to restricted users.
    *
    * @return bool
-   *   TRUE if the Product bundle item is published.
+   *   TRUE if the product bundle item is published.
    */
   public function isPublished();
 
   /**
-   * Sets the published status of a Product bundle item.
+   * Sets the published status of a product bundle item.
    *
    * @param bool $published
-   *   TRUE to set this Product bundle item to published, FALSE to set it to unpublished.
+   *   TRUE to set this product bundle item to published, FALSE to set it to unpublished.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setPublished($published);
 
   /**
-   * Gets the Product bundle item revision creation timestamp.
+   * Gets the product bundle item revision creation timestamp.
    *
    * @return int
    *   The UNIX timestamp of when this revision was created.
@@ -95,18 +95,18 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function getRevisionCreationTime();
 
   /**
-   * Sets the Product bundle item revision creation timestamp.
+   * Sets the product bundle item revision creation timestamp.
    *
    * @param int $timestamp
    *   The UNIX timestamp of when this revision was created.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setRevisionCreationTime($timestamp);
 
   /**
-   * Gets the Product bundle item revision author.
+   * Gets the product bundle item revision author.
    *
    * @return \Drupal\user\UserInterface
    *   The user entity for the revision author.
@@ -114,13 +114,13 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function getRevisionAuthor();
 
   /**
-   * Sets the Product bundle item revision author.
+   * Sets the product bundle item revision author.
    *
    * @param int $uid
    *   The user ID of the revision author.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setRevisionAuthorId($uid);
 
@@ -133,7 +133,7 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
    *   The order item quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setQuantity($quantity);
 
@@ -159,7 +159,7 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
    * @param Price $unit_price
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called Product bundle item entity.
+   *   The called product bundle item entity.
    */
   public function setUnitPrice(Price $unit_price);
 

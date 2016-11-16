@@ -11,7 +11,7 @@ use Drupal\commerce_product_bundle\Entity\BundleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for reverting a Product bundle revision.
+ * Provides a form for reverting a product bundle revision.
  *
  * @ingroup commerce_product_bundle
  */
@@ -19,14 +19,14 @@ class ProductBundleRevisionRevertForm extends ConfirmFormBase {
 
 
   /**
-   * The Product bundle revision.
+   * The product bundle revision.
    *
    * @var \Drupal\commerce_product_bundle\Entity\BundleInterface
    */
   protected $revision;
 
   /**
-   * The Product bundle storage.
+   * The product bundle storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
@@ -43,7 +43,7 @@ class ProductBundleRevisionRevertForm extends ConfirmFormBase {
    * Constructs a new ProductBundleRevisionRevertForm.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The Product bundle storage.
+   *   The product bundle storage.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    */
@@ -120,7 +120,7 @@ class ProductBundleRevisionRevertForm extends ConfirmFormBase {
     $this->revision->save();
 
     $this->logger('content')->notice('Product bundle: reverted %title revision %revision.', ['%title' => $this->revision->label(), '%revision' => $this->revision->getRevisionId()]);
-    drupal_set_message(t('Product bundle %title has been reverted to the revision from %revision-date.', ['%title' => $this->revision->label(), '%revision-date' => $this->dateFormatter->format($original_revision_timestamp)]));
+    drupal_set_message(t('product bundle %title has been reverted to the revision from %revision-date.', ['%title' => $this->revision->label(), '%revision-date' => $this->dateFormatter->format($original_revision_timestamp)]));
     $form_state->setRedirect(
       'entity.commerce_product_bundle.version_history',
       array('commerce_product_bundle' => $this->revision->id())

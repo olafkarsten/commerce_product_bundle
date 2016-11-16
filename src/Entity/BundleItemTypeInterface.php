@@ -5,7 +5,7 @@ namespace Drupal\commerce_product_bundle\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
- * Provides an interface for defining Product bundle item type entities.
+ * Provides an interface for defining product bundle item type entities.
  */
 interface BundleItemTypeInterface extends ConfigEntityInterface {
 

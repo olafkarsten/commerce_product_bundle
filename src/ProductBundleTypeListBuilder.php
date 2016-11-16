@@ -6,7 +6,7 @@ use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides a listing of Product bundle type entities.
+ * Provides a listing of product bundle type entities.
  */
 class ProductBundleTypeListBuilder extends ConfigEntityListBuilder {
 

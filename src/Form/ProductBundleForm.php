@@ -6,7 +6,7 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Form controller for Product bundle edit forms.
+ * Form controller for product bundle edit forms.
  *
  * @ingroup commerce_product_bundle
  */
@@ -55,13 +55,13 @@ class ProductBundleForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Product bundle.', [
+        drupal_set_message($this->t('Created the %label product bundle.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Product bundle.', [
+        drupal_set_message($this->t('Saved the %label product bundle.', [
           '%label' => $entity->label(),
         ]));
     }

@@ -7,7 +7,7 @@ use Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 
 /**
- * Defines the Product bundle item type entity.
+ * Defines the product bundle item type entity.
  *
  * @ConfigEntityType(
  *   id = "commerce_product_bundle_item_type",
@@ -30,7 +30,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     },
  *   },
  *   config_prefix = "commerce_product_bundle_item_type",
- *   admin_permission = "Administer Product bundle item types",
+ *   admin_permission = "Administer product bundle item types",
  *   bundle_of = "commerce_product_bundle_item",
  *   entity_keys = {
  *     "id" = "id",
@@ -49,14 +49,14 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 class ProductBundleItemType extends ConfigEntityBundleBase implements BundleItemTypeInterface {
 
   /**
-   * The Product bundle item type ID.
+   * The product bundle item type ID.
    *
    * @var string
    */
   protected $id;
 
   /**
-   * The Product bundle item type label.
+   * The product bundle item type label.
    *
    * @var string
    */

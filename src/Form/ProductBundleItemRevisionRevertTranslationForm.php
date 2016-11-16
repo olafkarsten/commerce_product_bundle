@@ -10,7 +10,7 @@ use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for reverting a Product bundle item revision for a single translation.
+ * Provides a form for reverting a product bundle item revision for a single translation.
  *
  * @ingroup commerce_product_bundle
  */
@@ -35,7 +35,7 @@ class ProductBundleItemRevisionRevertTranslationForm extends ProductBundleItemRe
    * Constructs a new ProductBundleItemRevisionRevertTranslationForm.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The Product bundle item storage.
+   *   The product bundle item storage.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager

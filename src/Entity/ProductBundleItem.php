@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Product bundle item entity.
+ * Defines the product bundle item entity.
  *
  * @ingroup commerce_product_bundle
  *
@@ -132,7 +132,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
 
     $fields['title'] = BaseFieldDefinition::create('string')
         ->setLabel(t('Title'))
-        ->setDescription(t('The title of the Product bundle item entity.'))
+        ->setDescription(t('The title of the product bundle item entity.'))
         ->setRequired(TRUE)
         ->setTranslatable(TRUE)
         ->setRevisionable(TRUE)
@@ -155,7 +155,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Product bundle item is published.'))
+      ->setDescription(t('A boolean indicating whether the product bundle item is published.'))
       ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
 

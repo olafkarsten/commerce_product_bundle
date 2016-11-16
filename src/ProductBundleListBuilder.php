@@ -8,7 +8,7 @@ use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
 
 /**
- * Defines a class to build a listing of Product bundle entities.
+ * Defines a class to build a listing of product bundle entities.
  *
  * @ingroup commerce_product_bundle
  *

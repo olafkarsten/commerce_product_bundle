@@ -8,7 +8,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 
 /**
- * Defines the storage handler class for Product bundle item entities.
+ * Defines the storage handler class for product bundle item entities.
  *
  * This extends the base storage class, adding required special handling for
  * Product bundle item entities.
@@ -18,10 +18,10 @@ use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 interface ProductBundleItemStorageInterface extends ContentEntityStorageInterface {
 
   /**
-   * Gets a list of Product bundle item revision IDs for a specific Product bundle item.
+   * Gets a list of product bundle item revision IDs for a specific product bundle item.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $entity
-   *   The Product bundle item entity.
+   *   The product bundle item entity.
    *
    * @return int[]
    *   Product bundle item revision IDs (in ascending order).
@@ -29,7 +29,7 @@ interface ProductBundleItemStorageInterface extends ContentEntityStorageInterfac
   public function revisionIds(BundleItemInterface $entity);
 
   /**
-   * Gets a list of revision IDs having a given user as Product bundle item author.
+   * Gets a list of revision IDs having a given user as product bundle item author.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user entity.
@@ -43,7 +43,7 @@ interface ProductBundleItemStorageInterface extends ContentEntityStorageInterfac
    * Counts the number of revisions in the default language.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $entity
-   *   The Product bundle item entity.
+   *   The product bundle item entity.
    *
    * @return int
    *   The number of revisions in the default language.
@@ -51,7 +51,7 @@ interface ProductBundleItemStorageInterface extends ContentEntityStorageInterfac
   public function countDefaultLanguageRevisions(BundleItemInterface $entity);
 
   /**
-   * Unsets the language for all Product bundle item with the given language.
+   * Unsets the language for all product bundle item with the given language.
    *
    * @param \Drupal\Core\Language\LanguageInterface $language
    *   The language object.

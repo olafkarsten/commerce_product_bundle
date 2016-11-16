@@ -5,7 +5,7 @@ namespace Drupal\commerce_product_bundle\Form;
 use Drupal\Core\Entity\ContentEntityDeleteForm;
 
 /**
- * Provides a form for deleting Product bundle item entities.
+ * Provides a form for deleting product bundle item entities.
  *
  * @ingroup commerce_product_bundle
  */

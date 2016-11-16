@@ -8,7 +8,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_product_bundle\Entity\BundleInterface;
 
 /**
- * Defines the storage handler class for Product bundle entities.
+ * Defines the storage handler class for product bundle entities.
  *
  * This extends the base storage class, adding required special handling for
  * Product bundle entities.
@@ -18,10 +18,10 @@ use Drupal\commerce_product_bundle\Entity\BundleInterface;
 interface ProductBundleStorageInterface extends ContentEntityStorageInterface {
 
   /**
-   * Gets a list of Product bundle revision IDs for a specific Product bundle.
+   * Gets a list of product bundle revision IDs for a specific product bundle.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleInterface $entity
-   *   The Product bundle entity.
+   *   The product bundle entity.
    *
    * @return int[]
    *   Product bundle revision IDs (in ascending order).
@@ -29,7 +29,7 @@ interface ProductBundleStorageInterface extends ContentEntityStorageInterface {
   public function revisionIds(BundleInterface $entity);
 
   /**
-   * Gets a list of revision IDs having a given user as Product bundle author.
+   * Gets a list of revision IDs having a given user as product bundle author.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user entity.
@@ -43,7 +43,7 @@ interface ProductBundleStorageInterface extends ContentEntityStorageInterface {
    * Counts the number of revisions in the default language.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleInterface $entity
-   *   The Product bundle entity.
+   *   The product bundle entity.
    *
    * @return int
    *   The number of revisions in the default language.
@@ -51,7 +51,7 @@ interface ProductBundleStorageInterface extends ContentEntityStorageInterface {
   public function countDefaultLanguageRevisions(BundleInterface $entity);
 
   /**
-   * Unsets the language for all Product bundle with the given language.
+   * Unsets the language for all product bundle with the given language.
    *
    * @param \Drupal\Core\Language\LanguageInterface $language
    *   The language object.

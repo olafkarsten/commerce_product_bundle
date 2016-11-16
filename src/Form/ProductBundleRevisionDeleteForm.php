@@ -10,7 +10,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for deleting a Product bundle revision.
+ * Provides a form for deleting a product bundle revision.
  *
  * @ingroup commerce_product_bundle
  */
@@ -18,14 +18,14 @@ class ProductBundleRevisionDeleteForm extends ConfirmFormBase {
 
 
   /**
-   * The Product bundle revision.
+   * The product bundle revision.
    *
    * @var \Drupal\commerce_product_bundle\Entity\BundleInterface
    */
   protected $revision;
 
   /**
-   * The Product bundle storage.
+   * The product bundle storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
@@ -107,7 +107,7 @@ class ProductBundleRevisionDeleteForm extends ConfirmFormBase {
     $this->ProductBundleStorage->deleteRevision($this->revision->getRevisionId());
 
     $this->logger('content')->notice('Product bundle: deleted %title revision %revision.', array('%title' => $this->revision->label(), '%revision' => $this->revision->getRevisionId()));
-    drupal_set_message(t('Revision from %revision-date of Product bundle %title has been deleted.', array('%revision-date' => format_date($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label())));
+    drupal_set_message(t('Revision from %revision-date of product bundle %title has been deleted.', array('%revision-date' => format_date($this->revision->getRevisionCreationTime()), '%title' => $this->revision->label())));
     $form_state->setRedirect(
       'entity.commerce_product_bundle.canonical',
        array('commerce_product_bundle' => $this->revision->id())

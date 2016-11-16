@@ -8,7 +8,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 
 /**
- * Access controller for the Product bundle entity.
+ * Access controller for the product bundle entity.
  *
  * @see \Drupal\commerce_product_bundle\Entity\ProductBundle.
  */

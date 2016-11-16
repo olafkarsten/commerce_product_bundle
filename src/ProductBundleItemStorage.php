@@ -8,10 +8,10 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 
 /**
- * Defines the storage handler class for Product bundle item entities.
+ * Defines the storage handler class for product bundle item entities.
  *
  * This extends the base storage class, adding required special handling for
- * Product bundle item entities.
+ * product bundle item entities.
  *
  * @ingroup commerce_product_bundle
  */

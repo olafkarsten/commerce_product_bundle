@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Builds the form to delete Product bundle item type entities.
+ * Builds the form to delete product bundle item type entities.
  */
 class ProductBundleItemTypeDeleteForm extends EntityConfirmFormBase {
 
