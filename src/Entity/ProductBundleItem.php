@@ -653,10 +653,16 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
     return $entities;
   }
 
+  /**
+   * @inheritdoc
+   */
   public function getMinimumQuantity() {
     return $this->get('min_quantity');
   }
 
+  /**
+   * @inheritdoc
+   */
   public function getMaximumQuantity() {
     return $this->get('max_quantity');
   }
