@@ -8,7 +8,7 @@ field_name: bundle_items
 entity_type: commerce_product_bundle
 type: entity_reference
 settings:
-  target_type: commerce_product_bundle_i
+  target_type: commerce_product_bundle_item
 module: core
 locked: true
 cardinality: -1

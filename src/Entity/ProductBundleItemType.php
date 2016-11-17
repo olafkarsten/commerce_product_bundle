@@ -32,7 +32,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   },
  *   config_prefix = "commerce_product_bundle_i_type",
  *   admin_permission = "Administer product bundle item types",
- *   bundle_of = "commerce_product_bundle_i",
+ *   bundle_of = "commerce_product_bundle_item",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",

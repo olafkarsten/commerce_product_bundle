@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
  * @ingroup commerce_product_bundle
  *
  * @ContentEntityType(
- *   id = "commerce_product_bundle_i",
+ *   id = "commerce_product_bundle_item",
  *   label = @Translation("Product bundle item"),
  *   bundle_label = @Translation("Product bundle item type"),
  *   handlers = {
@@ -40,7 +40,7 @@ use Drupal\user\UserInterface;
  *     },
  *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
- *   base_table = "commerce_product_bundle_i",
+ *   base_table = "commerce_product_bundle_item",
  *   data_table = "commerce_product_bundle_i_field_data",
  *   translatable = TRUE,
  *   admin_permission = "administer product bundle item entities",
@@ -54,11 +54,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}",
+ *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}",
  *     "add-page" = "/admin/commerce/config/product-bundles/bundle-items/add",
  *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_i_type}",
- *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/delete",
+ *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/bundle-items",
  *   },
  *   bundle_entity_type = "commerce_product_bundle_i_type",

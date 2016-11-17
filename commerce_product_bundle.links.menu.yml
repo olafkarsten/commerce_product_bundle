@@ -4,9 +4,9 @@ entity.commerce_product_bundle.collection:
   description: 'List product bundles'
   parent: 'commerce.admin_commerce'
 
-entity.commerce_product_bundle_i.collection:
+entity.commerce_product_bundle_item.collection:
   title: 'Product bundle items'
-  route_name: entity.commerce_product_bundle_i.collection
+  route_name: entity.commerce_product_bundle_item.collection
   description: 'List product bundle items'
   parent: 'commerce.admin_commerce'
 
