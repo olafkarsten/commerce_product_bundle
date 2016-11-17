@@ -10,7 +10,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * Defines the product bundle item type entity.
  *
  * @ConfigEntityType(
- *   id = "commerce_product_bundle_item_type",
+ *   id = "commerce_product_bundle_i_type",
  *   label = @Translation("Product bundle item type"),
  *   label_singular = @Translation("product bundle item type"),
  *   label_plural = @Translation("product bundle item types"),
@@ -26,22 +26,23 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleItemTypeDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\commerce_product_bundle\ProductBundleItemTypeHtmlRouteProvider",
+ *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *   },
- *   config_prefix = "commerce_product_bundle_item_type",
+ *   config_prefix = "commerce_product_bundle_i_type",
  *   admin_permission = "Administer product bundle item types",
- *   bundle_of = "commerce_product_bundle_item",
+ *   bundle_of = "commerce_product_bundle_i",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}",
+ *     "canonical" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}",
  *     "add-form" = "/admin/commerce/config/product-bundles/item-types/add",
- *     "edit-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}/delete",
+ *     "edit-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/item-types"
  *   }
  * )
@@ -63,43 +64,24 @@ class ProductBundleItemType extends ConfigEntityBundleBase implements BundleItem
   protected $label;
 
   /**
-   * The order item type ID.
+   * The product bundle item type description.
    *
    * @var string
    */
-  protected $orderItemType;
+  protected $description;
 
   /**
    * {@inheritdoc}
    */
-  public function getOrderItemTypeId() {
-    return $this->orderItemType;
+  public function getDescription() {
+    return $this->description;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOrderItemTypeId($order_item_type_id) {
-    $this->orderItemType = $order_item_type_id;
-    return $this;
-  }
-
-  /**
-   * Get the referenced purchasable entity.
-   *
-   * @return \Drupal\commerce\PurchasableEntityInterface;
-   */
-  public function getReferencedEntity(){
-      return $this->get('variations')->getTarget();
-  }
-
-  /**
-   * Get the Id of the referenced purchasable entity.
-   *
-   * @return int
-   */
-  public function getReferencedEntityId(){
-    $this->get('variations')->getTargetIdentifier();
+  public function setDescription($description) {
+    $this->description = $description;
   }
 
 }

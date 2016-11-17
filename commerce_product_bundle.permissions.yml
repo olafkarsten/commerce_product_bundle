@@ -1,10 +1,15 @@
-add product bundle entities:
-  title: 'Create new Product bundle entities'
+administer product bundle types:
+  title: 'Administer Product bundle types'
+  description: 'Allow to access the administration form to configure Product bundle types.'
+  restrict access: true
 
 administer product bundle entities:
   title: 'Administer Product bundle entities'
   description: 'Allow to access the administration form to configure Product bundle entities.'
   restrict access: true
+
+add product bundle entities:
+  title: 'Create new Product bundle entities'
 
 delete product bundle entities:
   title: 'Delete Product bundle entities'
@@ -21,89 +26,30 @@ view published product bundle entities:
 view unpublished product bundle entities:
   title: 'View unpublished Product bundle entities'
 
-view all product bundle revisions:
-  title: 'View all Product bundle revisions'
-
-revert all product bundle revisions:
-  title: 'Revert all Product bundle revisions'
-  description: 'Role requires permission <em>view Product bundle revisions</em> and <em>edit rights</em> for product bundle entities in question or <em>administer product bundle entities</em>.'
-
-delete all product bundle revisions:
-  title: 'Delete all revisions'
-  description: 'Role requires permission to <em>view Product bundle revisions</em> and <em>delete rights</em> for product bundle entities in question or <em>administer product bundle entities</em>.'
-add product bundle item entities:
-  title: 'Create new Product bundle item entities'
-
-administer product bundle item entities:
-  title: 'Administer Product bundle item entities'
-  description: 'Allow to access the administration form to configure Product bundle item entities.'
-  restrict access: true
-
-delete product bundle item entities:
-  title: 'Delete Product bundle item entities'
-
-edit product bundle item entities:
-  title: 'Edit Product bundle item entities'
-
-access product bundle item overview:
-  title: 'Access the Product bundle item overview page'
-
-view published product bundle item entities:
-  title: 'View published Product bundle item entities'
-
-view unpublished product bundle item entities:
-  title: 'View unpublished Product bundle item entities'
-
-view all product bundle item revisions:
-  title: 'View all Product bundle item revisions'
-
-revert all product bundle item revisions:
-  title: 'Revert all Product bundle item revisions'
-  description: 'Role requires permission <em>view Product bundle item revisions</em> and <em>edit rights</em> for product bundle item entities in question or <em>administer product bundle item entities</em>.'
-
-delete all product bundle item revisions:
-  title: 'Delete all revisions'
-  description: 'Role requires permission to <em>view Product bundle item revisions</em> and <em>delete rights</em> for product bundle item entities in question or <em>administer product bundle item entities</em>.'
-add product bundle item entities:
-  title: 'Create new Product bundle item entities'
-
-administer product bundle item entities:
-  title: 'Administer Product bundle item entities'
-  description: 'Allow to access the administration form to configure Product bundle item entities.'
-  restrict access: true
-
-delete product bundle item entities:
-  title: 'Delete Product bundle item entities'
-
-edit product bundle item entities:
-  title: 'Edit Product bundle item entities'
-
-access product bundle item overview:
-  title: 'Access the Product bundle item overview page'
-
-view published product bundle item entities:
-  title: 'View published Product bundle item entities'
-
-view unpublished product bundle item entities:
-  title: 'View unpublished Product bundle item entities'
-
-view all product bundle item revisions:
-  title: 'View all Product bundle item revisions'
-
-revert all product bundle item revisions:
-  title: 'Revert all Product bundle item revisions'
-  description: 'Role requires permission <em>view Product bundle item revisions</em> and <em>edit rights</em> for product bundle item entities in question or <em>administer product bundle item entities</em>.'
-
-delete all product bundle item revisions:
-  title: 'Delete all revisions'
-  description: 'Role requires permission to <em>view Product bundle item revisions</em> and <em>delete rights</em> for product bundle item entities in question or <em>administer product bundle item entities</em>.'
-
 administer product bundle item types:
   title: 'Administer Product bundle item types'
   description: 'Allow to access the administration form to configure Product bundle item types.'
   restrict access: true
 
-  administer product bundle types:
-    title: 'Administer Product bundle types'
-    description: 'Allow to access the administration form to configure Product bundle types.'
-    restrict access: true
+administer product bundle item entities:
+  title: 'Administer Product bundle item entities'
+  description: 'Allow to access the administration form to configure Product bundle item entities.'
+  restrict access: true
+
+add product bundle item entities:
+  title: 'Create new Product bundle item entities'
+
+delete product bundle item entities:
+  title: 'Delete Product bundle item entities'
+
+edit product bundle item entities:
+  title: 'Edit Product bundle item entities'
+
+access product bundle item overview:
+  title: 'Access the Product bundle item overview page'
+
+view published product bundle item entities:
+  title: 'View published Product bundle item entities'
+
+view unpublished product bundle item entities:
+  title: 'View unpublished Product bundle item entities'

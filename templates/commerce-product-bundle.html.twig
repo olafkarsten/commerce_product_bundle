@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ *
+ * Default product bundle template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - product_bundle: The rendered product bundle fields.
+ *   Use 'product_bundle' to print them all, or print a subset such as
+ *   'product_bundle.title'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ product_bundle|without('title') }}
+ *   @endcode
+ * - product_bundle_entity: The product bundle entity.
+ * - product_bundle_url: The product bundle URL.
+ *
+ * @ingroup themeable
+ */
+#}
+<article{{ attributes }}>
+  {{- product_bundle -}}
+</article>

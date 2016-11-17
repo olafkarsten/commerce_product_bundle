@@ -4,15 +4,12 @@ namespace Drupal\commerce_product_bundle\Entity;
 
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductInterface;
-use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
-use Drupal\commerce_product\Form\ProductVariationInlineForm;
-use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\RevisionableContentEntityBase;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\user\UserInterface;
 
 /**
@@ -21,7 +18,7 @@ use Drupal\user\UserInterface;
  * @ingroup commerce_product_bundle
  *
  * @ContentEntityType(
- *   id = "commerce_product_bundle_item",
+ *   id = "commerce_product_bundle_i",
  *   label = @Translation("Product bundle item"),
  *   bundle_label = @Translation("Product bundle item type"),
  *   handlers = {
@@ -29,7 +26,7 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleItemListBuilder",
  *     "views_data" = "Drupal\commerce_product_bundle\Entity\ProductBundleItemViewsData",
- *     "translation" = "Drupal\commerce_product_bundle\ProductBundleItemTranslationHandler",
+ *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "form" = {
  *       "default" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
@@ -38,17 +35,17 @@ use Drupal\user\UserInterface;
  *     },
  *     "access" = "Drupal\commerce_product_bundle\ProductBundleItemAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\commerce_product_bundle\ProductBundleItemHtmlRouteProvider",
+ *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
+ *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
- *   base_table = "commerce_product_bundle_item",
- *   data_table = "commerce_product_bundle_item_field_data",
+ *   base_table = "commerce_product_bundle_i",
+ *   data_table = "commerce_product_bundle_i_field_data",
  *   translatable = TRUE,
  *   admin_permission = "administer product bundle item entities",
  *   entity_keys = {
  *     "id" = "bundle_item_id",
- *     "bundle" = "type",
- *     "revision" = "vid",
  *     "bundle" = "type",
  *     "label" = "title",
  *     "uuid" = "uuid",
@@ -57,57 +54,62 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}",
+ *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}",
  *     "add-page" = "/admin/commerce/config/product-bundles/bundle-items/add",
- *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_item_type}",
- *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/delete",
- *     "revision" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/revisions/{revision}/view",
- *     "revision_revert" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/revisions/{revision}/revert",
- *     "translation_revert" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/revisions/{revision}/revert/{langcode}",
- *     "revision_delete" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/revisions/{revision}/delete",
+ *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_i_type}",
+ *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/bundle-items",
  *   },
- *   bundle_entity_type = "commerce_product_bundle_item_type",
- *   field_ui_base_route = "entity.commerce_product_bundle_item_type.edit_form"
+ *   bundle_entity_type = "commerce_product_bundle_i_type",
+ *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"
  * )
  */
-class ProductBundleItem extends RevisionableContentEntityBase implements BundleItemInterface {
+class ProductBundleItem extends ContentEntityBase implements BundleItemInterface {
 
   use EntityChangedTrait;
 
   /**
-   * The minimum quantity.
+   * The parent product bundle.
+   *
+   * @var \Drupal\commerce_product_bundle\Entity\BundleInterface
+   */
+  protected $bundle;
+
+  /**
+   * The product.
+   *
+   * @var \Drupal\commerce_product\Entity\ProductInterface
+   */
+  protected $product;
+
+  /**
+   * The product variations available in this bundle, if not all from ::product.
+   *
+   * @var \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   */
+  protected $variations = [];
+
+  /**
+   * The minimum quantity allowed for this item in the bundle.
    *
    * @var int
    */
   protected $min_quantity = 1;
 
   /**
-   * The minimum quantity.
+   * The maximum quantity allowed for this item in the bundle.
    *
    * @var int
    */
   protected $max_quantity = 1;
 
   /**
-   * The unit price for one unit of the bundle item
+   * The unit price, if overridden, for each variation offered by this bundle item.
    *
-   * @var  \Drupal\commerce_price\Price
+   * @var \Drupal\commerce_price\Price
    */
   protected $unit_price;
-
-  /**
-   * @var \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *   The variations that bundle items
-   *    belongs to.
-   */
-  protected $variations = [];
-
-  /**
-   * @var \Drupal\commerce_product\Entity\ProductInterface
-   */
-  protected $product;
 
   /**
    * {@inheritdoc}
@@ -128,11 +130,9 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Author'))
       ->setDescription(t('The user ID of author of the product bundle item entity.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\commerce_product_bundle\Entity\ProductBundleItem::getCurrentUserId')
-      ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'title'  => 'hidden',
         'type'   => 'author',
@@ -156,7 +156,6 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setDescription(t('The title of the product bundle item entity.'))
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
-      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length'      => 50,
         'text_processing' => 0,
@@ -177,15 +176,14 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the product bundle item is published.'))
-      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
 
     // The price is not required because it's not guaranteed to be used
     // for storage. We may use the price of the referenced variations.
     // entity.
-    $fields['bundle_item_price'] = BaseFieldDefinition::create('commerce_price')
-      ->setLabel(t('The price of a Single Bundle Item'))
-      ->setDescription(t('The bundle item price'))
+    $fields['unit_price'] = BaseFieldDefinition::create('commerce_price')
+      ->setLabel(t('Unit price'))
+      ->setDescription(t('The unit price, if overridden, of the variation selected from this bundle item.'))
       ->setDisplayOptions('view', [
         'label'  => 'above',
         'type'   => 'commerce_price_default',
@@ -198,14 +196,11 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['product_reference'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Product Reference'))
+    $fields['product'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Product'))
       ->setDescription(t('Reference to a product.'))
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'commerce_product')
       ->setSetting('handler', 'default')
-      //@ToDo Not sure wether to set to true or false
-      ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'entity_reference_label',
@@ -223,6 +218,9 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+
+    // Variations added in commerce_product_bundle.module.
+    // @see ___________.
 
     $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Minimum Quantity'))
@@ -258,26 +256,6 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
 
-    $fields['revision_timestamp'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Revision timestamp'))
-      ->setDescription(t('The time that the current revision was created.'))
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Revision user ID'))
-      ->setDescription(t('The user ID of the author of the current revision.'))
-      ->setSetting('target_type', 'user')
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_translation_affected'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Revision translation affected'))
-      ->setDescription(t('Indicates if the last edit of a translation belongs to current revision.'))
-      ->setReadOnly(TRUE)
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE);
-
     return $fields;
   }
 
@@ -307,12 +285,6 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
         $translation->setOwnerId(0);
       }
     }
-
-    // If no revision author has been set explicitly, make the product_bundle_item owner the
-    // revision author.
-    if (!$this->getRevisionAuthor()) {
-      $this->setRevisionAuthorId($this->getOwnerId());
-    }
   }
 
   /**
@@ -334,22 +306,6 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   /**
    * {@inheritdoc}
    */
-  public function getRevisionAuthor() {
-    return $this->get('revision_uid')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionAuthorId($uid) {
-    $this->set('revision_uid', $uid);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getOwnerId() {
     return $this->get('uid')->target_id;
   }
@@ -357,8 +313,22 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   /**
    * {@inheritdoc}
    */
+  public function getBundle() {
+    return $this->bundle;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBundleId() {
+    return $this->bundle->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getType() {
-    return $this->bundle();
+    return $this->get('type');
   }
 
   /**
@@ -421,22 +391,6 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   /**
    * {@inheritdoc}
    */
-  public function getRevisionCreationTime() {
-    return $this->get('revision_timestamp')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionCreationTime($timestamp) {
-    $this->set('revision_timestamp', $timestamp);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getStores() {
     // TODO: Proxy the referenced variations.
   }
@@ -445,6 +399,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
    * {@inheritdoc}
    */
   public function getUnitPrice() {
+    // @todo Proxy the referenced variation(s) price if unit_price is NULL.
     if (!$this->get('unit_price')->isEmpty()) {
       return $this->get('unit_price')->first()->toPrice();
     }
@@ -464,7 +419,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
    */
   public function setQuantity($quantity) {
     $this->setMinimumQuantity($quantity)
-            ->setMaximumQuantity($quantity);
+         ->setMaximumQuantity($quantity);
 
     return $this;
   }
@@ -483,6 +438,8 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
    */
   public function setMaximumQuantity($maximum_quantity) {
     $this->set('max_quantity', $maximum_quantity);
+
+    return $this;
   }
 
   /**
@@ -539,7 +496,7 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
   }
 
   /**
-   * Checks if the bundle item has a given variation
+   * Checks if the bundle item has a given variation.
    *
    * @param ProductVariationInterface $variation
    *
@@ -657,14 +614,14 @@ class ProductBundleItem extends RevisionableContentEntityBase implements BundleI
    * @inheritdoc
    */
   public function getMinimumQuantity() {
-    return $this->get('min_quantity');
+    return $this->min_quantity;
   }
 
   /**
    * @inheritdoc
    */
   public function getMaximumQuantity() {
-    return $this->get('max_quantity');
+    return $this->max_quantity;
   }
 
 }

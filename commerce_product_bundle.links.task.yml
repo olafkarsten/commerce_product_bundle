@@ -1,5 +1,3 @@
-# Product bundle routing definition
-
 entity.commerce_product_bundle.canonical:
   route_name: entity.commerce_product_bundle.canonical
   base_route: entity.commerce_product_bundle.canonical
@@ -13,56 +11,38 @@ entity.commerce_product_bundle.edit_form:
 entity.commerce_product_bundle.delete_form:
   route_name:  entity.commerce_product_bundle.delete_form
   base_route:  entity.commerce_product_bundle.canonical
-  title: Delete
+  title: 'Delete'
   weight: 10
 
-# Product bundle item routing definition
-entity.commerce_product_bundle_item.settings_tab:
-  route_name: entity.commerce_product_bundle_item.settings
-  title: 'Settings'
-  base_route: entity.commerce_product_bundle_item.settings
-
-entity.commerce_product_bundle_item.canonical:
-  route_name: entity.commerce_product_bundle_item.canonical
-  base_route: entity.commerce_product_bundle_item.canonical
+entity.commerce_product_bundle_i.canonical:
+  route_name: entity.commerce_product_bundle_i.canonical
+  base_route: entity.commerce_product_bundle_i.canonical
   title: 'View'
 
-entity.commerce_product_bundle_item.edit_form:
-  route_name: entity.commerce_product_bundle_item.edit_form
-  base_route: entity.commerce_product_bundle_item.canonical
+entity.commerce_product_bundle_i.edit_form:
+  route_name: entity.commerce_product_bundle_i.edit_form
+  base_route: entity.commerce_product_bundle_i.canonical
   title: 'Edit'
 
-entity.commerce_product_bundle_item.version_history:
-  route_name: entity.commerce_product_bundle_item.version_history
-  base_route: entity.commerce_product_bundle_item.canonical
-  title: 'Revisions'
-
-entity.commerce_product_bundle_item.delete_form:
-  route_name:  entity.commerce_product_bundle_item.delete_form
-  base_route:  entity.commerce_product_bundle_item.canonical
-  title: Delete
+entity.commerce_product_bundle_i.delete_form:
+  route_name:  entity.commerce_product_bundle_i.delete_form
+  base_route:  entity.commerce_product_bundle_i.canonical
+  title: 'Delete'
   weight: 10
 
-# Product bundle item routing definition
-
-entity.commerce_product_bundle_item.canonical:
-  route_name: entity.commerce_product_bundle_item.canonical
-  base_route: entity.commerce_product_bundle_item.canonical
+entity.commerce_product_bundle_i.canonical:
+  route_name: entity.commerce_product_bundle_i.canonical
+  base_route: entity.commerce_product_bundle_i.canonical
   title: 'View'
 
-entity.commerce_product_bundle_item.edit_form:
-  route_name: entity.commerce_product_bundle_item.edit_form
-  base_route: entity.commerce_product_bundle_item.canonical
+entity.commerce_product_bundle_i.edit_form:
+  route_name: entity.commerce_product_bundle_i.edit_form
+  base_route: entity.commerce_product_bundle_i.canonical
   title: 'Edit'
 
-entity.commerce_product_bundle_item.version_history:
-  route_name: entity.commerce_product_bundle_item.version_history
-  base_route: entity.commerce_product_bundle_item.canonical
-  title: 'Revisions'
-
-entity.commerce_product_bundle_item.delete_form:
-  route_name:  entity.commerce_product_bundle_item.delete_form
-  base_route:  entity.commerce_product_bundle_item.canonical
-  title: Delete
+entity.commerce_product_bundle_i.delete_form:
+  route_name:  entity.commerce_product_bundle_i.delete_form
+  base_route:  entity.commerce_product_bundle_i.canonical
+  title: 'Delete'
   weight: 10
 

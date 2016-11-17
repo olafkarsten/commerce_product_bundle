@@ -5,7 +5,6 @@ namespace Drupal\commerce_product_bundle\Entity;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
-use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -14,7 +13,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup commerce_product_bundle
  */
-interface BundleItemInterface extends RevisionableInterface, EntityChangedInterface, EntityOwnerInterface {
+interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterface {
 
   /**
    * Gets the product bundle item type.
@@ -84,42 +83,20 @@ interface BundleItemInterface extends RevisionableInterface, EntityChangedInterf
   public function setPublished($published);
 
   /**
-   * Gets the product bundle item revision creation timestamp.
+   * Gets the parent bundle entity.
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
+   *   The product bundle entity, or null.
+   */
+  public function getBundle();
+
+  /**
+   * Gets the parent product bundle ID.
    *
    * @return int
-   *   The UNIX timestamp of when this revision was created.
+   *   The product bundle ID, or null.
    */
-  public function getRevisionCreationTime();
-
-  /**
-   * Sets the product bundle item revision creation timestamp.
-   *
-   * @param int $timestamp
-   *   The UNIX timestamp of when this revision was created.
-   *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called product bundle item entity.
-   */
-  public function setRevisionCreationTime($timestamp);
-
-  /**
-   * Gets the product bundle item revision author.
-   *
-   * @return \Drupal\user\UserInterface
-   *   The user entity for the revision author.
-   */
-  public function getRevisionAuthor();
-
-  /**
-   * Sets the product bundle item revision author.
-   *
-   * @param int $uid
-   *   The user ID of the revision author.
-   *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called product bundle item entity.
-   */
-  public function setRevisionAuthorId($uid);
+  public function getBundleId();
 
   /**
    * Sets the quantity for the referenced variations

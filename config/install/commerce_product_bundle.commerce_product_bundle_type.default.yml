@@ -3,4 +3,6 @@ status: true
 dependencies: {  }
 id: default
 label: Default
-description: ''
+description: 'The default product bundle type.'
+bundleItemType: default
+orderItemType: commerce_product_bundle_default

@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - commerce_product_bundle
+label: 'Default product bundle'
+id: commerce_product_bundle_default
+purchasableEntityType: commerce_product_bundle
+orderType: default

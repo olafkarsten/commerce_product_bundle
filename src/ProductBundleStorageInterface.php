@@ -17,45 +17,4 @@ use Drupal\commerce_product_bundle\Entity\BundleInterface;
  */
 interface ProductBundleStorageInterface extends ContentEntityStorageInterface {
 
-  /**
-   * Gets a list of product bundle revision IDs for a specific product bundle.
-   *
-   * @param \Drupal\commerce_product_bundle\Entity\BundleInterface $entity
-   *   The product bundle entity.
-   *
-   * @return int[]
-   *   Product bundle revision IDs (in ascending order).
-   */
-  public function revisionIds(BundleInterface $entity);
-
-  /**
-   * Gets a list of revision IDs having a given user as product bundle author.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user entity.
-   *
-   * @return int[]
-   *   Product bundle revision IDs (in ascending order).
-   */
-  public function userRevisionIds(AccountInterface $account);
-
-  /**
-   * Counts the number of revisions in the default language.
-   *
-   * @param \Drupal\commerce_product_bundle\Entity\BundleInterface $entity
-   *   The product bundle entity.
-   *
-   * @return int
-   *   The number of revisions in the default language.
-   */
-  public function countDefaultLanguageRevisions(BundleInterface $entity);
-
-  /**
-   * Unsets the language for all product bundle with the given language.
-   *
-   * @param \Drupal\Core\Language\LanguageInterface $language
-   *   The language object.
-   */
-  public function clearRevisionsLanguage(LanguageInterface $language);
-
 }

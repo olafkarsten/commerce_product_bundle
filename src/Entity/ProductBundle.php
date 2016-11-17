@@ -2,13 +2,11 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
-use Drupal\commerce_price\Price;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\RevisionableContentEntityBase;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\user\UserInterface;
 
 /**
@@ -21,11 +19,11 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Product bundle"),
  *   bundle_label = @Translation("Product bundle type"),
  *   handlers = {
- *     "storage" = "Drupal\commerce_product_bundle\ProductBundleBundleStorage",
+ *     "storage" = "Drupal\commerce_product_bundle\ProductBundleStorage",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleListBuilder",
  *     "views_data" = "Drupal\commerce_product_bundle\Entity\ProductBundleViewsData",
- *     "translation" = "Drupal\commerce_product_bundle\ProductBundleTranslationHandler",
+ *     "translation" = "Drupal\commerce_product\ProductBundleTranslationHandler",
  *     "form" = {
  *       "default" = "Drupal\commerce_product_bundle\Form\ProductBundleForm",
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleForm",
@@ -34,20 +32,19 @@ use Drupal\user\UserInterface;
  *     },
  *     "access" = "Drupal\commerce_product_bundle\ProductBundleAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\commerce_product_bundle\ProductBundleHtmlRouteProvider",
+ *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
+ *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
  *   base_table = "commerce_product_bundle",
  *   data_table = "commerce_product_bundle_field_data",
- *   revision_table = "commerce_product_bundle_revision",
- *   revision_data_table = "commerce_product_bundle_field_revision",
  *   translatable = TRUE,
  *   admin_permission = "administer product bundle entities",
  *   permission_granularity = "bundle",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
- *     "revision" = "vid",
  *     "label" = "title",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
@@ -60,52 +57,15 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/admin/commerce/config/product-bundles/add/{commerce_product_bundle_type}",
  *     "edit-form" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/edit",
  *     "delete-form" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/delete",
- *     "version-history" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/revisions",
- *     "revision" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/revisions/{revision}/view",
- *     "revision_revert" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/revisions/{revision}/revert",
- *     "translation_revert" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/revisions/{revision}/revert/{langcode}",
- *     "revision_delete" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/revisions/{revision}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles",
  *   },
  *   bundle_entity_type = "commerce_product_bundle_type",
  *   field_ui_base_route = "entity.commerce_product_bundle_type.edit_form"
  * )
  */
-class ProductBundle extends RevisionableContentEntityBase implements BundleInterface {
+class ProductBundle extends ContentEntityBase implements BundleInterface {
 
   use EntityChangedTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
-    parent::preCreate($storage_controller, $values);
-    $values += array(
-      'uid' => \Drupal::currentUser()->id(),
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-
-    foreach (array_keys($this->getTranslationLanguages()) as $langcode) {
-      $translation = $this->getTranslation($langcode);
-
-      // If no owner has been set explicitly, make the anonymous user the owner.
-      if (!$translation->getOwner()) {
-        $translation->setOwnerId(0);
-      }
-    }
-
-    // If no revision author has been set explicitly, make the product_bundle owner the
-    // revision author.
-    if (!$this->getRevisionAuthor()) {
-      $this->setRevisionAuthorId($this->getOwnerId());
-    }
-  }
 
   /**
    * {@inheritdoc}
@@ -192,185 +152,39 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
   /**
    * {@inheritdoc}
    */
-  public function getRevisionCreationTime() {
-    return $this->get('revision_timestamp')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionCreationTime($timestamp) {
-    $this->set('revision_timestamp', $timestamp);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getRevisionAuthor() {
-    return $this->get('revision_uid')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionAuthorId($uid) {
-    $this->set('revision_uid', $uid);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields = parent::baseFieldDefinitions($entity_type);
-
-    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Author'))
-      ->setDescription(t('The user ID of author of the product bundle entity.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'user')
-      ->setSetting('handler', 'default')
-      ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'author',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['title'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title'))
-      ->setDescription(t('The title of the product bundle entity.'))
-      ->setRevisionable(TRUE)
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'string_textfield',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    // The price is not required because it's not guaranteed to be used
-    // for storage. We may use the price of the referenced bundle items.
-    $fields['product_bundle_base_price'] = BaseFieldDefinition::create('commerce_price')
-      ->setLabel(t('The base price of a the product bundle'))
-      ->setDescription(t('The product bundle base price. If set, the prices of  the product bundle items will be ignored. Set only, if you want a global price per product bundle, independent from its items.'))
-      ->setDisplayOptions('view', [
-        'label'  => 'above',
-        'type'   => 'commerce_price_default',
-        'weight' => 0,
-      ])
-      ->setDisplayOptions('form', [
-        'type'   => 'commerce_price_default',
-        'weight' => 0,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['bundle_items'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Product Bundle Items'))
-      ->setDescription(t('Reference to the product bundle items.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'commerce_product_bundle_item')
-      ->setSetting('handler', 'default')
-      ->setTranslatable(FALSE)
-      ->setCardinality(FieldStorageConfig::CARDINALITY_UNLIMITED)
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'entity_reference_label',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the product bundle is published.'))
-      ->setRevisionable(TRUE)
-      ->setDefaultValue(TRUE);
-
-    $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'))
-      ->setDescription(t('The time that the entity was created.'));
-
-    $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the entity was last edited.'));
-
-    $fields['revision_timestamp'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Revision timestamp'))
-      ->setDescription(t('The time that the current revision was created.'))
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Revision user ID'))
-      ->setDescription(t('The user ID of the author of the current revision.'))
-      ->setSetting('target_type', 'user')
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_translation_affected'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Revision translation affected'))
-      ->setDescription(t('Indicates if the last edit of a translation belongs to current revision.'))
-      ->setReadOnly(TRUE)
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE);
-
-    return $fields;
-  }
-
   public function getStores() {
     // TODO: Collect the stores of the bundleItems.
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getOrderItemTypeId() {
-    // TODO: Implement getOrderItemTypeId() method.
-  }
+    // The order item type is a bundle-level setting.
+    $type_storage = $this->entityTypeManager()->getStorage('commerce_product_bundle_type');
+    $type_entity = $type_storage->load($this->bundle());
 
-  public function getOrderItemTitle() {
-    // TODO: Implement getOrderItemTitle() method.
+    return $type_entity->getOrderItemTypeId();
   }
 
   /**
-   * Get the bundle price.
-   *
-   * @return \Drupal\commerce_price\Price
+   * {@inheritdoc}
+   */
+  public function getOrderItemTitle() {
+    $label = $this->label();
+    if (!$label) {
+      $label = $this->generateTitle();
+    }
+
+    return $label;
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function getPrice() {
-     if (!$this->get('product_bundle_base_price')->isEmpty()) {
-       return $this->get('product_bundle_base_price')->first()->toPrice();
+     if (!$this->get('bundle_price')->isEmpty()) {
+       return $this->get('bundle_price')->first()->toPrice();
      }
   }
 
@@ -392,20 +206,19 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function addBundleItem(BundleItemInterface $bundle_item) {
     if (!$this->hasBundleItem($bundle_item)) {
-      $this->get('variations')->appendItem($bundle_item);
+      $this->get('bundle_items')->appendItem($bundle_item);
     }
 
     return $this;
   }
 
   /**
-   * Removes a bundle item.
-   *
-   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function removeBundleItem(BundleItemInterface $bundle_item) {
     $index = $this->getBundleItemIndex($bundle_item);
@@ -417,30 +230,21 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
   }
 
   /**
-   * Checks wether the bundle has any bundle items.
-   *
-   * @return bool
+   * {@inheritdoc}
    */
-  public function hasBundleItems(){
+  public function hasBundleItems() {
     return !$this->get('bundle_items')->isEmpty();
   }
 
   /**
-   * Checks wether the bundle has a given bundle item
-   *
-   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
-   *
-   * @return bool
+   * {@inheritdoc}
    */
-  public function hasBundleItem(BundleItemInterface $bundle_item){
+  public function hasBundleItem(BundleItemInterface $bundle_item) {
     return in_array($bundle_item->id(), $this->getBundleItemIds());
   }
 
   /**
-   * Gets the bundle item IDs.
-   *
-   * @return int[]
-   *   The variation IDs.
+   * {@inheritdoc}
    */
   public function getBundleItemIds() {
     $item_ids = [];
@@ -449,6 +253,114 @@ class ProductBundle extends RevisionableContentEntityBase implements BundleInter
     }
 
     return $item_ids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+    parent::preCreate($storage_controller, $values);
+    $values += array(
+      'uid' => \Drupal::currentUser()->id(),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+
+    foreach (array_keys($this->getTranslationLanguages()) as $langcode) {
+      $translation = $this->getTranslation($langcode);
+
+      // If no owner has been set explicitly, make the anonymous user the owner.
+      if (!$translation->getOwner()) {
+        $translation->setOwnerId(0);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Author'))
+      ->setDescription(t('The user ID of author of the product bundle entity.'))
+      ->setSetting('target_type', 'user')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'author',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['title'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Title'))
+      ->setDescription(t('The title of the product bundle entity.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    // The price is not required because it's not guaranteed to be used
+    // for storage. We may use the price of the referenced bundle items.
+    $fields['bundle_price'] = BaseFieldDefinition::create('commerce_price')
+      ->setLabel(t('Bundle price'))
+      ->setDescription(t('The product bundle base price. If set, the prices of the product bundle items will be ignored. Set only, if you want a global price per product bundle, independent from its items.'))
+      ->setDisplayOptions('view', [
+        'label'  => 'above',
+        'type'   => 'commerce_price_default',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type'   => 'commerce_price_default',
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Publishing status'))
+      ->setDescription(t('A boolean indicating whether the product bundle is published.'))
+      ->setDefaultValue(TRUE);
+
+    $fields['created'] = BaseFieldDefinition::create('created')
+      ->setLabel(t('Created'))
+      ->setDescription(t('The time that the entity was created.'));
+
+    $fields['changed'] = BaseFieldDefinition::create('changed')
+      ->setLabel(t('Changed'))
+      ->setDescription(t('The time that the entity was last edited.'));
+
+    return $fields;
   }
 
   /**
