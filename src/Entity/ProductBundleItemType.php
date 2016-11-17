@@ -29,9 +29,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
+ *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
  *   config_prefix = "commerce_product_bundle_i_type",
- *   admin_permission = "Administer product bundle item types",
+ *   admin_permission = "administer commerce_product_bundle_i_type",
  *   bundle_of = "commerce_product_bundle_i",
  *   entity_keys = {
  *     "id" = "id",

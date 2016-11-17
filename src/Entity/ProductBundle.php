@@ -30,7 +30,6 @@ use Drupal\user\UserInterface;
  *       "edit" = "Drupal\commerce_product_bundle\Form\ProductBundleForm",
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleDeleteForm",
  *     },
- *     "access" = "Drupal\commerce_product_bundle\ProductBundleAccessControlHandler",
  *     "route_provider" = {
  *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
@@ -40,7 +39,7 @@ use Drupal\user\UserInterface;
  *   base_table = "commerce_product_bundle",
  *   data_table = "commerce_product_bundle_field_data",
  *   translatable = TRUE,
- *   admin_permission = "administer product bundle entities",
+ *   admin_permission = "administer commerce_product_bundle",
  *   permission_granularity = "bundle",
  *   entity_keys = {
  *     "id" = "id",
