@@ -1,4 +1,4 @@
-commerce_product_bundle.commerce_product_bundle_item_type.*:
+commerce_product_bundle.commerce_product_bundle_i_type.*:
   type: config_entity
   label: 'Product bundle item type config'
   mapping:

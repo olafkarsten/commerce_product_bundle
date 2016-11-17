@@ -61,8 +61,8 @@ use Drupal\user\UserInterface;
  *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/bundle-items",
  *   },
- *   bundle_entity_type = "commerce_product_bundle_item_type",
- *   field_ui_base_route = "entity.commerce_product_bundle_item_type.edit_form"
+ *   bundle_entity_type = "commerce_product_bundle_i_type",
+ *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"
  * )
  */
 class ProductBundleItem extends ContentEntityBase implements BundleItemInterface {
