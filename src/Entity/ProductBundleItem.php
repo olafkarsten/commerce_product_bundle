@@ -41,7 +41,7 @@ use Drupal\user\UserInterface;
  *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
  *   base_table = "commerce_product_bundle_item",
- *   data_table = "commerce_product_bundle_i_field_data",
+ *   data_table = "commerce_product_bundle_item_field_data",
  *   translatable = TRUE,
  *   admin_permission = "administer product bundle item entities",
  *   entity_keys = {
@@ -56,13 +56,13 @@ use Drupal\user\UserInterface;
  *   links = {
  *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}",
  *     "add-page" = "/admin/commerce/config/product-bundles/bundle-items/add",
- *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_i_type}",
+ *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_item_type}",
  *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/edit",
  *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_item}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/bundle-items",
  *   },
- *   bundle_entity_type = "commerce_product_bundle_i_type",
- *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"
+ *   bundle_entity_type = "commerce_product_bundle_item_type",
+ *   field_ui_base_route = "entity.commerce_product_bundle_item_type.edit_form"
  * )
  */
 class ProductBundleItem extends ContentEntityBase implements BundleItemInterface {

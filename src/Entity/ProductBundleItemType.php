@@ -10,7 +10,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * Defines the product bundle item type entity.
  *
  * @ConfigEntityType(
- *   id = "commerce_product_bundle_i_type",
+ *   id = "commerce_product_bundle_item_type",
  *   label = @Translation("Product bundle item type"),
  *   label_singular = @Translation("product bundle item type"),
  *   label_plural = @Translation("product bundle item types"),
@@ -30,7 +30,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *   },
- *   config_prefix = "commerce_product_bundle_i_type",
+ *   config_prefix = "commerce_product_bundle_item_type",
  *   admin_permission = "Administer product bundle item types",
  *   bundle_of = "commerce_product_bundle_item",
  *   entity_keys = {
@@ -39,10 +39,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}",
+ *     "canonical" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}",
  *     "add-form" = "/admin/commerce/config/product-bundles/item-types/add",
- *     "edit-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_i_type}/delete",
+ *     "edit-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}/edit",
+ *     "delete-form" = "/admin/commerce/config/product-bundles/item-types/{commerce_product_bundle_item_type}/delete",
  *     "collection" = "/admin/commerce/config/product-bundles/item-types"
  *   }
  * )

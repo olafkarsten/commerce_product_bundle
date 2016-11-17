@@ -21,7 +21,7 @@ use Drupal\Core\Url;
  *   - elements: An associative array containing the user information and any
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_commerce_product_bundle_i(array &$variables) {
+function template_preprocess_commerce_product_bundle_item(array &$variables) {
   // Fetch ProductBundleItem Entity Object.
   $product_bundle_item = $variables['elements']['#commerce_product_bundle_item'];
 

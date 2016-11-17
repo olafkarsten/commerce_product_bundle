@@ -22,7 +22,7 @@ class ProductBundleItemTypeDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.commerce_product_bundle_i_type.collection');
+    return new Url('entity.commerce_product_bundle_item_type.collection');
   }
 
   /**
