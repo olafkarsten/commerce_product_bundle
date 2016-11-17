@@ -1,0 +1,4 @@
+services:
+  commerce_product_bundle.lazy_builders:
+    class: Drupal\commerce_product_bundle\ProductBundleLazyBuilders
+    arguments: ['@entity_type.manager', '@entity.form_builder']
