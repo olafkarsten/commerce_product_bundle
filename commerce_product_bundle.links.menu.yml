@@ -16,8 +16,8 @@ entity.commerce_product_bundle_type.collection:
   description: 'List product bundle types'
   parent: 'commerce.configuration'
 
-entity.commerce_product_bundle_item_type.collection:
+entity.commerce_product_bundle_i_type.collection:
   title: 'Product bundle item types'
-  route_name: entity.commerce_product_bundle_item_type.collection
+  route_name: entity.commerce_product_bundle_i_type.collection
   description: 'List product bundle item types'
   parent: 'commerce.configuration'

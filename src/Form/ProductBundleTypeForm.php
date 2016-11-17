@@ -28,7 +28,7 @@ class ProductBundleTypeForm extends EntityForm {
    *   The entity type manager.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
-    $this->bundleItemTypeStorage = $entity_type_manager->getStorage('commerce_product_bundle_item_type');
+    $this->bundleItemTypeStorage = $entity_type_manager->getStorage('commerce_product_bundle_i_type');
   }
 
   /**
