@@ -22,7 +22,7 @@ content:
       trim_length: 600
     third_party_settings: {  }
   bundle_items:
-    type: entity_reference_entity_view
+    type: commerce_product_bundle_add_to_cart
     weight: 3
     label: visually_hidden
     settings:
