@@ -105,11 +105,20 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   protected $max_quantity = 1;
 
   /**
+   * The bundle items current active quantity . In case
+   * of a fresh bundle, that is the default quantity.
+   *
+   * @var int
+   */
+  protected $activeQuantity;
+
+  /**
    * The unit price, if overridden, for each variation offered by this bundle item.
    *
    * @var \Drupal\commerce_price\Price
    */
   protected $unit_price;
+
 
   /**
    * {@inheritdoc}
@@ -223,10 +232,16 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getUnitPrice() {
-    // @todo Proxy the referenced variation(s) price if unit_price is NULL.
     if (!$this->get('unit_price')->isEmpty()) {
       return $this->get('unit_price')->first()->toPrice();
     }
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasUnitPrice(){
+    return $this->get('unit_price')->isEmpty();
   }
 
   /**
@@ -241,9 +256,21 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
+  public function getQuantity() {
+
+    if(isset($this->activeQuantity)) {
+      return $this->activeQuantity();
+    }
+    return $this->getMinimumQuantity();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setQuantity($quantity) {
-    $this->setMinimumQuantity($quantity)
-      ->setMaximumQuantity($quantity);
+
+    // @ToDo We need to check against the min/max constraints
+    $this->activeQuantity = $quantity;
 
     return $this;
   }
