@@ -98,12 +98,21 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    */
   public function getBundleId();
 
+
   /**
-   * Sets the quantity for the referenced variations
-   * as a whole. This is somewhat sugar to preven
+   * Gets the bundle item quantity.
+   *
+   * @return string
+   *   The bundle item quantity
+   */
+  public function getQuantity();
+
+
+  /**
+   * Sets the quantity for the bundle item.
    *
    * @param string $quantity
-   *   The referenced product quantity.
+   *   The bundle item quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called product bundle item entity.
@@ -221,5 +230,12 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * @return Price $unit_price
    */
   public function getUnitPrice();
+
+  /**
+   * Check wether the bundleItem has an own unit price.
+   *
+   * @return bool
+   */
+  public function hasUnitPrice();
 
 }
