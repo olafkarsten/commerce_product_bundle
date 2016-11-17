@@ -114,6 +114,322 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
+  public function getOwner() {
+    return $this->get('uid')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('uid', $uid);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->get('uid')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBundle() {
+    return $this->bundle;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBundleId() {
+    return $this->bundle->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getType() {
+    return $this->get('type');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTitle() {
+    return $this->get('title')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setTitle($title) {
+    $this->set('title', $title);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCreatedTime() {
+    return $this->get('created')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCreatedTime($timestamp) {
+    $this->set('created', $timestamp);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('uid', $account->id());
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isPublished() {
+    return (bool) $this->getEntityKey('status');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPublished($published) {
+    $this->set('status', $published ? TRUE : FALSE);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStores() {
+    // TODO: Proxy the referenced variations.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnitPrice() {
+    // @todo Proxy the referenced variation(s) price if unit_price is NULL.
+    if (!$this->get('unit_price')->isEmpty()) {
+      return $this->get('unit_price')->first()->toPrice();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUnitPrice(Price $unit_price) {
+    $this->set('unit_price', $unit_price);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setQuantity($quantity) {
+    $this->setMinimumQuantity($quantity)
+      ->setMaximumQuantity($quantity);
+
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setMinimumQuantity($minimum_quantity) {
+    $this->set('min_quantity', $minimum_quantity);
+
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setMaximumQuantity($maximum_quantity) {
+    $this->set('max_quantity', $maximum_quantity);
+
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getProductId() {
+    return $this->getProduct()->target_id;
+  }
+
+  /**
+   * Get the referenced product.
+   */
+  public function getProduct() {
+    $product = $this->get('product')->referencedEntities();
+
+    return $product[0];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setProduct(ProductInterface $product) {
+    $this->set('product', $product);
+    return $this;
+  }
+
+  /**
+   * Gets whether the product has variations.
+   *
+   * A product must always have at least one variation, but a newly initialized
+   * (or invalid) product entity might not have any.
+   *
+   * @return bool
+   *   TRUE if the product has variations, FALSE otherwise.
+   */
+  public function hasVariations() {
+    return !$this->get('variations')->isEmpty();
+  }
+
+  /**
+   * Adds a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function addVariation(ProductVariationInterface $variation) {
+    if (!$this->hasVariation($variation)) {
+      $this->get('variations')->appendItem($variation);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Checks if the bundle item has a given variation.
+   *
+   * @param ProductVariationInterface $variation
+   *
+   * @return bool
+   */
+  public function hasVariation(ProductVariationInterface $variation) {
+    return in_array($variation->id(), $this->getVariationIds());
+  }
+
+  /**
+   * Gets the variation IDs.
+   *
+   * @return int[]
+   *   The variation IDs.
+   */
+  public function getVariationIds() {
+    $variation_ids = [];
+    foreach ($this->get('variations') as $field_item) {
+      $variation_ids[] = $field_item->target_id;
+    }
+
+    return $variation_ids;
+  }
+
+  /**
+   * Removes a variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function removeVariation(ProductVariationInterface $variation) {
+    $index = $this->getVariationIndex($variation);
+    if ($index !== FALSE) {
+      $this->get('variations')->offsetUnset($index);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Gets the index of the given variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return int|bool
+   *   The index of the given variation, or FALSE if not found.
+   */
+  protected function getVariationIndex(ProductVariationInterface $variation) {
+    return array_search($variation->id(), $this->getVariationIds());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultVariation() {
+    foreach ($this->getVariations() as $variation) {
+      // Return the first active variation.
+      if ($variation->isActive()) {
+        return $variation;
+      }
+    }
+  }
+
+  /**
+   * Gets the variations.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   *   The variations.
+   */
+  public function getVariations() {
+    $variations = $this->get('variations')->referencedEntities();
+
+    return $this->ensureTranslations($variations);
+  }
+
+  /**
+   * Sets the variations.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
+   *   The variations.
+   *
+   * @return $this
+   */
+  public function setVariations(array $variations) {
+    $this->set('variations', $variations);
+
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getMinimumQuantity() {
+    return $this->min_quantity;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getMaximumQuantity() {
+    return $this->max_quantity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
     $values += array(
@@ -260,18 +576,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Default value callback for 'uid' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getCurrentUserId() {
-    return [\Drupal::currentUser()->id()];
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
@@ -285,308 +589,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
         $translation->setOwnerId(0);
       }
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOwner() {
-    return $this->get('uid')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOwnerId($uid) {
-    $this->set('uid', $uid);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOwnerId() {
-    return $this->get('uid')->target_id;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBundle() {
-    return $this->bundle;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBundleId() {
-    return $this->bundle->id();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getType() {
-    return $this->get('type');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getTitle() {
-    return $this->get('title')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setTitle($title) {
-    $this->set('title', $title);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCreatedTime() {
-    return $this->get('created')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setCreatedTime($timestamp) {
-    $this->set('created', $timestamp);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOwner(UserInterface $account) {
-    $this->set('uid', $account->id());
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isPublished() {
-    return (bool) $this->getEntityKey('status');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPublished($published) {
-    $this->set('status', $published ? TRUE : FALSE);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStores() {
-    // TODO: Proxy the referenced variations.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getUnitPrice() {
-    // @todo Proxy the referenced variation(s) price if unit_price is NULL.
-    if (!$this->get('unit_price')->isEmpty()) {
-      return $this->get('unit_price')->first()->toPrice();
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUnitPrice(Price $unit_price) {
-    $this->set('unit_price', $unit_price);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setQuantity($quantity) {
-    $this->setMinimumQuantity($quantity)
-         ->setMaximumQuantity($quantity);
-
-    return $this;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function setMinimumQuantity($minimum_quantity) {
-    $this->set('min_quantity', $minimum_quantity);
-
-    return $this;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function setMaximumQuantity($maximum_quantity) {
-    $this->set('max_quantity', $maximum_quantity);
-
-    return $this;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getProductId() {
-    return $this->getProduct()->target_id;
-  }
-
-  /**
-   * Get the referenced product.
-   */
-  public function getProduct() {
-    $product = $this->get('product')->referencedEntities();
-
-    return $product[0];
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function setProduct(ProductInterface $product) {
-     $this->set('product', $product);
-    return $this;
-  }
-
-  /**
-   * Gets whether the product has variations.
-   *
-   * A product must always have at least one variation, but a newly initialized
-   * (or invalid) product entity might not have any.
-   *
-   * @return bool
-   *   TRUE if the product has variations, FALSE otherwise.
-   */
-  public function hasVariations() {
-    return !$this->get('variations')->isEmpty();
-  }
-
-  /**
-   * Adds a variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return $this
-   */
-  public function addVariation(ProductVariationInterface $variation) {
-    if (!$this->hasVariation($variation)) {
-      $this->get('variations')->appendItem($variation);
-    }
-
-    return $this;
-  }
-
-  /**
-   * Checks if the bundle item has a given variation.
-   *
-   * @param ProductVariationInterface $variation
-   *
-   * @return bool
-   */
-  public function hasVariation(ProductVariationInterface $variation) {
-    return in_array($variation->id(), $this->getVariationIds());
-  }
-
-  /**
-   * Gets the variation IDs.
-   *
-   * @return int[]
-   *   The variation IDs.
-   */
-  public function getVariationIds() {
-    $variation_ids = [];
-    foreach ($this->get('variations') as $field_item) {
-      $variation_ids[] = $field_item->target_id;
-    }
-
-    return $variation_ids;
-  }
-
-  /**
-   * Removes a variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return $this
-   */
-  public function removeVariation(ProductVariationInterface $variation) {
-    $index = $this->getVariationIndex($variation);
-    if ($index !== FALSE) {
-      $this->get('variations')->offsetUnset($index);
-    }
-
-    return $this;
-  }
-
-  /**
-   * Gets the index of the given variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return int|bool
-   *   The index of the given variation, or FALSE if not found.
-   */
-  protected function getVariationIndex(ProductVariationInterface $variation) {
-    return array_search($variation->id(), $this->getVariationIds());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDefaultVariation() {
-    foreach ($this->getVariations() as $variation) {
-      // Return the first active variation.
-      if ($variation->isActive()) {
-        return $variation;
-      }
-    }
-  }
-
-  /**
-   * Gets the variations.
-   *
-   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *   The variations.
-   */
-  public function getVariations() {
-    $variations = $this->get('variations')->referencedEntities();
-
-    return $this->ensureTranslations($variations);
-  }
-
-  /**
-   * Sets the variations.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
-   *   The variations.
-   *
-   * @return $this
-   */
-  public function setVariations(array $variations) {
-    $this->set('variations', $variations);
-
-    return $this;
   }
 
   /**
@@ -611,17 +613,15 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * @inheritdoc
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
    */
-  public function getMinimumQuantity() {
-    return $this->min_quantity;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getMaximumQuantity() {
-    return $this->max_quantity;
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 
 }
