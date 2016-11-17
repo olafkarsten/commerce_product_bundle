@@ -41,7 +41,7 @@ class ProductBundleItemForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.commerce_product_bundle_item.canonical', ['commerce_product_bundle_item' => $entity->id()]);
+    $form_state->setRedirect('entity.commerce_product_bundle_i.canonical', ['commerce_product_bundle_i' => $entity->id()]);
   }
 
 }

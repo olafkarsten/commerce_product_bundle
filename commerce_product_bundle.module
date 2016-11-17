@@ -38,7 +38,7 @@ function commerce_product_bundle_theme() {
     'commerce_product_bundle' => [
       'render element' => 'elements',
     ],
-    'commerce_product_bundle_item' => [
+    'commerce_product_bundle_i' => [
       'render element' => 'elements',
     ],
   ];
@@ -55,7 +55,7 @@ function commerce_product_bundle_theme_suggestions_product_bundle(array $variabl
  * Implements hook_theme_suggestions_HOOK().
  */
 function commerce_product_bundle_theme_suggestions_product_bundle_i(array $variables) {
-  return _commerce_entity_theme_suggestions('commerce_product_bundle_item', $variables);
+  return _commerce_entity_theme_suggestions('commerce_product_bundle_i', $variables);
 }
 
 /**
@@ -92,7 +92,7 @@ function template_preprocess_commerce_product_bundle(array &$variables) {
  */
 function template_preprocess_commerce_product_bundle_item(array &$variables) {
   /** @var Drupal\commerce_product_bundle\Entity\BundleItemInterface $product_bundle_item */
-  $product_bundle_item = $variables['elements']['#commerce_product_bundle_item'];
+  $product_bundle_item = $variables['elements']['#commerce_product_bundle_i'];
 
   $variables['product_bundle_item_entity'] = $product_bundle_item;
   $variables['product_bundle_item'] = [];
@@ -164,7 +164,7 @@ function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_typ
       'type' => 'entity_reference',
       'cardinality' => FieldStorageConfig::CARDINALITY_UNLIMITED,
       'settings' => [
-        'target_type' => 'commerce_product_bundle_item',
+        'target_type' => 'commerce_product_bundle_i',
       ],
       'locked' => TRUE,
       'translatable' => FALSE,
