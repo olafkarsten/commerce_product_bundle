@@ -27,7 +27,6 @@ class ProductBundleItemTypeForm extends EntityForm {
       '#description' => $this->t("Label for the product bundle item type."),
       '#required' => TRUE,
     ];
-
     $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => $product_bundle_item_type->id(),
@@ -36,8 +35,12 @@ class ProductBundleItemTypeForm extends EntityForm {
       ],
       '#disabled' => !$product_bundle_item_type->isNew(),
     ];
-
-    /* @ToDo You will need additional form elements for your custom properties. */
+    $form['description'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Description'),
+      '#description' => $this->t('This text will be displayed on the <em>Add product bundle item</em> page.'),
+      '#default_value' => $product_bundle_item_type->getDescription(),
+    ];
 
     return $form;
   }

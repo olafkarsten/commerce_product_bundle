@@ -1,44 +1,23 @@
-
-# Product bundle menu items definition
 entity.commerce_product_bundle.collection:
-  title: 'Product bundle list'
+  title: 'Product bundles'
   route_name: entity.commerce_product_bundle.collection
-  description: 'List Product bundle entities'
-  parent: 'commerce.configuration'
-  weight: 100
+  description: 'List product bundles'
+  parent: 'commerce.admin_commerce'
 
+entity.commerce_product_bundle_i.collection:
+  title: 'Product bundle items'
+  route_name: entity.commerce_product_bundle_i.collection
+  description: 'List product bundle items'
+  parent: 'commerce.admin_commerce'
 
-# Product bundle type menu items definition
 entity.commerce_product_bundle_type.collection:
-  title: 'Product bundle type'
+  title: 'Product bundle types'
   route_name: entity.commerce_product_bundle_type.collection
-  description: 'List Product bundle type (bundles)'
+  description: 'List product bundle types'
   parent: 'commerce.configuration'
-  weight: 99
 
-
-# Product bundle item menu items definition
-entity.commerce_product_bundle_item.collection:
-  title: 'Product bundle item list'
-  route_name: entity.commerce_product_bundle_item.collection
-  description: 'List Product bundle item entities'
+entity.commerce_product_bundle_i_type.collection:
+  title: 'Product bundle item types'
+  route_name: entity.commerce_product_bundle_i_type.collection
+  description: 'List product bundle item types'
   parent: 'commerce.configuration'
-  weight: 100
-
-# Product bundle item menu items definition
-entity.commerce_product_bundle_item.collection:
-  title: 'Product bundle item list'
-  route_name: entity.commerce_product_bundle_item.collection
-  description: 'List Product bundle item entities'
-  parent: 'commerce.configuration'
-  weight: 100
-
-
-# Product bundle item type menu items definition
-entity.commerce_product_bundle_item_type.collection:
-  title: 'Product bundle item type'
-  route_name: entity.commerce_product_bundle_item_type.collection
-  description: 'List Product bundle item type (bundles)'
-  parent: 'commerce.configuration'
-  weight: 99
-

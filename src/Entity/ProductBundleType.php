@@ -19,7 +19,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\commerce_product_bundle\ProductBundleTypeHtmlRouteProvider",
+ *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *   },
  *   config_prefix = "commerce_product_bundle_type",
@@ -54,5 +55,69 @@ class ProductBundleType extends ConfigEntityBundleBase implements BundleTypeInte
    * @var string
    */
   protected $label;
+
+  /**
+   * The product bundle type description.
+   *
+   * @var string
+   */
+  protected $description;
+
+  /**
+   * The product bundle item type id.
+   *
+   * @var string
+   */
+  protected $bundleItemType;
+
+  /**
+   * The order item type id.
+   *
+   * @var string
+   */
+  protected $orderItemType;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDescription($description) {
+    $this->description = $description;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBundleItemTypeId($bundle_item_type_id) {
+    $this->bundleItemType = $bundle_item_type_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBundleItemTypeId() {
+    return $this->bundleItemType;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOrderItemTypeId($order_item_type_id) {
+    $this->orderItemType = $order_item_type_id;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOrderItemTypeId() {
+    return $this->orderItemType;
+  }
 
 }

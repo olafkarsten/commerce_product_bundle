@@ -3,12 +3,13 @@ status: true
 dependencies:
   module:
     - commerce_product_bundle
-id: commerce_product_bundle.bundle_items
-field_name: bundle_items
+    - commerce_store
+id: commerce_product_bundle.stores
+field_name: stores
 entity_type: commerce_product_bundle
 type: entity_reference
 settings:
-  target_type: commerce_product_bundle_i
+  target_type: commerce_store
 module: core
 locked: true
 cardinality: -1
