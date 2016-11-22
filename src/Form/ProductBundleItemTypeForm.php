@@ -65,6 +65,9 @@ class ProductBundleItemTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($product_bundle_item_type->urlInfo('collection'));
+    if ($status == SAVED_NEW) {
+      commerce_product_bundle_add_variations_field($product_bundle_item_type);
+    }
   }
 
 }

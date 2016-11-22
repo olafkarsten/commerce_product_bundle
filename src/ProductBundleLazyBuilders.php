@@ -56,7 +56,7 @@ class ProductBundleLazyBuilders {
     $product_bundle = $this->entityTypeManager->getStorage('commerce_product_bundle')->load($product_bundle_id);
     $order_item = $order_item_storage->createFromPurchasableEntity($product_bundle);
     $form_state_additions = [
-      'product' => $product_bundle,
+      'product_bundle' => $product_bundle,
       'view_mode' => $view_mode,
       // This is where we could pass settings into the form.
       // 'settings' => [

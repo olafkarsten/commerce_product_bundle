@@ -152,6 +152,14 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function getMaximumQuantity();
 
   /**
+   * Gets the bundle item's product id.
+   *
+   * @return int
+   *   The bundle item's product id.
+   */
+  public function getProductId();
+
+  /**
    * Get the referenced product.
    *
    * @return null | \Drupal\commerce_product\Entity\ProductInterface
@@ -179,11 +187,38 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function setVariations(array $variations);
 
   /**
-   * Get the referenced product variations.
+   * Gets whether the bundle item has restricted variations.
+   *
+   * @todo Consider how this may change - variations may be set, or they may
+   *   be derived from the fallback -- a product's active variations if
+   *   bundle has not specified them.
+   *
+   * @return bool
+   *   TRUE if the bundle item has restricted available variations, FALSE otherwise.
+   */
+  public function hasVariations();
+
+  /**
+   * Gets the referenced product variations.
+   *
+   * @todo: What to do about variations that are not enabled on their products?
+   *  - They could be checked at bundle creation time but then they could
+   *    become inactive after bundle creation ... what then?
+   *    - Proposed: Check in both situations;
+   *      - Do not show variation if inactive during creation
+   *      - Throw error on load if variation is no longer active.
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
    */
   public function getVariations();
+
+  /**
+   * Gets the variation IDs.
+   *
+   * @return int[]
+   *   The variation IDs.
+   */
+  public function getVariationIds();
 
   /**
    * Get the default variation.
@@ -191,6 +226,26 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface
    */
   public function getDefaultVariation();
+
+  /**
+   * Checks if the bundle item has a given variation.
+   *
+   * @param ProductVariationInterface $variation
+   *
+   * @return bool
+   */
+  public function hasVariation(ProductVariationInterface $variation);
+
+  /**
+   * Gets the index of the given variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return int|bool
+   *   The index of the given variation, or FALSE if not found.
+   */
+  public function getVariationIndex(ProductVariationInterface $variation);
 
   /**
    * Adds a variation.

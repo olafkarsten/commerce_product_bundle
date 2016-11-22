@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_product_bundle.commerce_product_bundle_type.default
+    - field.storage.commerce_product_bundle_i.variations
+id: commerce_product_bundle_i.default.variations
+field_name: variations
+entity_type: commerce_product_bundle_i
+bundle: default
+label: 'Variations'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product_variation'
+  handler_settings: {  }
+field_type: entity_reference
