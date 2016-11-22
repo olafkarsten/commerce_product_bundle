@@ -223,13 +223,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function getStores() {
-    // TODO: Proxy the referenced variations.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getUnitPrice() {
     if (!$this->get('unit_price')->isEmpty()) {
       return $this->get('unit_price')->first()->toPrice();
@@ -293,14 +286,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
   public function getProductId() {
     return $this->getProduct()->target_id;
   }
 
   /**
-   * Get the referenced product.
+   * {@inheritdoc}
    */
   public function getProduct() {
     $product = $this->get('product')->referencedEntities();
@@ -317,25 +310,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Gets whether the product has variations.
-   *
-   * A product must always have at least one variation, but a newly initialized
-   * (or invalid) product entity might not have any.
-   *
-   * @return bool
-   *   TRUE if the product has variations, FALSE otherwise.
+   * {@inheritdoc}
    */
   public function hasVariations() {
     return !$this->get('variations')->isEmpty();
   }
 
   /**
-   * Adds a variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function addVariation(ProductVariationInterface $variation) {
     if (!$this->hasVariation($variation)) {
@@ -346,21 +328,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Checks if the bundle item has a given variation.
-   *
-   * @param ProductVariationInterface $variation
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function hasVariation(ProductVariationInterface $variation) {
     return in_array($variation->id(), $this->getVariationIds());
   }
 
   /**
-   * Gets the variation IDs.
-   *
-   * @return int[]
-   *   The variation IDs.
+   * {@inheritdoc}
    */
   public function getVariationIds() {
     $variation_ids = [];
@@ -372,12 +347,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Removes a variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function removeVariation(ProductVariationInterface $variation) {
     $index = $this->getVariationIndex($variation);
@@ -389,15 +359,9 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Gets the index of the given variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return int|bool
-   *   The index of the given variation, or FALSE if not found.
+   * {@inheritdoc}
    */
-  protected function getVariationIndex(ProductVariationInterface $variation) {
+  public function getVariationIndex(ProductVariationInterface $variation) {
     return array_search($variation->id(), $this->getVariationIds());
   }
 
@@ -414,24 +378,21 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * Gets the variations.
-   *
-   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *   The variations.
+   * {@inheritdoc}
    */
   public function getVariations() {
     $variations = $this->get('variations')->referencedEntities();
+    if (empty($variations)) {
+      // @todo Inject variationStorage?
+      $variationStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_variation');
+      $variations = $variationStorage->loadEnabled($this->getProduct());
+    }
 
     return $this->ensureTranslations($variations);
   }
 
   /**
-   * Sets the variations.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
-   *   The variations.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function setVariations(array $variations) {
     $this->set('variations', $variations);
@@ -562,7 +523,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDisplayConfigurable('view', TRUE);
 
     // Variations added in commerce_product_bundle.module.
-    // @see ___________.
+    // @see commerce_product_bundle_add_variations_field().
 
     $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Minimum Quantity'))

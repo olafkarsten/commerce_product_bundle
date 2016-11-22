@@ -152,7 +152,7 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
    * {@inheritdoc}
    */
   public function getStores() {
-    // TODO: Collect the stores of the bundleItems.
+    return $this->get('stores')->referencedEntities();
   }
 
   /**
@@ -170,12 +170,7 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
    * {@inheritdoc}
    */
   public function getOrderItemTitle() {
-    $label = $this->label();
-    if (!$label) {
-      $label = $this->generateTitle();
-    }
-
-    return $label;
+    return $this->label();
   }
 
   /**

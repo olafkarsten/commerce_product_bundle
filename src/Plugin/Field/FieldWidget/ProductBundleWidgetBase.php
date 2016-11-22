@@ -108,9 +108,11 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     // Assumes that the bundle item ID comes from an $element['bundle_item'] built
     // in formElement().
     // @todo Ensure the structure and values of this array are correct.
+    // @todo Add bundle_items -> variations to field_selected_variations here.
+
     foreach ($values as $key => $value) {
       $values[$key] = [
-        'target_id' => $value['bundle_item'],
+        'target_id' => $value['bundle'],
       ];
     }
 

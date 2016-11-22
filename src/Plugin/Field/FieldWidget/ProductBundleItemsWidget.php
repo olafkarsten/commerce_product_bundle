@@ -4,6 +4,7 @@ namespace Drupal\commerce_product_bundle\Plugin\Field\FieldWidget;
 
 use Drupal\commerce_product\ProductAttributeFieldManagerInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @FieldWidget(
  *   id = "commerce_product_bundle_items",
- *   label = @Translation("Product variation attributes"),
+ *   label = @Translation("Product bundle items"),
  *   field_types = {
  *     "entity_reference"
  *   }
@@ -95,23 +96,45 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $product_bundle */
+    $bundle = $form_state->get('product_bundle');
+    $element['bundle'] = [
+      '#type' => 'value',
+      '#value' => $bundle->id()
+    ];
+    // @todo Probably use field_selected_variations
+    // @todo Probably need qty fields for each variation - :/
+    $element['bundle_items'] = [];
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
+    $parents = array_merge($element['#field_parents'], [$items->getName(), $delta]);
+    foreach ($bundle->getBundleItems() as $bundle_item) {
+      $parents = array_merge($parents, ['bundle_items', $bundle_item->id()]);
+      $element['bundle_items'][$bundle_item->id()] = $this->getBundleItemForm($bundle_item, $form, $form_state, $parents);
+    }
 
-    /**
-     * @todo The below logic will need to be iterated for each item in the bundle.
-     */
+    return $element;
+  }
+
+  private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
+    $bundle_item_form = [
+      '#prefix' => $bundle_item->getTitle()
+    ];
 
     /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
-    $product = $form_state->get('product');
-    // @todo Load only the selected/limited variations if they are set.
-    $variations = $this->variationStorage->loadEnabled($product);
+    $product = $bundle_item->getProduct();
+
+    /** @var \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations */
+    $variations = $bundle_item->getVariations();
+
     if (count($variations) === 0) {
       // Nothing to purchase, tell the parent form to hide itself.
-      $form_state->set('hide_form', TRUE);
-      $element['variation'] = [
+      // @todo Only hide the entire bundle_items form when there are no variations to select in any item.
+      // $form_state->set('hide_form', TRUE);
+      $bundle_item_form['variation'] = [
         '#type' => 'value',
         '#value' => 0,
       ];
-      return $element;
+      return $bundle_item_form;
     }
     elseif (count($variations) === 1) {
       /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation */
@@ -120,49 +143,49 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       // customer should still see the attribute widgets, to know what they're
       // buying (e.g a product only available in the Small size).
       if (empty($this->attributeFieldManager->getFieldDefinitions($selected_variation->bundle()))) {
-        $element['variation'] = [
+        $bundle_item_form['variation'] = [
           '#type' => 'value',
           '#value' => $selected_variation->id(),
         ];
-        return $element;
+        return $bundle_item_form;
       }
     }
 
-    // Build the full attribute form.
-    $wrapper_id = Html::getUniqueId('commerce-product-add-to-cart-form');
-    $form += [
+    // Build the bundle item's full attribute form.
+    $wrapper_id = Html::getUniqueId('commerce-product-bundle-item-add-to-cart-form');
+    $bundle_item_form += [
       '#wrapper_id' => $wrapper_id,
       '#prefix' => '<div id="' . $wrapper_id . '">',
       '#suffix' => '</div>',
     ];
-    $parents = array_merge($element['#field_parents'], [$items->getName(), $delta]);
+
     $user_input = (array) NestedArray::getValue($form_state->getUserInput(), $parents);
     if (!empty($user_input)) {
-      $selected_variation = $this->selectBundleItemsVariationsFromUserInput($variations, $user_input);
+      $selected_variation = $this->selectVariationFromUserInput($variations, $user_input);
     }
     else {
-      $selected_variation = $this->bundleItemStorage->loadFromContext($product);
+      $selected_variation = $this->variationStorage->loadFromContext($product);
       // The returned variation must also be enabled.
       if (!in_array($selected_variation, $variations)) {
         $selected_variation = reset($variations);
       }
     }
 
-    $element['variation'] = [
+    $bundle_item_form['variation'] = [
       '#type' => 'value',
       '#value' => $selected_variation->id(),
     ];
     // Set the selected variation in the form state for our AJAX callback.
-    $form_state->set('selected_variation', $selected_variation->id());
+    $form_state->set('bundle_items][' . $bundle_item->id() . '][selected_variation', $selected_variation->id());
 
-    $element['attributes'] = [
+    $bundle_item_form['attributes'] = [
       '#type' => 'container',
       '#attributes' => [
         'class' => ['attribute-widgets'],
       ],
     ];
-    foreach ($this->getAttributeInfo($selected_variation, $variations) as $field_name => $attribute) {
-      $element['attributes'][$field_name] = [
+    foreach ($this->getItemAttributeInfo($selected_variation, $variations) as $field_name => $attribute) {
+      $bundle_item_form['attributes'][$field_name] = [
         '#type' => $attribute['element_type'],
         '#title' => $attribute['title'],
         '#options' => $attribute['values'],
@@ -170,32 +193,32 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
         '#default_value' => $selected_variation->getAttributeValueId($field_name),
         '#ajax' => [
           'callback' => [get_class($this), 'ajaxRefresh'],
-          'wrapper' => $form['#wrapper_id'],
+          'wrapper' => $bundle_item_form['#wrapper_id'],
         ],
       ];
       // Convert the _none option into #empty_value.
-      if (isset($element['attributes'][$field_name]['#options']['_none'])) {
-        if (!$element['attributes'][$field_name]['#required']) {
-          $element['attributes'][$field_name]['#empty_value'] = '';
+      if (isset($bundle_item_form['attributes'][$field_name]['#options']['_none'])) {
+        if (!$bundle_item_form['attributes'][$field_name]['#required']) {
+          $bundle_item_form['attributes'][$field_name]['#empty_value'] = '';
         }
-        unset($element['attributes'][$field_name]['#options']['_none']);
+        unset($bundle_item_form['attributes'][$field_name]['#options']['_none']);
       }
-      // 1 required value -> Disable the element to skip unneeded ajax calls.
+      // 1 required value -> Disable the bundle_item_variations to skip unneeded ajax calls.
       if ($attribute['required'] && count($attribute['values']) === 1) {
-        $element['attributes'][$field_name]['#disabled'] = TRUE;
+        $bundle_item_form['attributes'][$field_name]['#disabled'] = TRUE;
       }
       // Optimize the UX of optional attributes:
       // - Hide attributes that have no values.
       // - Require attributes that have a value on each variation.
-      if (empty($element['attributes'][$field_name]['#options'])) {
-        $element['attributes'][$field_name]['#access'] = FALSE;
+      if (empty($bundle_item_form['attributes'][$field_name]['#options'])) {
+        $bundle_item_form['attributes'][$field_name]['#access'] = FALSE;
       }
-      if (!isset($element['attributes'][$field_name]['#empty_value'])) {
-        $element['attributes'][$field_name]['#required'] = TRUE;
+      if (!isset($bundle_item_form['attributes'][$field_name]['#empty_value'])) {
+        $bundle_item_form['attributes'][$field_name]['#required'] = TRUE;
       }
     }
 
-    return $element;
+    return $bundle_item_form;
   }
 
   /**
@@ -212,30 +235,25 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
    *   The selected variations for each bundle item in the bundle.
    */
-  protected function selectBundleItemsVariationsFromUserInput(array $bundle_items, array $user_input) {
+  protected function selectVariationFromUserInput(array $bundle_items, array $user_input) {
+    $current_variation = reset($bundle_items);
+    if (!empty($user_input)) {
+      $attributes = $user_input['attributes'];
+      foreach ($bundle_items as $variation) {
+        $match = TRUE;
+        foreach ($attributes as $field_name => $value) {
+          if ($variation->getAttributeValueId($field_name) != $value) {
+            $match = FALSE;
+          }
+        }
+        if ($match) {
+          $current_variation = $variation;
+          break;
+        }
+      }
+    }
 
-    // @todo Loop over each bundle item and get the variations.
-
-    $current_bundle_items_variations = [];
-
-    // $current_variation = reset($bundle_items);
-    // if (!empty($user_input)) {
-    //   $attributes = $user_input['attributes'];
-    //   foreach ($bundle_items as $variation) {
-    //     $match = TRUE;
-    //     foreach ($attributes as $field_name => $value) {
-    //       if ($variation->getAttributeValueId($field_name) != $value) {
-    //         $match = FALSE;
-    //       }
-    //     }
-    //     if ($match) {
-    //       $current_variation = $variation;
-    //       break;
-    //     }
-    //   }
-    // }
-
-    return $current_bundle_items_variations;
+    return $current_variation;
   }
 
   /**
@@ -251,7 +269,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    * @return array[]
    *   The attribute information, keyed by field name.
    */
-  protected function getAttributeInfo(ProductVariationInterface $selected_variation, array $variations) {
+  protected function getItemAttributeInfo(ProductVariationInterface $selected_variation, array $variations) {
     $attributes = [];
     $field_definitions = $this->attributeFieldManager->getFieldDefinitions($selected_variation->bundle());
     $field_map = $this->attributeFieldManager->getFieldMap($selected_variation->bundle());
