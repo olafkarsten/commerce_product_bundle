@@ -107,9 +107,8 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     // @todo Probably need qty fields for each variation - :/
     $element['bundle_items'] = [];
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
-    $parents = array_merge($element['#field_parents'], [$items->getName(), $delta]);
     foreach ($bundle->getBundleItems() as $bundle_item) {
-      $parents = array_merge($parents, ['bundle_items', $bundle_item->id()]);
+      $parents = [$items->getName(), $delta, 'bundle_items', $bundle_item->id()];
       $element['bundle_items'][$bundle_item->id()] = $this->getBundleItemForm($bundle_item, $form, $form_state, $parents);
     }
 
@@ -143,9 +142,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
   }
 
   private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
-    $bundle_item_form = [
-      '#prefix' => $bundle_item->getTitle()
-    ];
+    $bundle_item_form = [];
 
     /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
     $product = $bundle_item->getProduct();
@@ -203,7 +200,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       '#value' => $selected_variation->id(),
     ];
     // Set the selected variation in the form state for our AJAX callback.
-    $form_state->set('bundle_items][' . $bundle_item->id() . '][selected_variation', $selected_variation->id());
+    $form_state->set('purchased_entity][widget][0][bundle_items][' . $bundle_item->id() . '][selected_variation', $selected_variation->id());
 
     $bundle_item_form['attributes'] = [
       '#type' => 'container',

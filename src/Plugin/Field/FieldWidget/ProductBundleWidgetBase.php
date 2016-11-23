@@ -5,6 +5,7 @@ namespace Drupal\commerce_product_bundle\Plugin\Field\FieldWidget;
 use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product\Event\ProductVariationAjaxChangeEvent;
 use Drupal\commerce_product\Event\ProductEvents;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
@@ -132,9 +133,13 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     $request = \Drupal::request();
     $route_match = \Drupal::service('current_route_match');
     /** @var \Drupal\Core\Ajax\AjaxResponse $response */
-    $response = $ajax_renderer->renderResponse($form, $request, $route_match);
+    $variation_parents = array_slice($form_state->getTriggeringElement()['#array_parents'], 0, 5);
+    $variation_form = NestedArray::getValue($form, $variation_parents);
+    $response = $ajax_renderer->renderResponse($variation_form, $request, $route_match);
 
-    $variation = ProductVariation::load($form_state->get('selected_variation'));
+    $selected_variation_key = implode('][', array_merge($variation_parents, ['selected_variation']));
+    $selected_variation_id = $form_state->get($selected_variation_key);
+    $variation = ProductVariation::load($selected_variation_id);
     /** @var \Drupal\commerce_product\ProductVariationFieldRendererInterface $variation_field_renderer */
     $variation_field_renderer = \Drupal::service('commerce_product.variation_field_renderer');
     $view_mode = $form_state->get('form_display')->getMode();
