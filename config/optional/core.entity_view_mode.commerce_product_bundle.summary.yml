@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_product_bundle
+id: commerce_product_bundle.summary
+label: Summary
+targetEntityType: commerce_product_bundle
+cache: true

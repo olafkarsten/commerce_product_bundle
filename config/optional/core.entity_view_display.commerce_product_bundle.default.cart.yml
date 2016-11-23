@@ -7,6 +7,9 @@ dependencies:
     - field.field.commerce_product_bundle.default.body
     - field.field.commerce_product_bundle.default.bundle_items
     - field.field.commerce_product_bundle.default.stores
+  enforced:
+    module:
+      - commerce_cart
 id: commerce_product_bundle.default.cart
 targetEntityType: commerce_product_bundle
 bundle: default

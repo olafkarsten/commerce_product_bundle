@@ -1,8 +1,10 @@
 langcode: en
 status: true
 dependencies:
-  module:
-    - commerce_product_bundle
+  enforced:
+    module:
+      - commerce_cart
+      - commerce_product_bundle
 id: commerce_product_bundle.cart
 label: Cart
 targetEntityType: commerce_product_bundle

@@ -3,14 +3,13 @@ status: true
 dependencies:
   module:
     - commerce_order
-    - commerce_product
-id: commerce_order_item.field_selected_variations
-field_name: field_selected_variations
+    - commerce_product_bundle
+id: commerce_order_item.field_bundle_item_selections
+field_name: field_bundle_item_selections
 entity_type: commerce_order_item
-type: entity_reference
-settings:
-  target_type: commerce_product_variation
-module: core
+type: commerce_product_bundle_item_selection
+settings: {  }
+module: commerce_product_bundle
 locked: false
 cardinality: -1
 translatable: true

@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_product_bundle\Plugin\Field\FieldWidget;
 
+use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_product\ProductAttributeFieldManagerInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
@@ -112,7 +113,33 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       $element['bundle_items'][$bundle_item->id()] = $this->getBundleItemForm($bundle_item, $form, $form_state, $parents);
     }
 
+    $form['#entity_builders'][] = [$this, 'addBundleItemSelections'];
+
     return $element;
+  }
+
+  /**
+   * Entity builder: updates the order item with the bundle item selections.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   * @param \Drupal\commerce_order\Entity\OrderItemInterface $order_item
+   *   The entity updated with the submitted values.
+   * @param array $form
+   *   The complete form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function addBundleItemSelections($entity_type, OrderItemInterface $order_item, array $form, FormStateInterface $form_state) {
+    $bundle_item_selections = [];
+    foreach ($form_state->getValue('purchased_entity')[0]['bundle_items'] as $item => $selection) {
+      $bundle_item_selections[] = [
+        'bundle_item' => $item,
+        'selected_entity' => $selection['variation'],
+        'selected_qty' => '1', // @todo implement quantity field
+      ];
+    }
+    $order_item->set('field_bundle_item_selections', $bundle_item_selections);
   }
 
   private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
