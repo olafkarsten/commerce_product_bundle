@@ -117,30 +117,6 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     return $element;
   }
 
-  /**
-   * Entity builder: updates the order item with the bundle item selections.
-   *
-   * @param string $entity_type
-   *   The entity type.
-   * @param \Drupal\commerce_order\Entity\OrderItemInterface $order_item
-   *   The entity updated with the submitted values.
-   * @param array $form
-   *   The complete form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public function addBundleItemSelections($entity_type, OrderItemInterface $order_item, array $form, FormStateInterface $form_state) {
-    $bundle_item_selections = [];
-    foreach ($form_state->getValue('purchased_entity')[0]['bundle_items'] as $item => $selection) {
-      $bundle_item_selections[] = [
-        'bundle_item' => $item,
-        'selected_entity' => $selection['variation'],
-        'selected_qty' => '1', // @todo implement quantity field
-      ];
-    }
-    $order_item->set('field_bundle_item_selections', $bundle_item_selections);
-  }
-
   private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
     $bundle_item_form = [];
 
@@ -246,24 +222,24 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
   }
 
   /**
-   * Selects variation(s) from bundle items from user input.
+   * Selects a product variation from user input.
    *
    * If there's no user input (form viewed for the first time), the default
    * variations are returned.
    *
-   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface[] $bundle_items
-   *   An array of product bundle items.
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
+   *   An array of product variations.
    * @param array $user_input
    *   The user input.
    *
-   * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *   The selected variations for each bundle item in the bundle.
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface
+   *   The selected variation.
    */
-  protected function selectVariationFromUserInput(array $bundle_items, array $user_input) {
-    $current_variation = reset($bundle_items);
+  protected function selectVariationFromUserInput(array $variations, array $user_input) {
+    $current_variation = reset($variations);
     if (!empty($user_input)) {
       $attributes = $user_input['attributes'];
-      foreach ($bundle_items as $variation) {
+      foreach ($variations as $variation) {
         $match = TRUE;
         foreach ($attributes as $field_name => $value) {
           if ($variation->getAttributeValueId($field_name) != $value) {
@@ -282,8 +258,6 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
 
   /**
    * Gets the attribute information for the selected product variation.
-   *
-   * @todo Confirm: I believe this will still be necessary for each variation of each bundle item.
    *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation
    *   The selected product variation.
@@ -337,8 +311,6 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
   /**
    * Gets the attribute values of a given set of variations.
    *
-   * @todo Confirm: I believe this will still be necessary for each variation of each bundle item.
-   *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
    *   The variations.
    * @param string $field_name
@@ -364,6 +336,30 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     }
 
     return $values;
+  }
+
+  /**
+   * Entity builder: updates the order item with the bundle item selections.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   * @param \Drupal\commerce_order\Entity\OrderItemInterface $order_item
+   *   The entity updated with the submitted values.
+   * @param array $form
+   *   The complete form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function addBundleItemSelections($entity_type, OrderItemInterface $order_item, array $form, FormStateInterface $form_state) {
+    $bundle_item_selections = [];
+    foreach ($form_state->getValue('purchased_entity')[0]['bundle_items'] as $item => $selection) {
+      $bundle_item_selections[] = [
+        'bundle_item' => $item,
+        'selected_entity' => $selection['variation'],
+        'selected_qty' => '1', // @todo implement quantity field
+      ];
+    }
+    $order_item->set('field_bundle_item_selections', $bundle_item_selections);
   }
 
 }
