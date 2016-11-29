@@ -199,9 +199,12 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function hasVariations();
 
   /**
-   * Gets the referenced product variations.
+   * Gets the product variations limited by the bundle item or enabled on the product.
    *
-   * @todo: What to do about variations that are not enabled on their products?
+   * This method should return the variations, if any, specified (limited) by
+   * the bundle item, or fall back to all active variations of the referenced product.
+   *
+   * @todo: What to do about [limited] variations that are not enabled on their products?
    *  - They could be checked at bundle creation time but then they could
    *    become inactive after bundle creation ... what then?
    *    - Proposed: Check in both situations;

@@ -128,8 +128,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
 
     if (count($variations) === 0) {
       // Nothing to purchase, tell the parent form to hide itself.
-      // @todo Only hide the entire bundle_items form when there are no variations to select in any item.
-      // $form_state->set('hide_form', TRUE);
+      $form_state->set('hide_form', TRUE);
       $bundle_item_form['variation'] = [
         '#type' => 'value',
         '#value' => 0,
@@ -139,16 +138,18 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     elseif (count($variations) === 1) {
       /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation */
       $selected_variation = reset($variations);
-      // If there is 1 variation but there are attribute fields, then the
-      // customer should still see the attribute widgets, to know what they're
-      // buying (e.g a product only available in the Small size).
-      if (empty($this->attributeFieldManager->getFieldDefinitions($selected_variation->bundle()))) {
-        $bundle_item_form['variation'] = [
-          '#type' => 'value',
-          '#value' => $selected_variation->id(),
-        ];
-        return $bundle_item_form;
-      }
+      // For regular products, from which this logic was adapted, the variation
+      // form is only hidden (with simply this value stored) when the variation
+      // has no attribute fields (to show the customer which variation they are
+      // purchasing). But since the product bundle is expected to indicate the
+      // items in the bundle, and to avoid unnecessary UI clutter, we hide all
+      // attribute widgets when there is only one variation.
+      // Compare this with ProductVariationAttributesWidget::formElement.
+      $bundle_item_form['variation'] = [
+        '#type' => 'value',
+        '#value' => $selected_variation->id(),
+      ];
+      return $bundle_item_form;
     }
 
     // Build the bundle item's full attribute form.
