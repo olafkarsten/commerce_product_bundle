@@ -103,8 +103,6 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       '#type' => 'value',
       '#value' => $bundle->id()
     ];
-    // @todo Probably use field_selected_variations
-    // @todo Probably need qty fields for each variation - :/
     $element['bundle_items'] = [];
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
     foreach ($bundle->getBundleItems() as $bundle_item) {
@@ -118,13 +116,39 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
   }
 
   private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
-    $bundle_item_form = [];
+    $bundle_item_form = [
+      'title' => [
+        '#type' => 'markup',
+        '#markup' => $bundle_item->getTitle(),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>'
+      ]
+    ];
 
     /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
     $product = $bundle_item->getProduct();
 
     /** @var \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations */
     $variations = $bundle_item->getVariations();
+
+    $min_qty = $bundle_item->getMinimumQuantity();
+    $max_qty = $bundle_item->getMaximumQuantity();
+    if ($min_qty === $max_qty) {
+      $bundle_item_form['qty'] = [
+        '#type' => 'value',
+        '#value' => $bundle_item->getQuantity()
+      ];
+    }
+    else {
+      $bundle_item_form['qty'] = [
+        '#type' => 'number',
+        '#title' => $this->t('Quantity'),
+        '#min' => $min_qty,
+        '#max' => $max_qty,
+        '#default_value' => $min_qty,
+        '#step' => 1
+      ];
+    }
 
     if (count($variations) === 0) {
       // Nothing to purchase, tell the parent form to hide itself.
@@ -357,7 +381,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       $bundle_item_selections[] = [
         'bundle_item' => $item,
         'selected_entity' => $selection['variation'],
-        'selected_qty' => '1', // @todo implement quantity field
+        'selected_qty' => $selection['qty'],
       ];
     }
     $order_item->set('field_bundle_item_selections', $bundle_item_selections);
