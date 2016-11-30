@@ -48,14 +48,14 @@ function commerce_product_bundle_theme() {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function commerce_product_bundle_theme_suggestions_product_bundle(array $variables) {
+function commerce_product_bundle_theme_suggestions_commerce_product_bundle(array $variables) {
   return _commerce_entity_theme_suggestions('commerce_product_bundle', $variables);
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function commerce_product_bundle_theme_suggestions_product_bundle_i(array $variables) {
+function commerce_product_bundle_theme_suggestions_commerce_product_bundle_i(array $variables) {
   return _commerce_entity_theme_suggestions('commerce_product_bundle_i', $variables);
 }
 
