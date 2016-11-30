@@ -115,6 +115,21 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     return $element;
   }
 
+  /**
+   * Gets the child form element for a given bundle item.
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *   The bundle item.
+   * @param array $form
+   *   The complete form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $parents
+   *   The parents of the bundle item form element in the form structure.
+   *
+   * @return array
+   *   A renderable form array for the given bundle item.
+   */
   private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
     $bundle_item_form = [
       'title' => [
