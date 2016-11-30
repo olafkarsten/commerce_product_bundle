@@ -224,8 +224,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getUnitPrice() {
-    if (!$this->get('unit_price')->isEmpty()) {
+    if (!$this->get('unit_price')->isEmpty() && !$this->get('unit_price')->first()->toPrice()->isZero()) {
       return $this->get('unit_price')->first()->toPrice();
+    }
+    // @todo: Figure out how to get the currently selected variation
+    // without holding state in this object.
+    // @see https://www.drupal.org/node/2831613
+    elseif (!$this->getDefaultVariation()->getUnitPrice()->isEmpty()) {
+      return $this->getDefaultVariation()->getUnitPrice()->first()->toPrice();
     }
   }
 

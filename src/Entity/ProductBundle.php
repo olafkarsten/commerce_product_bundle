@@ -7,6 +7,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\commerce_price\Price;
 use Drupal\user\UserInterface;
 
 /**
@@ -177,9 +178,18 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
    * {@inheritdoc}
    */
   public function getPrice() {
-     if (!$this->get('bundle_price')->isEmpty()) {
-       return $this->get('bundle_price')->first()->toPrice();
-     }
+    if (!$this->get('bundle_price')->isEmpty() && !$this->get('bundle_price')->first()->toPrice()->isZero()) {
+      return $this->get('bundle_price')->first()->toPrice();
+    }
+    else {
+      $currency_code = \Drupal::service('commerce_store.store_context')->getStore()->getDefaultCurrencyCode();
+      $bundle_price = new Price('0.00', $currency_code);
+      foreach ($this->getBundleItems() as $item) {
+        $bundle_price = $bundle_price->add($item->getUnitPrice());
+      }
+
+      return $bundle_price;
+    }
   }
 
   /**

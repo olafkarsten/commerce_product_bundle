@@ -98,7 +98,6 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    */
   public function getBundleId();
 
-
   /**
    * Gets the bundle item quantity.
    *
@@ -106,7 +105,6 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *   The bundle item quantity
    */
   public function getQuantity();
-
 
   /**
    * Sets the quantity for the bundle item.
