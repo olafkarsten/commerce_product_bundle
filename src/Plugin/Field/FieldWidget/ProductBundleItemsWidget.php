@@ -130,7 +130,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    * @return array
    *   A renderable form array for the given bundle item.
    */
-  private function getBundleItemForm(BundleItemInterface $bundle_item, &$form, FormStateInterface $form_state, array $parents) {
+  private function getBundleItemForm(BundleItemInterface $bundle_item, array &$form, FormStateInterface $form_state, array $parents) {
     $bundle_item_form = [
       'title' => [
         '#type' => 'markup',
