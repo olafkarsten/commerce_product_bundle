@@ -121,8 +121,10 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Sets the minimum quantity of the product variations.
    *
    * @param int $minimum_quantity
+   *   The minimum quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   *   The called product bundle item entity.
    */
   public function setMinimumQuantity($minimum_quantity);
 
@@ -130,29 +132,33 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Gets the minimum quantity of the product variations.
    *
    * @return int
+   *   The minimum quantity.
    */
   public function getMinimumQuantity();
 
   /**
    * Sets the maximum quantity of the product variations.
    *
-   * @param $minimum_quantity
+   * @param int $maximum_quantity
+   *   The maximum quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   *   The called product bundle item entity.
    */
-  public function setMaximumQuantity($minimum_quantity);
+  public function setMaximumQuantity($maximum_quantity);
 
   /**
    * Gets the maximum quantity of the product variations.
    *
    * @return int
+   *   The maximum quantity.
    */
   public function getMaximumQuantity();
 
   /**
    * Gets the bundle item's product id.
    *
-   * @return int
+   * @return string|int
    *   The bundle item's product id.
    */
   public function getProductId();
@@ -160,8 +166,9 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Get the referenced product.
    *
-   * @return null | \Drupal\commerce_product\Entity\ProductInterface
-   *    The referenced commerce product.
+   * @return null|\Drupal\commerce_product\Entity\ProductInterface
+   *    The referenced commerce product or null
+   *    if no product is referenced.
    */
   public function getProduct();
 
@@ -169,8 +176,9 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Set the referenced product.
    *
    * @param \Drupal\commerce_product\Entity\ProductInterface $product
+   *    The product.
    *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   * @return $this
    */
   public function setProduct(ProductInterface $product);
 
@@ -180,7 +188,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
    *   The variations.
    *
-   * @return $this
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   *   The called product bundle item entity.
    */
   public function setVariations(array $variations);
 
@@ -188,8 +197,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Gets whether the bundle item has restricted variations.
    *
    * @todo Consider how this may change - variations may be set, or they may
-   *   be derived from the fallback -- a product's active variations if
-   *   bundle has not specified them.
+   * be derived from the fallback -- a product's active variations if
+   * bundle has not specified them.
    *
    * @return bool
    *   TRUE if the bundle item has restricted available variations, FALSE otherwise.
@@ -210,6 +219,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *      - Throw error on load if variation is no longer active.
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
+   *    Array of product variations.
    */
   public function getVariations();
 
@@ -225,15 +235,19 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Get the default variation.
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface
+   *    The default product variation.
    */
   public function getDefaultVariation();
 
   /**
    * Checks if the bundle item has a given variation.
    *
-   * @param ProductVariationInterface $variation
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The product variation.
    *
    * @return bool
+   *   True if the bundle item has this product variation
+   *    referenced, false if not.
    */
   public function hasVariation(ProductVariationInterface $variation);
 
@@ -272,7 +286,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Sets the price of one unit of the referenced
    * product variations.
    *
-   * @param Price $unit_price
+   * @param \Drupal\commerce_price\Price $unit_price
+   *   The unit price.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called product bundle item entity.
@@ -283,7 +298,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Gets the price of one unit of the referenced
    * product variations.
    *
-   * @return Price $unit_price
+   * @return \Drupal\commerce_price\Price
+   *   The unit price.
    */
   public function getUnitPrice();
 
@@ -291,6 +307,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Check wether the bundleItem has an own unit price.
    *
    * @return bool
+   *   True it the bundle item has an own unit price set,
+   *   false if not.
    */
   public function hasUnitPrice();
 
