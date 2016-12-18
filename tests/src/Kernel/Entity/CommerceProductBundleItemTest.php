@@ -22,33 +22,33 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
    */
-      public function testBundleItem(){
+  public function testBundleItem() {
 
-        $bundleItem = ProductBundleItem::create([
-          'type' => 'default',
-        ]);
+    $bundleItem = ProductBundleItem::create([
+      'type' => 'default',
+    ]);
 
-        $bundleItem->save();
+    $bundleItem->save();
 
-        $bundleItem->setTitle('My testtitle');
-        $this->assertEquals('My testtitle', $bundleItem->getTitle());
+    $bundleItem->setTitle('My testtitle');
+    $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
-        $this->assertEquals(TRUE, $bundleItem->isPublished());
-        $bundleItem->setPublished(FALSE);
-        $this->assertEquals(FALSE, $bundleItem->isPublished());
+    $this->assertEquals(TRUE, $bundleItem->isPublished());
+    $bundleItem->setPublished(FALSE);
+    $this->assertEquals(FALSE, $bundleItem->isPublished());
 
-        $bundleItem->setCreatedTime(635879700);
-        $this->assertEquals(635879700, $bundleItem->getCreatedTime());
+    $bundleItem->setCreatedTime(635879700);
+    $this->assertEquals(635879700, $bundleItem->getCreatedTime());
 
-        $bundleItem->setOwner($this->user);
-        $this->assertEquals($this->user, $bundleItem->getOwner());
-        $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());
-        $bundleItem->setOwnerId(0);
-        $this->assertEquals(NULL, $bundleItem->getOwner());
-        $bundleItem->setOwnerId($this->user->id());
-        $this->assertEquals($this->user, $bundleItem->getOwner());
-        $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());
+    $bundleItem->setOwner($this->user);
+    $this->assertEquals($this->user, $bundleItem->getOwner());
+    $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());
+    $bundleItem->setOwnerId(0);
+    $this->assertEquals(NULL, $bundleItem->getOwner());
+    $bundleItem->setOwnerId($this->user->id());
+    $this->assertEquals($this->user, $bundleItem->getOwner());
+    $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());
 
-      }
+  }
 
 }

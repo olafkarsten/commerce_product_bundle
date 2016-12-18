@@ -118,7 +118,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   protected $unit_price;
 
-
   /**
    * {@inheritdoc}
    */
@@ -238,7 +237,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * @return bool
    */
-  public function hasUnitPrice(){
+  public function hasUnitPrice() {
     return $this->get('unit_price')->isEmpty();
   }
 
@@ -256,7 +255,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public function getQuantity() {
 
-    if(isset($this->activeQuantity)) {
+    if (isset($this->activeQuantity)) {
       return $this->activeQuantity();
     }
     return $this->getMinimumQuantity();

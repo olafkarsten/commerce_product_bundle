@@ -3,9 +3,6 @@
 namespace Drupal\commerce_product_bundle;
 
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\commerce_product_bundle\Entity\BundleItemInterface;
 
 /**
  * Defines the storage handler class for product bundle item entities.

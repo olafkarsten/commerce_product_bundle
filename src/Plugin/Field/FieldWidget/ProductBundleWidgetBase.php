@@ -24,12 +24,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * NOTES:
+   * NOTES:.
    *
    *  1. This is based off of ProductVariationWidgetBase which handled
    *     product -> (1) VARIATION selection
    *  2. This base widget will always need to handle
-   *     bundle -> (products) -> (MANY) VARIATIONS selections
+   *     bundle -> (products) -> (MANY) VARIATIONS selections.
    */
 
   /**
@@ -42,7 +42,7 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
   /**
    * The product storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface;
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $productStorage;
 

@@ -29,7 +29,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ProductBundleItemsWidget extends ProductBundleWidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * NOTES:
+   * NOTES:.
    *
    *  1. This is based off of ProductVariationAttributesWidget which handled
    *     product -> (1) VARIATION selection based on available attributes.
@@ -101,7 +101,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     $bundle = $form_state->get('product_bundle');
     $element['bundle'] = [
       '#type' => 'value',
-      '#value' => $bundle->id()
+      '#value' => $bundle->id(),
     ];
     $element['bundle_items'] = [];
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
@@ -136,8 +136,8 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
         '#type' => 'markup',
         '#markup' => $bundle_item->getTitle(),
         '#prefix' => '<p>',
-        '#suffix' => '</p>'
-      ]
+        '#suffix' => '</p>',
+      ],
     ];
 
     /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
@@ -151,7 +151,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
     if ($min_qty === $max_qty) {
       $bundle_item_form['qty'] = [
         '#type' => 'value',
-        '#value' => $bundle_item->getQuantity()
+        '#value' => $bundle_item->getQuantity(),
       ];
     }
     else {
@@ -161,7 +161,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
         '#min' => $min_qty,
         '#max' => $max_qty,
         '#default_value' => $min_qty,
-        '#step' => 1
+        '#step' => 1,
       ];
     }
 

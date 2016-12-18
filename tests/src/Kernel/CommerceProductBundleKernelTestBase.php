@@ -1,9 +1,4 @@
 <?php
-/**
- * This file is part of the d8commerce package.
- *
- * @author Olaf Karsten <olaf.karsten@beckerundkarsten.de>
- */
 
 namespace Drupal\Tests\commerce_product_bundle\Kernel;
 
@@ -64,6 +59,5 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
     $user = $this->createUser();
     $this->user = $this->reloadEntity($user);
   }
-
 
 }

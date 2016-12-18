@@ -64,4 +64,3 @@ class ProductBundleTranslationHandler extends ContentTranslationHandler {
   }
 
 }
-

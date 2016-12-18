@@ -2,7 +2,6 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
-use Drupal\commerce_product_bundle\Entity\BundleTypeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 
 /**

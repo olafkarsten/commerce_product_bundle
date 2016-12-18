@@ -134,7 +134,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function getMinimumQuantity();
 
   /**
-   * Sets the maximum quantity of the product variations
+   * Sets the maximum quantity of the product variations.
    *
    * @param $minimum_quantity
    *
@@ -270,7 +270,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
 
   /**
    * Sets the price of one unit of the referenced
-   * product variations
+   * product variations.
    *
    * @param Price $unit_price
    *

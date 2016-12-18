@@ -151,6 +151,7 @@ function commerce_product_bundle_add_body_field($product_bundle_type, $label = '
  *
  * Variations can't be a base field because the Views integration is broken.
  * Instead, it is created as a configurable field for each bundle item type.
+ *
  * @ToDo Find and reference the issue in d.o.
  *
  * @param \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $bundle_type
@@ -215,6 +216,7 @@ function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_typ
  *
  * Variations can't be a base field because the Views integration is broken.
  * Instead, it is created as a configurable field for each bundle item type.
+ *
  * @ToDo Find and reference the issue in d.o.
  *
  * @param \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type

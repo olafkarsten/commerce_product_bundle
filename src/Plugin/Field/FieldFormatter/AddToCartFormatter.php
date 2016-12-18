@@ -25,8 +25,8 @@ class AddToCartFormatter extends FormatterBase {
    */
   public static function defaultSettings() {
     return [
-        'combine' => TRUE,
-      ] + parent::defaultSettings();
+      'combine' => TRUE,
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -34,13 +34,12 @@ class AddToCartFormatter extends FormatterBase {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
-//    $form['combine'] = [
-//      '#type' => 'checkbox',
-//      '#title' => t('Combine order items containing the same product variation.'),
-//      '#description' => t('The order item type, referenced product variation, and data from fields exposed on the Add to Cart form must all match to combine.'),
-//      '#default_value' => $this->getSetting('combine'),
-//    ];
-
+    // $form['combine'] = [
+    //      '#type' => 'checkbox',
+    //      '#title' => t('Combine order items containing the same product variation.'),
+    //      '#description' => t('The order item type, referenced product variation, and data from fields exposed on the Add to Cart form must all match to combine.'),
+    //      '#default_value' => $this->getSetting('combine'),
+    //    ];.
     return $form;
   }
 
@@ -49,13 +48,12 @@ class AddToCartFormatter extends FormatterBase {
    */
   public function settingsSummary() {
     $summary = [];
-//    if ($this->getSetting('combine')) {
-//      $summary[] = $this->t('Combine order items containing the same product variation.');
-//    }
-//    else {
-//      $summary[] = $this->t('Do not combine order items containing the same product variation.');
-//    }
-
+    // If ($this->getSetting('combine')) {
+    //      $summary[] = $this->t('Combine order items containing the same product variation.');
+    //    }
+    //    else {
+    //      $summary[] = $this->t('Do not combine order items containing the same product variation.');
+    //    }.
     return $summary;
   }
 
@@ -68,8 +66,9 @@ class AddToCartFormatter extends FormatterBase {
         $items->getEntity()->id(),
         $this->viewMode,
         //
-        // $this->getSetting('combine'),
-      ]],
+        // $this->getSetting('combine'),.
+      ],
+      ],
       '#create_placeholder' => TRUE,
     ];
   }

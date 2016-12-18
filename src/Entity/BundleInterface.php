@@ -98,11 +98,11 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
   public function setBundleItems(array $bundle_items);
 
   /**
-   * Adds a bunde item to the bundle
+   * Adds a bunde item to the bundle.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
    *
-   * @return  \Drupal\commerce_product_bundle\Entity\BundleInterface[]
+   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface[]
    *    The called bundle entity.
    */
   public function addBundleItem(BundleItemInterface $bundle_item);
@@ -124,7 +124,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
   public function hasBundleItems();
 
   /**
-   * Checks whether the bundle has a given bundle item
+   * Checks whether the bundle has a given bundle item.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
    *

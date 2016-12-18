@@ -51,7 +51,7 @@ class ProductBundleTypeForm extends EntityForm {
     $product_bundle_type = $this->entity;
 
     $bundle_item_types = $this->bundleItemTypeStorage->loadMultiple();
-    $bundle_item_types = array_map(function($bundle_item_type) {
+    $bundle_item_types = array_map(function ($bundle_item_type) {
       return $bundle_item_type->label();
     }, $bundle_item_types);
 
