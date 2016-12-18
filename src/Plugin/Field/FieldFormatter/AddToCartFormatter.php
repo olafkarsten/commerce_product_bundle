@@ -34,12 +34,14 @@ class AddToCartFormatter extends FormatterBase {
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
+    // @codingStandardsIgnoreStart
     // $form['combine'] = [
     //      '#type' => 'checkbox',
     //      '#title' => t('Combine order items containing the same product variation.'),
     //      '#description' => t('The order item type, referenced product variation, and data from fields exposed on the Add to Cart form must all match to combine.'),
     //      '#default_value' => $this->getSetting('combine'),
-    //    ];.
+    //    ];
+    // @codingStandardsIgnoreEnd
     return $form;
   }
 
@@ -48,12 +50,14 @@ class AddToCartFormatter extends FormatterBase {
    */
   public function settingsSummary() {
     $summary = [];
+    // @codingStandardsIgnoreStart
     // If ($this->getSetting('combine')) {
     //      $summary[] = $this->t('Combine order items containing the same product variation.');
     //    }
     //    else {
     //      $summary[] = $this->t('Do not combine order items containing the same product variation.');
     //    }.
+    // @codingStandardsIgnoreEnd
     return $summary;
   }
 
@@ -65,7 +69,7 @@ class AddToCartFormatter extends FormatterBase {
       '#lazy_builder' => ['commerce_product_bundle.lazy_builders:addToCartForm', [
         $items->getEntity()->id(),
         $this->viewMode,
-        //
+        // @codingStandardsIgnoreLine
         // $this->getSetting('combine'),.
       ],
       ],
