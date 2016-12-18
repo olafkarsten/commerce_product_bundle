@@ -235,7 +235,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * @return bool
+   * {@inheritdoc}
    */
   public function hasUnitPrice() {
     return $this->get('unit_price')->isEmpty();
