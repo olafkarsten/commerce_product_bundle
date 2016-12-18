@@ -16,7 +16,7 @@ interface BundleTypeInterface extends ConfigEntityInterface, EntityDescriptionIn
    * @return string
    *   The bundle item type ID.
    */
-  public function getBundleItemTypeID();
+  public function getBundleItemTypeId();
 
   /**
    * Sets the product bundle type's matching bundle item type ID.
@@ -26,7 +26,7 @@ interface BundleTypeInterface extends ConfigEntityInterface, EntityDescriptionIn
    *
    * @return $this
    */
-  public function setBundleItemTypeID($bundle_item_type_id);
+  public function setBundleItemTypeId($bundle_item_type_id);
 
   /**
    * Gets the product bundle type's order item type ID.
