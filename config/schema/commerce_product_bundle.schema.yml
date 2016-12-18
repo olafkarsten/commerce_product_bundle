@@ -1,0 +1,40 @@
+commerce_product_bundle.commerce_product_bundle_type.*:
+  type: config_entity
+  label: 'Product bundle type'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    description:
+      type: text
+      label: 'Description'
+    bundleItemType:
+      type: string
+      label: 'Bundle item type'
+    orderItemType:
+      type: string
+      label: 'Order item type'
+
+commerce_product_bundle.commerce_product_bundle_i_type.*:
+  type: config_entity
+  label: 'Product bundle item type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+
+field.formatter.settings.commerce_product_bundle_add_to_cart:
+  type: mapping
+  label: 'Entity reference rendered entity display format settings'
+  mapping:
+    view_mode:
+      type: string
+      label: 'View mode'
