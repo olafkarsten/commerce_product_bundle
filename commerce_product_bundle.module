@@ -110,7 +110,7 @@ function template_preprocess_commerce_product_bundle_i(array &$variables) {
  * @param string $label
  *   (optional) The label for the body instance. Defaults to 'Body'.
  */
-function commerce_product_bundle_add_body_field($product_bundle_type, $label = 'Body') {
+function commerce_product_bundle_add_body_field(BundleTypeInterface $product_bundle_type, $label = 'Body') {
   $field_storage = FieldStorageConfig::loadByName('commerce_product_bundle', 'body');
   $field = FieldConfig::loadByName('commerce_product_bundle', $product_bundle_type->id(), 'body');
   if (empty($field_storage)) {
@@ -152,9 +152,10 @@ function commerce_product_bundle_add_body_field($product_bundle_type, $label = '
  * Variations can't be a base field because the Views integration is broken.
  * Instead, it is created as a configurable field for each bundle item type.
  *
- * @ToDo Find and reference the issue in d.o.
- *
  * @param \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $bundle_type
+ *   The bundle item type the field should be attached to.
+ *
+ * @ToDo Find and reference the issue in d.o.
  */
 function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_type) {
   $field_storage = FieldStorageConfig::loadByName('commerce_product_bundle', 'bundle_items');
@@ -217,9 +218,10 @@ function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_typ
  * Variations can't be a base field because the Views integration is broken.
  * Instead, it is created as a configurable field for each bundle item type.
  *
- * @ToDo Find and reference the issue in d.o.
- *
  * @param \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type
+ *    The bundle item type the field should be attached to.
+ *
+ * @ToDo Find and reference the issue in d.o.
  */
 function commerce_product_bundle_add_variations_field(BundleItemTypeInterface $bundle_item_type) {
   $field_storage = FieldStorageConfig::loadByName('commerce_product_bundle_i', 'variations');
@@ -278,7 +280,7 @@ function commerce_product_bundle_add_variations_field(BundleItemTypeInterface $b
  * @param \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type
  *   The product bundle type.
  */
-function commerce_product_bundle_add_stores_field($product_bundle_type) {
+function commerce_product_bundle_add_stores_field(BundleTypeInterface $product_bundle_type) {
   $field_storage = FieldStorageConfig::loadByName('commerce_product_bundle', 'stores');
   $field = FieldConfig::loadByName('commerce_product_bundle', $product_bundle_type->id(), 'stores');
   if (empty($field_storage)) {
