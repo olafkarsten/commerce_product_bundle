@@ -6,7 +6,7 @@ use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
 use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestBase;
 
 /**
- * Test the Product Bundle Item Entity
+ * Test the Product Bundle Item entity.
  *
  * @coversDefaultClass \Drupal\commerce_product_bundle\Entity\ProductBundleItem
  *
