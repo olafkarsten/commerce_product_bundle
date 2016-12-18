@@ -60,8 +60,8 @@ class ProductBundleLazyBuilders {
       'view_mode' => $view_mode,
       // This is where we could pass settings into the form.
       // 'settings' => [
-      //   'combine' => $combine,
-      // ],.
+      //   'combine' => $combine,  @codingStandardsIgnoreLine
+      // ],
     ];
     return $this->entityFormBuilder->getForm($order_item, 'add_to_cart', $form_state_additions);
   }
