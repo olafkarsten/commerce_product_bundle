@@ -84,6 +84,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Returns the bundle items of that bundle.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface[]
+   *   The referenced bundle items of this product bundle.
    */
   public function getBundleItems();
 
@@ -91,6 +92,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Sets the bundle items of that bundle.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface[] $bundle_items
+   *   The bundle items to add.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
    *   The called bundle entity.
@@ -98,9 +100,10 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
   public function setBundleItems(array $bundle_items);
 
   /**
-   * Adds a bunde item to the bundle.
+   * Adds a bundle item to the bundle.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *   The bundle item to add.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface[]
    *    The called bundle entity.
@@ -111,6 +114,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Removes a bundle item.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *    The bundle item to remove.
    *
    * @return $this
    */
@@ -120,6 +124,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Checks whether the bundle has any bundle items.
    *
    * @return bool
+   *   True if the bundle has any bundle items, false other wise.
    */
   public function hasBundleItems();
 
@@ -127,8 +132,10 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Checks whether the bundle has a given bundle item.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *   The bundle item to check for.
    *
    * @return bool
+   *   True if the given bundle item is referenced, false otherwise.
    */
   public function hasBundleItem(BundleItemInterface $bundle_item);
 
