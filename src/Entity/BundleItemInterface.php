@@ -196,9 +196,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets whether the bundle item has restricted variations.
    *
-   * @todo Consider how this may change - variations may be set, or they may
-   * be derived from the fallback -- a product's active variations if
-   * bundle has not specified them.
+   * @todo Consider how this may change.
+   * @see https://www.drupal.org/node/2837499
    *
    * @return bool
    *   TRUE if the bundle item has restricted available variations, FALSE otherwise.
@@ -212,11 +211,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * the bundle item, or fall back to all active variations of the referenced product.
    *
    * @todo: What to do about [limited] variations that are not enabled on their products?
-   *  - They could be checked at bundle creation time but then they could
-   *    become inactive after bundle creation ... what then?
-   *    - Proposed: Check in both situations;
-   *      - Do not show variation if inactive during creation
-   *      - Throw error on load if variation is no longer active.
+   * @see https://www.drupal.org/node/2837499
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
    *    Array of product variations.
