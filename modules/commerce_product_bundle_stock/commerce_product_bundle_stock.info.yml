@@ -1,0 +1,10 @@
+name: Commerce Product Bundle Stock
+type: module
+description: Provides integration between commerce product bundle and commerce stock.
+core: 8.x
+package: Commerce Contrib
+dependencies:
+  - commerce
+  - commerce_product
+  - commerce_stock
+  - commerce_stock_local

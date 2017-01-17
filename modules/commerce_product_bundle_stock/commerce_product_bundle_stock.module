@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains commerce_product_bundle_stock.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function commerce_product_bundle_stock_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the commerce_product_bundle_stock module.
+    case 'help.page.commerce_product_bundle_stock':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides integration between commerce product bundle and commerce stock.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
