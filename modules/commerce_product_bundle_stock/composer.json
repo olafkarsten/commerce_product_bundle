@@ -1,0 +1,14 @@
+{
+  "name": "drupal/commerce_product_bundle_stock",
+  "type": "drupal-module",
+  "description": "Provides integration between commerce product bundle and commerce stock.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/commerce_product_bundle_stock",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/commerce_product_bundle_stock",
+    "source": "http://cgit.drupalcode.org/commerce_product_bundle_stock"
+  },
+  "require": { }
+}
