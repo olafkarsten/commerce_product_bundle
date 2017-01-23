@@ -3,6 +3,7 @@
 namespace Drupal\Tests\commerce_product_bundle\Kernel\Entity;
 
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestBase;
 
 /**
@@ -32,6 +33,13 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
 
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
+
+    // Confirm the attached fields are there.
+    $this->assertTrue($bundleItem->hasField('variations'));
+    $created_field = $bundleItem->getFieldDefinition('variations');
+    $this->assertInstanceOf(FieldConfig::class, $created_field);
+    $this->assertEquals('commerce_product_variation', $created_field->getSetting('target_type'));
+    $this->assertEquals('default:commerce_product_variation', $created_field->getSetting('handler'));
 
     $this->assertEquals(TRUE, $bundleItem->isPublished());
     $bundleItem->setPublished(FALSE);
