@@ -37,7 +37,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $this->assertEquals(TRUE, $bundleItem->isActive());
     $bundleItem->setActive(FALSE);
     $this->assertEquals(FALSE, $bundleItem->isActive());
-    
+
     // Confirm the attached fields are there.
     $this->assertTrue($bundleItem->hasField('variations'));
     $created_field = $bundleItem->getFieldDefinition('variations');
