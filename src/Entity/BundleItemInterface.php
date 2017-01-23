@@ -62,25 +62,25 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function setCreatedTime($timestamp);
 
   /**
-   * Returns the product bundle item published status indicator.
+   * Returns the product bundle item active status indicator.
    *
-   * Unpublished product bundle item are only visible to restricted users.
+   * Unactivated product bundle item are only visible to restricted users.
    *
    * @return bool
-   *   TRUE if the product bundle item is published.
+   *   TRUE if the product bundle item is active.
    */
-  public function isPublished();
+  public function isActive();
 
   /**
-   * Sets the published status of a product bundle item.
+   * Sets the active status of a product bundle item.
    *
-   * @param bool $published
-   *   TRUE to set this product bundle item to published, FALSE to set it to unpublished.
+   * @param bool $active
+   *   TRUE to set this product bundle item to activate, FALSE to set it to unactivated.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called product bundle item entity.
    */
-  public function setPublished($published);
+  public function setActive($active);
 
   /**
    * Gets the parent bundle entity.

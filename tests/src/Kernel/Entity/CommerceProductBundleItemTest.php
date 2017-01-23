@@ -17,8 +17,8 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
   /**
    * @covers ::getTitle
    * @covers ::setTitle
-   * @covers ::isPublished
-   * @covers ::setPublished
+   * @covers ::isActive
+   * @covers ::setActive
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
    */
@@ -33,9 +33,9 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
-    $this->assertEquals(TRUE, $bundleItem->isPublished());
-    $bundleItem->setPublished(FALSE);
-    $this->assertEquals(FALSE, $bundleItem->isPublished());
+    $this->assertEquals(TRUE, $bundleItem->isActive());
+    $bundleItem->setActive(FALSE);
+    $this->assertEquals(FALSE, $bundleItem->isActive());
 
     $bundleItem->setCreatedTime(635879700);
     $this->assertEquals(635879700, $bundleItem->getCreatedTime());
