@@ -206,15 +206,15 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isActive() {
     return (bool) $this->getEntityKey('status');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published) {
-    $this->set('status', $published ? TRUE : FALSE);
+  public function setActive($active) {
+    $this->set('status', $active ? TRUE : FALSE);
 
     return $this;
   }

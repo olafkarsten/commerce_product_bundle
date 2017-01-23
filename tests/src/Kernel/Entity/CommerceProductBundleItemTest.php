@@ -18,8 +18,8 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
   /**
    * @covers ::getTitle
    * @covers ::setTitle
-   * @covers ::isPublished
-   * @covers ::setPublished
+   * @covers ::isActive
+   * @covers ::setActive
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
    */
@@ -34,16 +34,16 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
+    $this->assertEquals(TRUE, $bundleItem->isActive());
+    $bundleItem->setActive(FALSE);
+    $this->assertEquals(FALSE, $bundleItem->isActive());
+    
     // Confirm the attached fields are there.
     $this->assertTrue($bundleItem->hasField('variations'));
     $created_field = $bundleItem->getFieldDefinition('variations');
     $this->assertInstanceOf(FieldConfig::class, $created_field);
     $this->assertEquals('commerce_product_variation', $created_field->getSetting('target_type'));
     $this->assertEquals('default:commerce_product_variation', $created_field->getSetting('handler'));
-
-    $this->assertEquals(TRUE, $bundleItem->isPublished());
-    $bundleItem->setPublished(FALSE);
-    $this->assertEquals(FALSE, $bundleItem->isPublished());
 
     $bundleItem->setCreatedTime(635879700);
     $this->assertEquals(635879700, $bundleItem->getCreatedTime());
