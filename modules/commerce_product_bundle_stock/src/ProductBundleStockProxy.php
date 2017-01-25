@@ -35,6 +35,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    */
   public function createTransaction($entity_id, $location_id, $zone, $quantity, $unit_cost, $transaction_type_id, array $metadata) {
     $bundle = ProductBundle::load($entity_id);
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
     foreach ($bundle->getBundleItems() as $item) {
       $entity = $item->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
@@ -63,6 +64,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    */
   public function getIsInStock($entity_id, array $locations) {
     $bundle = ProductBundle::load($entity_id);
+    /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
@@ -78,6 +80,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    */
   public function getIsAlwaysInStock($entity_id) {
     $bundle = ProductBundle::load($entity_id);
+    /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
@@ -102,6 +105,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   public function getLocationList($return_active_only = TRUE) {
     $services = $this->stockServiceManager->listServices();
     $locations = [];
+    /** @var \Drupal\commerce_stock\StockServiceInterface $service */
     foreach ($services as $service) {
       $locations += $service->getStockChecker()->getLocationList();
     }
