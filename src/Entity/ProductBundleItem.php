@@ -112,6 +112,13 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   protected $activeQuantity;
 
   /**
+   * The currently selected variation.
+   *
+   * @var \Drupal\commerce_product\Entity\ProductVariationInterface
+   */
+  protected $currentVariation;
+
+  /**
    * The unit price, if overridden, for each variation offered by this bundle item.
    *
    * @var \Drupal\commerce_price\Price
@@ -402,6 +409,21 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   public function setVariations(array $variations) {
     $this->set('variations', $variations);
 
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentVariation() {
+    return $this->currentVariation ?: $this->getDefaultVariation();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrentVariation(ProductVariationInterface $variation) {
+    $this->currentVariation = $variation;
     return $this;
   }
 
