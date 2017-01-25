@@ -10,7 +10,7 @@ use Drupal\simpletest\WebTestBase;
  *
  * @group commerce_product_bundle_stock
  */
-class LoadTest extends WebTestBase{
+class LoadTest extends WebTestBase {
 
   /**
    * Modules to enable.
