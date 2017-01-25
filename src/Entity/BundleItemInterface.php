@@ -278,6 +278,24 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function removeVariation(ProductVariationInterface $variation);
 
   /**
+   * Gets the currently selected variation, or the default variation.
+   *
+   * @return \Drupal\commerce_product\Entity\ProductVariationInterface
+   *   The variation.
+   */
+  public function getCurrentVariation();
+
+  /**
+   * Gets the currently selected variation, or the default variation.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return $this
+   */
+  public function setCurrentVariation(ProductVariationInterface $variation);
+
+  /**
    * Sets the price of one unit of the referenced
    * product variations.
    *

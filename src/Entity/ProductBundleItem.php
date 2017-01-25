@@ -88,7 +88,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    *
    * @var \Drupal\commerce_product\Entity\ProductVariationInterface
    */
-  protected $activeVariation;
+  protected $currentVariation;
 
   /**
    * {@inheritdoc}
@@ -370,6 +370,21 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   public function setVariations(array $variations) {
     $this->set('variations', $variations);
 
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentVariation() {
+    return $this->currentVariation ?: $this->getDefaultVariation();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrentVariation(ProductVariationInterface $variation) {
+    $this->currentVariation = $variation;
     return $this;
   }
 
