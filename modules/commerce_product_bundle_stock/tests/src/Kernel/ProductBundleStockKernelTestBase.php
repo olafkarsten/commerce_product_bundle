@@ -6,6 +6,8 @@ use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestB
 
 /**
  * Provides a base class for Commerce Product Bundle Stock tests.
+ *
+ * @requires module commerce_stock
  */
 abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKernelTestBase {
 
