@@ -50,12 +50,17 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    */
   public function getTotalStockLevel($entity_id, array $locations) {
     $bundle = ProductBundle::load($entity_id);
-    $levels = array_map(function ($entity) use ($bundle, $locations) {
+
+    $levels = array_map(function ($bundleItem) use ($bundle, $locations) {
+     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
+     $quantity = $bundleItem->getQuantity() ?: 1 ;
+     $entity = $bundleItem->getCurrentVariation();
       /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
       $service = $this->stockServiceManager->getService($entity);
       $level = $service->getStockChecker()->getTotalStockLevel($entity->id(), $locations);
-      return $level;
-    }, $this->getAllPurchasableEntities($bundle));
+      return floor($level / $quantity);
+    }, $bundle->getBundleItems());
+
     return min($levels);
   }
 
