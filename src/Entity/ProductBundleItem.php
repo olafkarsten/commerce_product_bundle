@@ -76,34 +76,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   protected $bundle;
 
   /**
-   * The product.
-   *
-   * @var \Drupal\commerce_product\Entity\ProductInterface
-   */
-  protected $product;
-
-  /**
-   * The product variations available in this bundle, if not all from ::product.
-   *
-   * @var \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   */
-  protected $variations = [];
-
-  /**
-   * The minimum quantity allowed for this item in the bundle.
-   *
-   * @var int
-   */
-  protected $min_quantity = 1;
-
-  /**
-   * The maximum quantity allowed for this item in the bundle.
-   *
-   * @var int
-   */
-  protected $max_quantity = 1;
-
-  /**
    * The bundle items current active quantity . In case
    * of a fresh bundle, that is the default quantity.
    *
@@ -117,13 +89,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * @var \Drupal\commerce_product\Entity\ProductVariationInterface
    */
   protected $currentVariation;
-
-  /**
-   * The unit price, if overridden, for each variation offered by this bundle item.
-   *
-   * @var \Drupal\commerce_price\Price
-   */
-  protected $unit_price;
 
   /**
    * {@inheritdoc}
@@ -152,14 +117,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getBundle() {
-    return $this->bundle;
+    return $this->get('bundle_id')->entity;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getBundleId() {
-    return $this->bundle->id();
+    return $this->get('bundle_id')->target_id;
   }
 
   /**
@@ -261,9 +226,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getQuantity() {
-
     if (isset($this->activeQuantity)) {
-      return $this->activeQuantity();
+      return $this->activeQuantity;
     }
     return $this->getMinimumQuantity();
   }
@@ -343,19 +307,16 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function hasVariation(ProductVariationInterface $variation) {
-    return in_array($variation->id(), $this->getVariationIds());
+    return $this->getVariationIndex($variation) !== FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getVariationIds() {
-    $variation_ids = [];
-    foreach ($this->get('variations') as $field_item) {
-      $variation_ids[] = $field_item->target_id;
-    }
-
-    return $variation_ids;
+    return array_map(function ($variation) {
+      return $variation->target_id;
+    }, $this->get('variations'));
   }
 
   /**
@@ -431,14 +392,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * @inheritdoc
    */
   public function getMinimumQuantity() {
-    return $this->min_quantity;
+    return $this->get('min_quantity')->value;
   }
 
   /**
    * @inheritdoc
    */
   public function getMaximumQuantity() {
-    return $this->max_quantity;
+    return $this->get('max_quantity')->value;
   }
 
   /**
@@ -507,6 +468,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the product bundle item is published.'))
       ->setDefaultValue(TRUE);
+
+    // The product bundle backreference, populated by ProductBundle::postSave().
+    $fields['bundle_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Product bundle'))
+      ->setDescription(t('The parent product bundle.'))
+      ->setSetting('target_type', 'commerce_product_bundle')
+      ->setReadOnly(TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     // The price is not required because it's not guaranteed to be used
     // for storage. We may use the price of the referenced variations.

@@ -197,9 +197,9 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
    * @inheritdoc
    */
   public function getBundleItems() {
-    $variations = $this->get('bundle_items')->referencedEntities();
+    $bundle_items = $this->get('bundle_items')->referencedEntities();
 
-    return $this->ensureTranslations($variations);
+    return $this->ensureTranslations($bundle_items);
   }
 
   /**
@@ -282,6 +282,22 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
       // If no owner has been set explicitly, make the anonymous user the owner.
       if (!$translation->getOwner()) {
         $translation->setOwnerId(0);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    // Ensure there's a back-reference on each product bundle item.
+    foreach ($this->bundle_items as $item) {
+      $item = $item->entity;
+      if ($item->bundle_id->isEmpty()) {
+        $item->bundle_id = $this->id();
+        $item->save();
       }
     }
   }
