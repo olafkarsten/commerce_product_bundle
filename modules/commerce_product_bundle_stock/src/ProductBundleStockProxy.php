@@ -52,9 +52,9 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
     $bundle = ProductBundle::load($entity_id);
 
     $levels = array_map(function ($bundleItem) use ($bundle, $locations) {
-     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
-     $quantity = $bundleItem->getQuantity() ?: 1 ;
-     $entity = $bundleItem->getCurrentVariation();
+      /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
+      $quantity = $bundleItem->getQuantity() ?: 1;
+      $entity = $bundleItem->getCurrentVariation();
       /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
       $service = $this->stockServiceManager->getService($entity);
       $level = $service->getStockChecker()->getTotalStockLevel($entity->id(), $locations);
