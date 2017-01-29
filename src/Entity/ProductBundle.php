@@ -53,7 +53,7 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}",
+ *     "canonical" = "/product-bundles/{commerce_product_bundle}",
  *     "add-page" = "/admin/commerce/config/product-bundles/add",
  *     "add-form" = "/admin/commerce/config/product-bundles/add/{commerce_product_bundle_type}",
  *     "edit-form" = "/admin/commerce/config/product-bundles/{commerce_product_bundle}/edit",
