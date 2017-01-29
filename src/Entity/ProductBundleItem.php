@@ -22,6 +22,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Product bundle item"),
  *   bundle_label = @Translation("Product bundle item type"),
  *   handlers = {
+ *     "access" = "Drupal\commerce_product_bundle\ProductBundleItemAccessControlHandler",
  *     "storage" = "Drupal\commerce_product_bundle\ProductBundleItemStorage",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleItemListBuilder",
