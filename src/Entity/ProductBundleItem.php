@@ -211,7 +211,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function hasUnitPrice() {
-    return $this->get('unit_price')->isEmpty();
+    return !$this->get('unit_price')->isEmpty();
   }
 
   /**
@@ -239,6 +239,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   public function setQuantity($quantity) {
 
     // @ToDo We need to check against the min/max constraints
+    // @see https://www.drupal.org/node/2847809
     $this->activeQuantity = $quantity;
 
     return $this;
@@ -316,8 +317,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public function getVariationIds() {
     return array_map(function ($variation) {
-      return $variation->target_id;
-    }, $this->get('variations'));
+      return $variation->id();
+    }, $this->get('variations')->referencedEntities());
   }
 
   /**
@@ -370,7 +371,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public function setVariations(array $variations) {
     $this->set('variations', $variations);
-
     return $this;
   }
 
@@ -522,7 +522,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
     // Variations added in commerce_product_bundle.module.
     // @see commerce_product_bundle_add_variations_field().
 
-    $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
+    $fields['min_quantity'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Minimum Quantity'))
       ->setDescription(t('The minimum quantity.'))
       ->setSetting('unsigned', TRUE)
@@ -535,7 +535,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['max_quantity'] = BaseFieldDefinition::create('decimal')
+    $fields['max_quantity'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Maximum Quantity'))
       ->setDescription(t('The maximum quantity.'))
       ->setSetting('unsigned', TRUE)
