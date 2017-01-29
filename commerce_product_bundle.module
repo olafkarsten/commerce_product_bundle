@@ -5,8 +5,6 @@
  * Contains commerce_product_bundle.module.
  */
 
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\commerce\BundleFieldDefinition;
