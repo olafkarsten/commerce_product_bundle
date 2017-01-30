@@ -80,7 +80,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * The bundle items current active quantity . In case
    * of a fresh bundle, that is the default quantity.
    *
-   * @var int
+   * @var float
    */
   protected $activeQuantity;
 
@@ -522,7 +522,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
     // Variations added in commerce_product_bundle.module.
     // @see commerce_product_bundle_add_variations_field().
 
-    $fields['min_quantity'] = BaseFieldDefinition::create('integer')
+    $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Minimum Quantity'))
       ->setDescription(t('The minimum quantity.'))
       ->setSetting('unsigned', TRUE)
@@ -535,7 +535,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['max_quantity'] = BaseFieldDefinition::create('integer')
+    $fields['max_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Maximum Quantity'))
       ->setDescription(t('The maximum quantity.'))
       ->setSetting('unsigned', TRUE)

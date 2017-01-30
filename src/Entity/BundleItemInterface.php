@@ -101,7 +101,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets the bundle item quantity.
    *
-   * @return string
+   * @return float
    *   The bundle item quantity
    */
   public function getQuantity();
@@ -109,7 +109,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Sets the quantity for the bundle item.
    *
-   * @param string $quantity
+   * @param float $quantity
    *   The bundle item quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
@@ -120,7 +120,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Sets the minimum quantity of the product variations.
    *
-   * @param int $minimum_quantity
+   * @param float $minimum_quantity
    *   The minimum quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
@@ -131,7 +131,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets the minimum quantity of the product variations.
    *
-   * @return int
+   * @return float
    *   The minimum quantity.
    */
   public function getMinimumQuantity();
@@ -139,7 +139,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Sets the maximum quantity of the product variations.
    *
-   * @param int $maximum_quantity
+   * @param float $maximum_quantity
    *   The maximum quantity.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
@@ -150,7 +150,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets the maximum quantity of the product variations.
    *
-   * @return int
+   * @return float
    *   The maximum quantity.
    */
   public function getMaximumQuantity();
