@@ -335,7 +335,7 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the product bundle entity.'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 128,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')
