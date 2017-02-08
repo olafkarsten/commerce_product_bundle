@@ -2,8 +2,8 @@
 
 namespace Drupal\commerce_product_bundle_stock;
 
+use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_product_bundle\Entity\BundleInterface;
-use Drupal\commerce_product_bundle\Entity\ProductBundle;
 use Drupal\commerce_stock\StockCheckInterface;
 use Drupal\commerce_stock\StockServiceManagerInterface;
 use Drupal\commerce_stock\StockUpdateInterface;
@@ -33,31 +33,28 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function createTransaction($entity_id, $location_id, $zone, $quantity, $unit_cost, $transaction_type_id, array $metadata) {
-    $bundle = ProductBundle::load($entity_id);
+  public function createTransaction(PurchasableEntityInterface $bundle, $location_id, $zone, $quantity, $unit_cost, $transaction_type_id, array $metadata) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
     foreach ($bundle->getBundleItems() as $item) {
       $entity = $item->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
       $updater = $service->getStockUpdater();
       $item_quantity = $quantity * $item->getQuantity();
-      $updater->createTransaction($entity->id(), $location_id, $zone, $item_quantity, $unit_cost, $transaction_type_id, $metadata);
+      $updater->createTransaction($entity, $location_id, $zone, $item_quantity, $unit_cost, $transaction_type_id, $metadata);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTotalStockLevel($entity_id, array $locations) {
-    $bundle = ProductBundle::load($entity_id);
-
-    $levels = array_map(function ($bundleItem) use ($bundle, $locations) {
+  public function getTotalStockLevel(PurchasableEntityInterface $bundle, array $locations) {
+    $levels = array_map(function ($bundleItem) use ($locations) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
       $quantity = $bundleItem->getQuantity() ?: 1;
       $entity = $bundleItem->getCurrentVariation();
       /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
       $service = $this->stockServiceManager->getService($entity);
-      $level = $service->getStockChecker()->getTotalStockLevel($entity->id(), $locations);
+      $level = $service->getStockChecker()->getTotalStockLevel($entity, $locations);
       return floor($level / $quantity);
     }, $bundle->getBundleItems());
 
@@ -67,13 +64,12 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function getIsInStock($entity_id, array $locations) {
-    $bundle = ProductBundle::load($entity_id);
+  public function getIsInStock(PurchasableEntityInterface $bundle, array $locations) {
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
-      if (!$checker->getIsInStock($entity->id(), $locations)) {
+      if (!$checker->getIsInStock($entity, $locations)) {
         return FALSE;
       }
     }
@@ -83,13 +79,12 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function getIsAlwaysInStock($entity_id) {
-    $bundle = ProductBundle::load($entity_id);
+  public function getIsAlwaysInStock(PurchasableEntityInterface $bundle) {
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
-      if (!$checker->getIsAlwaysInStock($entity->id())) {
+      if (!$checker->getIsAlwaysInStock($entity)) {
         return FALSE;
       }
     }
@@ -99,7 +94,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function getIsStockManaged($entity_id) {
+  public function getIsStockManaged(PurchasableEntityInterface $entity) {
     // @todo Rethink this.
     return TRUE;
   }
