@@ -14,10 +14,10 @@
  */
 #}
 {%
-set classes = [
-has_parent ? 'js-form-wrapper',
-has_parent ? 'form-wrapper',
-]
+  set classes = [
+    has_parent ? 'js-form-wrapper',
+    has_parent ? 'form-wrapper',
+  ]
 %}
 <div{{ attributes.addClass(classes) }}>
   {{ elements }}
