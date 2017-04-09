@@ -16,11 +16,11 @@ class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataI
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['commerce_product_bundle']['table']['base'] = array(
+    $data['commerce_product_bundle']['table']['base'] = [
       'field' => 'id',
       'title' => $this->t('Product bundle'),
       'help' => $this->t('The product bundle ID.'),
-    );
+    ];
 
     return $data;
   }

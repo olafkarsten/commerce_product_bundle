@@ -194,7 +194,7 @@ function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_typ
  * Instead, it is created as a configurable field for each bundle item type.
  *
  * @param \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type
- *    The bundle item type the field should be attached to.
+ *   The bundle item type the field should be attached to.
  *
  * @todo Consider how this may change.
  * @see https://www.drupal.org/node/2837499

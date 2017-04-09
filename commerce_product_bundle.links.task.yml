@@ -45,4 +45,3 @@ entity.commerce_product_bundle_i.delete_form:
   base_route:  entity.commerce_product_bundle_i.canonical
   title: 'Delete'
   weight: 10
-

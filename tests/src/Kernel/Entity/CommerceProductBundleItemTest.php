@@ -3,7 +3,7 @@
 namespace Drupal\Tests\commerce_product_bundle\Kernel\Entity;
 
 use Drupal\commerce_product\Entity\Product;
-use \Drupal\commerce_price\Price;
+use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product_bundle\Entity\ProductBundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
