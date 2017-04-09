@@ -2,4 +2,4 @@ services:
   commerce_product_bundle.stock_proxy_service:
     class: Drupal\commerce_product_bundle_stock\ProductBundleStockProxyService
     tags:
-      - { name: commerce_stock.stock_service }
+      - { name: commerce_stock.stock_service, priority: -1 }

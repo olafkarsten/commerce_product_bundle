@@ -456,7 +456,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
       ->setSettings(array(
-        'max_length'      => 50,
+        'max_length'      => 128,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')
