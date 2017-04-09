@@ -6,3 +6,4 @@ package: Commerce Contrib
 dependencies:
   - commerce
   - commerce_product
+  - system (>=8.3.0)
