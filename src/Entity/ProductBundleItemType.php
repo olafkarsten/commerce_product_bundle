@@ -10,6 +10,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * @ConfigEntityType(
  *   id = "commerce_product_bundle_i_type",
  *   label = @Translation("Product bundle item type"),
+ *   label_collection = @Translation("Product bundle item types"),
  *   label_singular = @Translation("product bundle item type"),
  *   label_plural = @Translation("product bundle item types"),
  *   label_count = @PluralTranslation(

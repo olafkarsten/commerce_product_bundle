@@ -20,6 +20,13 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "commerce_product_bundle_i",
  *   label = @Translation("Product bundle item"),
+ *   label_collection = @Translation("Product bundle items"),
+ *   label_singular = @Translation("Product bundle item"),
+ *   label_plural = @Translation("Product bundle items"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count product bundle item",
+ *     plural = "@count product bundle items",
+ *   ),
  *   bundle_label = @Translation("Product bundle item type"),
  *   handlers = {
  *     "access" = "Drupal\commerce_product_bundle\ProductBundleItemAccessControlHandler",

@@ -10,6 +10,13 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  * @ConfigEntityType(
  *   id = "commerce_product_bundle_type",
  *   label = @Translation("Product bundle type"),
+ *   label_collection = @Translation("Product bundle types"),
+ *   label_singular = @Translation("Product bundle type"),
+ *   label_plural = @Translation("Product bundle types"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count product bundle type",
+ *     plural = "@count product bundle types",
+ *   ),
  *   handlers = {
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleTypeListBuilder",
  *     "form" = {
