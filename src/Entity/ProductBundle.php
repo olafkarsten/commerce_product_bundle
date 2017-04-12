@@ -18,6 +18,13 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "commerce_product_bundle",
  *   label = @Translation("Product bundle"),
+ *   label_collection = @Translation("Product bundles"),
+ *   label_singular = @Translation("Product bundle"),
+ *   label_plural = @Translation("Product bundles"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count product bundle",
+ *     plural = "@count product bundles",
+ *   ),
  *   bundle_label = @Translation("Product bundle type"),
  *   handlers = {
  *     "access" = "Drupal\commerce_product_bundle\ProductBundleAccessControlHandler",
@@ -265,9 +272,9 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'uid' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -313,41 +320,41 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
       ->setDescription(t('The user ID of author of the product bundle entity.'))
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
-      ))
+        ],
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the product bundle entity.'))
-      ->setSettings(array(
+      ->setSettings([
         'max_length' => 128,
         'text_processing' => 0,
-      ))
+      ])
       ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'string',
         'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 

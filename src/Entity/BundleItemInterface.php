@@ -167,7 +167,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Get the referenced product.
    *
    * @return null|\Drupal\commerce_product\Entity\ProductInterface
-   *    The referenced commerce product or null
+   *   The referenced commerce product or null
    *    if no product is referenced.
    */
   public function getProduct();
@@ -176,7 +176,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Set the referenced product.
    *
    * @param \Drupal\commerce_product\Entity\ProductInterface $product
-   *    The product.
+   *   The product.
    *
    * @return $this
    */
@@ -214,7 +214,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * @see https://www.drupal.org/node/2837499
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *    Array of product variations.
+   *   Array of product variations.
    */
   public function getVariations();
 
@@ -230,7 +230,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Get the default variation.
    *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface
-   *    The default product variation.
+   *   The default product variation.
    */
   public function getDefaultVariation();
 

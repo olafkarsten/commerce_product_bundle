@@ -106,7 +106,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    *   The bundle item to add.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleInterface[]
-   *    The called bundle entity.
+   *   The called bundle entity.
    */
   public function addBundleItem(BundleItemInterface $bundle_item);
 
@@ -114,7 +114,7 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    * Removes a bundle item.
    *
    * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
-   *    The bundle item to remove.
+   *   The bundle item to remove.
    *
    * @return $this
    */

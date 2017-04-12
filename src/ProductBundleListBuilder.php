@@ -36,9 +36,9 @@ class ProductBundleListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.commerce_product_bundle.edit_form', array(
+        'entity.commerce_product_bundle.edit_form', [
           'commerce_product_bundle' => $entity->id(),
-        )
+        ]
       )
     );
     return $row + parent::buildRow($entity);

@@ -100,9 +100,9 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
   public function testProductBundleStockProxy() {
     $stockServiceManager = \Drupal::service('commerce_stock.service_manager');
     $proxy = new ProductBundleStockProxy($stockServiceManager);
-    $this->assertTrue($proxy->getIsStockManaged(1));
-    $this->assertTrue($proxy->getIsAlwaysInStock($this->bundle->Id()));
-    $this->assertTrue($proxy->getIsInStock($this->bundle->Id(), []));
+    $this->assertTrue($proxy->getIsStockManaged($this->bundle));
+    $this->assertTrue($proxy->getIsAlwaysInStock($this->bundle));
+    $this->assertTrue($proxy->getIsInStock($this->bundle, []));
   }
 
 }

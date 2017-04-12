@@ -5,6 +5,7 @@
  * Contains commerce_product_bundle.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\commerce\BundleFieldDefinition;
@@ -39,6 +40,9 @@ function commerce_product_bundle_theme() {
       'render element' => 'elements',
     ],
     'commerce_product_bundle_i' => [
+      'render element' => 'elements',
+    ],
+    'container__field__widget_commerce_product_bundle_items' => [
       'render element' => 'elements',
     ],
   ];
@@ -98,6 +102,16 @@ function template_preprocess_commerce_product_bundle_i(array &$variables) {
   $variables['product_bundle_item'] = [];
   foreach (Element::children($variables['elements']) as $key) {
     $variables['product_bundle_item'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function commerce_product_bundle_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add theme wrapper for the product bundle items add to cart field widget.
+  if (strpos($form_id, 'add_to_cart') !== FALSE && substr($form_id, 0, 43) == 'commerce_order_item_commerce_product_bundle') {
+    $form['purchased_entity']['#theme_wrappers'] = ['container__field__widget_commerce_product_bundle_items'];
   }
 }
 
@@ -180,7 +194,7 @@ function commerce_product_bundle_add_items_field(BundleTypeInterface $bundle_typ
  * Instead, it is created as a configurable field for each bundle item type.
  *
  * @param \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type
- *    The bundle item type the field should be attached to.
+ *   The bundle item type the field should be attached to.
  *
  * @todo Consider how this may change.
  * @see https://www.drupal.org/node/2837499

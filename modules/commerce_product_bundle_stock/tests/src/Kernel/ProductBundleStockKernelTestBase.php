@@ -37,10 +37,8 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
   protected function setUp() {
     parent::setUp();
 
-    // Requires the location pr
-    // $this->installEntitySchema('commerce_stock_location_type');
-    // $this->installEntitySchema('commerce_stock_location');.
-    $this->installSchema("commerce_stock_local", 'commerce_stock_location');
+    $this->installEntitySchema('commerce_stock_location_type');
+    $this->installEntitySchema('commerce_stock_location');
 
     $this->installConfig(['commerce_stock']);
     $this->installConfig(['commerce_stock_local']);
@@ -49,12 +47,11 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
     $user = $this->createUser();
     $this->user = $this->reloadEntity($user);
 
-    // Requires the location pr
-    // $location = $this->prophesize('Drupal\commerce_stock_local\Entity\StockLocation');
-    // $location->getId()->willReturn(1);
-    // $location->getName()->willReturn('TestLocation');
-    // $location->isActive()->willReturn(TRUE);
-    // $this->locationStub = $location->reveal();
+    $location = $this->prophesize('Drupal\commerce_stock_local\Entity\StockLocation');
+    $location->getId()->willReturn(1);
+    $location->getName()->willReturn('TestLocation');
+    $location->isActive()->willReturn(TRUE);
+    $this->locationStub = $location->reveal();
   }
 
 }
