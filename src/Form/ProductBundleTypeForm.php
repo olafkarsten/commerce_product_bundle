@@ -3,6 +3,7 @@
 namespace Drupal\commerce_product_bundle\Form;
 
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -69,6 +70,7 @@ class ProductBundleTypeForm extends EntityForm {
       '#machine_name' => [
         'exists' => '\Drupal\commerce_product_bundle\Entity\ProductBundleType::load',
       ],
+      '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
       '#disabled' => !$product_bundle_type->isNew(),
     ];
     $form['description'] = [
