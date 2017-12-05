@@ -23,6 +23,7 @@ class CommerceProductBundleITest extends CommerceProductBundleKernelTestBase {
    * @covers ::setPublished
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
+   * @covers ::postDelete
    */
   public function testBundle() {
 
@@ -77,6 +78,11 @@ class CommerceProductBundleITest extends CommerceProductBundleKernelTestBase {
     $bundle = $this->reloadEntity($bundle);
     $items = $bundle->getBundleItems();
     $this->assertEquals($items[0]->Id(), $bundleItem->Id());
+
+    $bundle->delete();
+    $this->assertFalse(ProductBundle::load($bundle->Id()));
+    $this->assertFalse(ProductBundleItem::load($bundleItem->Id()));
+
   }
 
 }

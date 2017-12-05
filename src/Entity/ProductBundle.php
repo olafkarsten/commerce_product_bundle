@@ -312,6 +312,28 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
   /**
    * {@inheritdoc}
    */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    // Delete the product bundle items of a deleted product bundle.
+    $bundleItems = [];
+
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
+    foreach ($entities as $entity) {
+      if (empty($entity->bundle_items)) {
+        continue;
+      }
+
+      foreach ($entity->bundle_items as $item) {
+        $bundleItems[$item->target_id] = $item->entity;
+      }
+    }
+
+    $storage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_bundle_i');
+    $storage->delete($bundleItems);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
