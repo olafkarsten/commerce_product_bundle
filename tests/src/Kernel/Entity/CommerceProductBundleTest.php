@@ -14,7 +14,7 @@ use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestB
  *
  * @group commerce_product_bundle
  */
-class CommerceProductBundleITest extends CommerceProductBundleKernelTestBase {
+class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
 
   /**
    * @covers ::getTitle
