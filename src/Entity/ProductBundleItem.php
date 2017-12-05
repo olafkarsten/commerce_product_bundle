@@ -49,6 +49,7 @@ use Drupal\user\UserInterface;
  *   },
  *   base_table = "commerce_product_bundle_i",
  *   data_table = "commerce_product_bundle_i_field_data",
+ *   fieldable = TRUE,
  *   translatable = TRUE,
  *   admin_permission = "administer commerce_product_bundle_i",
  *   entity_keys = {
@@ -61,12 +62,12 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}",
- *     "add-page" = "/admin/commerce/config/product-bundles/bundle-items/add",
- *     "add-form" = "/admin/commerce/config/product-bundles/bundle-items/add/{commerce_product_bundle_i_type}",
- *     "edit-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/edit",
- *     "delete-form" = "/admin/commerce/config/product-bundles/bundle-items/{commerce_product_bundle_i}/delete",
- *     "collection" = "/admin/commerce/config/product-bundles/bundle-items",
+ *     "canonical" = "/product-bundle-items/{commerce_product_bundle_i}",
+ *     "add-page" = "/product-bundle-items/add",
+ *     "add-form" = "/product-bundle-items/add/{commerce_product_bundle_i_type}",
+ *     "edit-form" = "/product-bundle-items/{commerce_product_bundle_i}/edit",
+ *     "delete-form" = "/product-bundle-items/{commerce_product_bundle_i}/delete",
+ *     "collection" = "/product-bundle-items",
  *   },
  *   bundle_entity_type = "commerce_product_bundle_i_type",
  *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"

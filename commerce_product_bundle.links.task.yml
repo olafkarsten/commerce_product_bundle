@@ -14,6 +14,11 @@ entity.commerce_product_bundle.delete_form:
   title: 'Delete'
   weight: 10
 
+entity.commerce_product_bundle_type.edit_form:
+  route_name: entity.commerce_product_bundle_type.edit_form
+  base_route: entity.commerce_product_bundle_type.edit_form
+  title: 'Edit'
+
 entity.commerce_product_bundle_i.canonical:
   route_name: entity.commerce_product_bundle_i.canonical
   base_route: entity.commerce_product_bundle_i.canonical
@@ -30,18 +35,7 @@ entity.commerce_product_bundle_i.delete_form:
   title: 'Delete'
   weight: 10
 
-entity.commerce_product_bundle_i.canonical:
-  route_name: entity.commerce_product_bundle_i.canonical
-  base_route: entity.commerce_product_bundle_i.canonical
-  title: 'View'
-
-entity.commerce_product_bundle_i.edit_form:
-  route_name: entity.commerce_product_bundle_i.edit_form
-  base_route: entity.commerce_product_bundle_i.canonical
+entity.commerce_product_bundle_i_type.edit_form:
+  route_name: entity.commerce_product_bundle_i_type.edit_form
+  base_route: entity.commerce_product_bundle_i_type.edit_form
   title: 'Edit'
-
-entity.commerce_product_bundle_i.delete_form:
-  route_name:  entity.commerce_product_bundle_i.delete_form
-  base_route:  entity.commerce_product_bundle_i.canonical
-  title: 'Delete'
-  weight: 10

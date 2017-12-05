@@ -1,0 +1,7 @@
+commerce_product_bundle.configuration:
+  path: '/admin/commerce/config/product_bundles'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Product bundles'
+  requirements:
+    _permission: 'access commerce administration pages'
