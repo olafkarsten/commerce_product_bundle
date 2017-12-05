@@ -1,23 +1,29 @@
+commerce_product_bundle.configuration:
+  title: 'Product bundles'
+  route_name: 'commerce_product_bundle.configuration'
+  parent: 'commerce.configuration'
+
 entity.commerce_product_bundle.collection:
   title: 'Product bundles'
   route_name: entity.commerce_product_bundle.collection
-  description: 'List product bundles'
+  description: 'Manage your product bundles.'
   parent: 'commerce.admin_commerce'
 
 entity.commerce_product_bundle_i.collection:
   title: 'Product bundle items'
   route_name: entity.commerce_product_bundle_i.collection
-  description: 'List product bundle items'
+  description: 'Manage your product bundle items.'
   parent: 'commerce.admin_commerce'
 
 entity.commerce_product_bundle_type.collection:
-  title: 'Product bundle types'
+  title: 'Bundle types'
   route_name: entity.commerce_product_bundle_type.collection
-  description: 'List product bundle types'
-  parent: 'commerce.configuration'
+  description: 'Manage fields, form and display settings for your product bundles.'
+  parent: 'commerce_product_bundle.configuration'
+  weight: -10
 
 entity.commerce_product_bundle_i_type.collection:
-  title: 'Product bundle item types'
+  title: 'Bundle item types'
   route_name: entity.commerce_product_bundle_i_type.collection
-  description: 'List product bundle item types'
-  parent: 'commerce.configuration'
+  description: 'Manage fields, form and display settings for your product bundle items'
+  parent: 'commerce_product_bundle.configuration'
