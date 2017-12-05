@@ -4,7 +4,7 @@ namespace Drupal\commerce_product_bundle;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 
 /**
@@ -15,8 +15,6 @@ use Drupal\Core\Url;
  * @ToDo Replace the LinkGeneratorTrait with \Drupal\Core\Link
  */
 class ProductBundleListBuilder extends EntityListBuilder {
-
-  use LinkGeneratorTrait;
 
   /**
    * {@inheritdoc}
@@ -33,7 +31,7 @@ class ProductBundleListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\commerce_product_bundle\Entity\ProductBundle */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
+    $row['name'] = Link::fromTextAndUrl(
       $entity->label(),
       new Url(
         'entity.commerce_product_bundle.edit_form', [

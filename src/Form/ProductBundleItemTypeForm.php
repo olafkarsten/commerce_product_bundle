@@ -66,7 +66,7 @@ class ProductBundleItemTypeForm extends EntityForm {
           '%label' => $product_bundle_item_type->label(),
         ]));
     }
-    $form_state->setRedirectUrl($product_bundle_item_type->urlInfo('collection'));
+    $form_state->setRedirectUrl($product_bundle_item_type->toUrl('collection'));
     if ($status == SAVED_NEW) {
       commerce_product_bundle_add_variations_field($product_bundle_item_type);
     }
