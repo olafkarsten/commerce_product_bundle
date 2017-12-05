@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/olafkarsten/commerce_product_bundle.svg?branch=8.x-1.x)](https://travis-ci.org/olafkarsten/commerce_product_bundle)
+
 Commerce Product Bundle
 =================
 
