@@ -106,7 +106,7 @@ before_install:
   - composer self-update --quiet
   - composer config repositories.drupal composer https://packages.drupal.org/8
   - composer global require "hirak/prestissimo:^0.3"
-  - composer global require composer global require "lionsad/drupal_ti:1.*"
+  - composer global require "lionsad/drupal_ti:1.*"
   - composer global require "squizlabs/php_codesniffer:2.*"
   - drupal-ti before_install
 
