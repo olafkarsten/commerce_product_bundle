@@ -542,7 +542,12 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
         'weight' => 1,
       ])
       ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->addPropertyConstraints('value', [
+        'Range' => [
+          'min' => 0,
+        ],
+      ]);
 
     $fields['max_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Maximum Quantity'))

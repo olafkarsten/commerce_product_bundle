@@ -38,10 +38,24 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
+    $bundleItem->setMaximumQuantity(0);
+    $violations = $bundleItem->validate()->getByField("max_quantity");
+    $this->assertCount(1, $violations);
+
     $bundleItem->setMaximumQuantity(55);
     $this->assertEquals(55, $bundleItem->getMaximumQuantity());
+    $violations = $bundleItem->validate()->getByField("max_quantity");
+    $this->assertCount(0, $violations);
+
+    $bundleItem->setMinimumQuantity(-1);
+    $violations = $bundleItem->validate()->getByField("min_quantity");
+    $this->assertCount(1, $violations);
+
     $bundleItem->setMinimumQuantity(11);
     $this->assertEquals(11, $bundleItem->getMinimumQuantity());
+    $violations = $bundleItem->validate()->getByField("min_quantity");
+    $this->assertCount(0, $violations);
+
     $bundleItem->setQuantity(12);
     $this->assertEquals(12, $bundleItem->getQuantity());
 
