@@ -23,8 +23,6 @@ function commerce_product_bundle_help($route_name, CurrentRouteMatch $route_matc
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Extends Drupal Commerce with a product bundle functionality.') . '</p>';
       return $output;
-
-    default:
   }
 }
 
