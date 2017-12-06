@@ -4,7 +4,6 @@ namespace Drupal\commerce_product_bundle\Plugin\Validation\Constraint;
 
 use Drupal\Core\Entity\Plugin\Validation\Constraint\CompositeConstraintBase;
 
-
 /**
  * Helps validating that the minimum qty value is less than or equal to the maximum qty.
  *
@@ -26,7 +25,7 @@ class MinQtyLessThanOrEqualMaxQtyConstraint extends CompositeConstraintBase {
   /**
    * @inheritdoc
    */
-  public function coversFields(){
+  public function coversFields() {
     return ['min_quantity', 'max_quantity'];
   }
 
