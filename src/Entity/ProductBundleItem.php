@@ -534,6 +534,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setLabel(t('Minimum Quantity'))
       ->setDescription(t('The minimum quantity.'))
       ->setSetting('unsigned', TRUE)
+      ->setSetting('min', 0)
       ->setRequired(TRUE)
       ->setDefaultValue(1)
       ->setDisplayOptions('form', [
@@ -547,6 +548,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setLabel(t('Maximum Quantity'))
       ->setDescription(t('The maximum quantity.'))
       ->setSetting('unsigned', TRUE)
+      ->setSetting('min', 1)
       ->setRequired(TRUE)
       ->setDefaultValue(1)
       ->setDisplayOptions('form', [
