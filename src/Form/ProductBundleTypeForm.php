@@ -26,6 +26,7 @@ class ProductBundleTypeForm extends EntityForm {
    * ProductBundleTypeForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *  The entity type manager.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
