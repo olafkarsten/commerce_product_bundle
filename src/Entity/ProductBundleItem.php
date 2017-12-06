@@ -69,6 +69,9 @@ use Drupal\user\UserInterface;
  *     "delete-form" = "/product-bundle-items/{commerce_product_bundle_i}/delete",
  *     "collection" = "/product-bundle-items",
  *   },
+ *   constraints = {
+ *     "MinQtyLessThanOrEqualMaxQty" = {}
+ *   },
  *   bundle_entity_type = "commerce_product_bundle_i_type",
  *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"
  * )

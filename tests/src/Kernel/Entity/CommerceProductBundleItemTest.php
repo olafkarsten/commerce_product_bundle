@@ -56,6 +56,15 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $violations = $bundleItem->validate()->getByField("min_quantity");
     $this->assertCount(0, $violations);
 
+    $bundleItem->setMinimumQuantity(111);
+    $violations = $bundleItem->validate();
+    $this->assertCount(1, $violations);
+
+    $bundleItem->setMaximumQuantity(222);
+    $bundleItem->setMinimumQuantity(222);
+    $violations = $bundleItem->validate();
+    $this->assertCount(0, $violations);
+
     $bundleItem->setQuantity(12);
     $this->assertEquals(12, $bundleItem->getQuantity());
 
