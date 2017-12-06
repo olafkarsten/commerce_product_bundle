@@ -23,10 +23,11 @@ class ProductBundleTypeForm extends EntityForm {
   protected $bundleItemTypeStorage;
 
   /**
-   * Creates a new ProductBundleTypeForm object.
+   * ProductBundleTypeForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->bundleItemTypeStorage = $entity_type_manager->getStorage('commerce_product_bundle_i_type');
@@ -37,8 +38,7 @@ class ProductBundleTypeForm extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager'),
-      $container->get('entity_field.manager')
+      $container->get('entity_type.manager')
     );
   }
 
