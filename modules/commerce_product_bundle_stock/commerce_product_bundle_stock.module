@@ -18,7 +18,5 @@ function commerce_product_bundle_stock_help($route_name, RouteMatchInterface $ro
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Provides integration between commerce product bundle and commerce stock.') . '</p>';
       return $output;
-
-    default:
   }
 }
