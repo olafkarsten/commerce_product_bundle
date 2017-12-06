@@ -248,7 +248,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
 
     // @ToDo We need to check against the min/max constraints
     // @see https://www.drupal.org/node/2847809
-    $this->activeQuantity = $quantity;
+    $this->activeQuantity = (float) $quantity;
 
     return $this;
   }
@@ -257,7 +257,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * @inheritdoc
    */
   public function setMinimumQuantity($minimum_quantity) {
-    $this->set('min_quantity', $minimum_quantity);
+    $this->set('min_quantity', (float) $minimum_quantity);
 
     return $this;
   }
@@ -266,7 +266,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * @inheritdoc
    */
   public function setMaximumQuantity($maximum_quantity) {
-    $this->set('max_quantity', $maximum_quantity);
+    $this->set('max_quantity', (float) $maximum_quantity);
 
     return $this;
   }
