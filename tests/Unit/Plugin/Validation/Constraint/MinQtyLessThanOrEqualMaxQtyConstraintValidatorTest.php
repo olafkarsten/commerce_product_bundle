@@ -73,17 +73,17 @@ class MinQtyLessThanOrEqualMaxQtyConstraintValidatorTest extends UnitTestCase {
     $constraint = new MinQtyLessThanOrEqualMaxQtyConstraint();
 
     $bundleItemMock = $this->prophesize(BundleItemInterface::class);
-    $bundleItemMock->getMinimumQuantity()->willReturn(1,0,1,20);
-    $bundleItemMock->getMaximumQuantity()->willReturn(1,1,10,10);
+    $bundleItemMock->getMinimumQuantity()->willReturn(1, 0, 1, 20);
+    $bundleItemMock->getMaximumQuantity()->willReturn(1, 1, 10, 10);
     $entity = $bundleItemMock->reveal();
 
-    // Case 1: Default values, Min = Max
+    // Case 1: Default values, Min = Max.
     $cases[] = [$entity, FALSE];
-    // Case 2: Min < Max, Min = 0
+    // Case 2: Min < Max, Min = 0.
     $cases[] = [$entity, FALSE];
-    // Case 3: Min < Max, Min > 0
+    // Case 3: Min < Max, Min > 0.
     $cases[] = [$entity, FALSE];
-    // Case 4: Min > Max
+    // Case 4: Min > Max.
     $cases[] = [$entity, $constraint->message];
 
     return $cases;
