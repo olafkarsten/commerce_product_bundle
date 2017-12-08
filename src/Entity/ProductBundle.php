@@ -191,7 +191,7 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
       return $this->get('bundle_price')->first()->toPrice();
     }
     else {
-      $currency_code = \Drupal::service('commerce_store.store_context')->getStore()->getDefaultCurrencyCode();
+      $currency_code = \Drupal::service('commerce_store.current_store')->getStore()->getDefaultCurrencyCode();
       $bundle_price = new Price('0.00', $currency_code);
       foreach ($this->getBundleItems() as $item) {
         $bundle_price = $bundle_price->add($item->getUnitPrice());
