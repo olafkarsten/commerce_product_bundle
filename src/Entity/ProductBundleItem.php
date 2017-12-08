@@ -210,12 +210,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
     if (!$this->get('unit_price')->isEmpty() && !$this->get('unit_price')->first()->toPrice()->isZero()) {
       return $this->get('unit_price')->first()->toPrice();
     }
-    // @todo: Figure out how to get the currently selected variation
-    // without holding state in this object.
-    // @see https://www.drupal.org/node/2831613
-    elseif (!$this->getDefaultVariation()->getUnitPrice()->isEmpty()) {
-      return $this->getDefaultVariation()->getUnitPrice()->first()->toPrice();
-    }
+
+    return $this->getCurrentVariation()->getPrice();
   }
 
   /**
@@ -387,6 +383,10 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
 
   /**
    * {@inheritdoc}
+   *
+   * @todo: Figure out how to get the currently selected variation
+   * without holding state in this object.
+   * @see https://www.drupal.org/node/2831613
    */
   public function getCurrentVariation() {
     return $this->currentVariation ?: $this->getDefaultVariation();

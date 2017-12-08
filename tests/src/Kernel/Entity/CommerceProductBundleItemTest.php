@@ -74,8 +74,10 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setActive(FALSE);
     $this->assertEquals(FALSE, $bundleItem->isActive());
 
-    $price = new Price('55.55', 'USD');
+    // @ToDo https://www.drupal.org/project/commerce_product_bundle/issues/2929365
+    // $this->assertNull($bundleItem->getUnitPrice());
     $this->assertFalse($bundleItem->hasUnitPrice());
+    $price = new Price('55.55', 'USD');
     $bundleItem->setUnitPrice($price);
     $this->assertTrue($bundleItem->hasUnitPrice());
     $this->assertEquals($price, $bundleItem->getUnitPrice());

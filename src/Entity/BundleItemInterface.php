@@ -311,8 +311,8 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Gets the price of one unit of the referenced
    * product variations.
    *
-   * @return \Drupal\commerce_price\Price
-   *   The unit price.
+   * @return \Drupal\commerce_price\Price|null
+   *   The unit price or NULL.
    */
   public function getUnitPrice();
 
