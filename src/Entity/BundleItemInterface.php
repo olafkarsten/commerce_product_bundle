@@ -156,12 +156,12 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function getMaximumQuantity();
 
   /**
-   * Gets the bundle item's product id.
+   * Gets wether the bundle item has a product set or not.
    *
-   * @return string|int
-   *   The bundle item's product id.
+   * @return bool
+   *   TRUE if the bundle item contains a product reference. FALSE otherwise.
    */
-  public function getProductId();
+  public function hasProduct();
 
   /**
    * Get the referenced product.
@@ -171,6 +171,14 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *    if no product is referenced.
    */
   public function getProduct();
+
+  /**
+   * Gets the bundle item's product id.
+   *
+   * @return string|int
+   *   The bundle item's product id.
+   */
+  public function getProductId();
 
   /**
    * Set the referenced product.
@@ -187,6 +195,10 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
    *   The variations.
+   *
+   * @throws \InvalidArgumentException
+   *    In case the variations don't belong to the same product or if applicable to
+   *    the already referenced product.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
    *   The called product bundle item entity.
@@ -260,8 +272,27 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Adds a variation.
    *
+   * If the bundle item does not yet hold a product reference, nothing happens.
+   * So if you unsure you should propably check for existence of the product
+   * reference.
+   *
+   * If the bundle item has a product reference, but doesn't restrict
+   * the variations, nothing will happen. You can check for this
+   * with hasVariations().
+   *
+   * @code
+   * if($bundleItem->hasProduct() && $bundleItem->hasVariations()){
+   *    $bundleItem->addVariation($variation)
+   * } else {
+   *    $bundleItem->setVariations([$variation]);
+   * }
+   * @endcode
+   *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
    *   The variation.
+   *
+   * @throws \InvalidArgumentException
+   *    In case the variation don't belong to the referenced product.
    *
    * @return $this
    */
@@ -290,6 +321,10 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
    *   The variation.
+   *
+   * @throws \InvalidArgumentException
+   *   In case the variation passed as argument is not referenced by the bundle
+   *   item.
    *
    * @return $this
    */
