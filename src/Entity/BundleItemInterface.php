@@ -183,6 +183,9 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Set the referenced product.
    *
+   * If a new product is referenced, the variations references will be
+   * resetted.
+   *
    * @param \Drupal\commerce_product\Entity\ProductInterface $product
    *   The product.
    *
@@ -192,6 +195,9 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
 
   /**
    * Sets the variations.
+   *
+   * If the bundle item doesn't hold a product reference yet, the product of the
+   * first variation will be set as the bundle items product.
    *
    * @param \Drupal\commerce_product\Entity\ProductVariationInterface[] $variations
    *   The variations.
@@ -220,7 +226,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    * Gets the product variations limited by the bundle item or enabled on the product.
    *
    * This method should return the variations, if any, specified (limited) by
-   * the bundle item, or fall back to all active variations of the referenced product.
+   * the bundle item, or fall back to all enabled variations of the referenced product.
    *
    * @todo: What to do about [limited] variations that are not enabled on their products?
    * @see https://www.drupal.org/node/2837499
@@ -245,29 +251,6 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *   The default product variation.
    */
   public function getDefaultVariation();
-
-  /**
-   * Checks if the bundle item has a given variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The product variation.
-   *
-   * @return bool
-   *   True if the bundle item has this product variation
-   *    referenced, false if not.
-   */
-  public function hasVariation(ProductVariationInterface $variation);
-
-  /**
-   * Gets the index of the given variation.
-   *
-   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
-   *   The variation.
-   *
-   * @return int|bool
-   *   The index of the given variation, or FALSE if not found.
-   */
-  public function getVariationIndex(ProductVariationInterface $variation);
 
   /**
    * Adds a variation.
