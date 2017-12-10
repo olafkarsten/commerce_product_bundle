@@ -156,7 +156,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function getMaximumQuantity();
 
   /**
-   * Gets wether the bundle item has a product set or not.
+   * Gets whether the bundle item has a product set or not.
    *
    * @return bool
    *   TRUE if the bundle item contains a product reference. FALSE otherwise.
@@ -214,9 +214,6 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets whether the bundle item has restricted variations.
    *
-   * @todo Consider how this may change.
-   * @see https://www.drupal.org/node/2837499
-   *
    * @return bool
    *   TRUE if the bundle item has restricted available variations, FALSE otherwise.
    */
@@ -225,14 +222,11 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   /**
    * Gets the product variations limited by the bundle item or enabled on the product.
    *
-   * This method should return the variations, if any, specified (limited) by
+   * This method returns the variations, if any, specified (limited) by
    * the bundle item, or fall back to all enabled variations of the referenced product.
    *
-   * @todo: What to do about [limited] variations that are not enabled on their products?
-   * @see https://www.drupal.org/node/2837499
-   *
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
-   *   Array of product variations.
+   *   The product variations.
    */
   public function getVariations();
 
@@ -335,7 +329,7 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function getUnitPrice();
 
   /**
-   * Check wether the bundleItem has an own unit price.
+   * Check whether the bundleItem has an own unit price.
    *
    * @return bool
    *   True it the bundle item has an own unit price set,

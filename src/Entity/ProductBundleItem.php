@@ -207,11 +207,12 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getUnitPrice() {
-    if (!$this->get('unit_price')->isEmpty() && !$this->get('unit_price')->first()->toPrice()->isZero()) {
+    if (!$this->get('unit_price')->isEmpty()) {
       return $this->get('unit_price')->first()->toPrice();
     }
 
-    return $this->getCurrentVariation()->getPrice();
+    $variation = $this->getCurrentVariation();
+    return $variation ? $variation->getPrice() : NULL;
   }
 
   /**
@@ -273,23 +274,39 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function getProductId() {
-    return $this->getProduct()->target_id;
+  public function hasProduct() {
+    return !$this->get('product')->isEmpty();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getProduct() {
-    $product = $this->get('product')->referencedEntities();
+    if ($this->hasProduct()) {
+      return $this->get('product')->referencedEntities()[0];
+    }
+  }
 
-    return $product[0];
+  /**
+   * {@inheritdoc}
+   */
+  public function getProductId() {
+    return $this->getProduct()->id();
   }
 
   /**
    * @inheritdoc
    */
   public function setProduct(ProductInterface $product) {
+    // Unset variations, if we get another product.
+    if ($this->hasProduct()) {
+      $currentProductId = $this->getProduct()->id();
+      $newProductId = $product->id();
+      if ($currentProductId !== $newProductId) {
+        $this->set('variations', NULL);
+      }
+    }
+
     $this->set('product', $product);
     return $this;
   }
@@ -305,7 +322,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function addVariation(ProductVariationInterface $variation) {
-    if (!$this->hasVariation($variation)) {
+    if ($this->hasProduct() && $this->hasVariations() && !$this->hasVariation($variation)) {
+      $this->assertSameProduct([$variation]);
       $this->get('variations')->appendItem($variation);
     }
 
@@ -313,19 +331,46 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   }
 
   /**
-   * {@inheritdoc}
+   * Whether the bundle item has a specific variation referenced.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return bool
+   *   True if the variations reference contains the variation, false otherwise.
    */
-  public function hasVariation(ProductVariationInterface $variation) {
+  protected function hasVariation(ProductVariationInterface $variation) {
     return $this->getVariationIndex($variation) !== FALSE;
+  }
+
+  /**
+   * Get the index of a variation in the variation references.
+   *
+   * @param \Drupal\commerce_product\Entity\ProductVariationInterface $variation
+   *   The variation.
+   *
+   * @return false|int|string
+   *   The key for the variation if it is found in the
+   *   references, false otherwise.
+   */
+  protected function getVariationIndex(ProductVariationInterface $variation) {
+    return array_search($variation->id(), $this->getVariationIds() ?: []);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getVariationIds() {
+
+    $variations = $this->getVariations();
+    if (empty($variations)) {
+      return NULL;
+    }
+
     return array_map(function ($variation) {
       return $variation->id();
     }, $this->get('variations')->referencedEntities());
+
   }
 
   /**
@@ -343,14 +388,10 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function getVariationIndex(ProductVariationInterface $variation) {
-    return array_search($variation->id(), $this->getVariationIds());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getDefaultVariation() {
+    if (!$this->hasProduct()) {
+      return NULL;
+    }
     foreach ($this->getVariations() as $variation) {
       // Return the first active variation.
       if ($variation->isActive()) {
@@ -363,22 +404,67 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function getVariations() {
+
+    if (!$this->hasProduct()) {
+      return NULL;
+    }
+
     $variations = $this->get('variations')->referencedEntities();
     if (empty($variations)) {
-      // @todo Inject variationStorage?
-      $variationStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_variation');
-      $variations = $variationStorage->loadEnabled($this->getProduct());
+      return $this->getEnabledVariations();
     }
 
     return $this->ensureTranslations($variations);
   }
 
   /**
+   * Get the enabled product variations.
+   *
+   * @return null|\Drupal\commerce_product\Entity\ProductVariationInterface[]
+   *   Array of enabled product variations or NULL.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   */
+  protected function getEnabledVariations() {
+    $variationStorage = $this->entityTypeManager()->getStorage('commerce_product_variation');
+    return $variationStorage->loadEnabled($this->getProduct());
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setVariations(array $variations) {
+    if (empty($variations)) {
+      return $this;
+    }
+
+    // If there is no product referenced on the bundle item, do it now.
+    if ($this->get('product')->isEmpty()) {
+      $this->setProduct($variations[0]->getProduct());
+    }
+    $this->assertSameProduct($variations);
+
     $this->set('variations', $variations);
     return $this;
+  }
+
+  /**
+   * Ensure that all passed variations belong to the same product.
+   *
+   * @param array $variations
+   *   \Drupal\commerce_product\Entity\ProductVariationInterface[].
+   *
+   * @throws \InvalidArgumentException
+   *    In case a variation belongs to another product.
+   */
+  protected function assertSameProduct(array $variations) {
+    foreach ($variations as $variation) {
+      $shouldBeOfType = $this->getProduct()->id();
+      $isType = $variation->getProductId();
+      if ($shouldBeOfType !== $isType) {
+        throw new \InvalidArgumentException('All variations of a bundle item must be from the same product.');
+      }
+    }
   }
 
   /**
@@ -396,6 +482,10 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * {@inheritdoc}
    */
   public function setCurrentVariation(ProductVariationInterface $variation) {
+    $this->assertSameProduct([$variation]);
+    if (!$this->hasVariation($variation)) {
+      throw new \InvalidArgumentException('Variation is not part of this product bundle.');
+    }
     $this->currentVariation = $variation;
     return $this;
   }
@@ -512,6 +602,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDescription(t('Reference to a product.'))
       ->setSetting('target_type', 'commerce_product')
       ->setSetting('handler', 'default')
+      ->setCardinality(1)
+      ->setRequired(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'entity_reference_label',

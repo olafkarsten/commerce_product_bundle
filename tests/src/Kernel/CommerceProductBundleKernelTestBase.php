@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\commerce_product_bundle\Kernel;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
 /**
@@ -58,6 +59,36 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
 
     $user = $this->createUser();
     $this->user = $this->reloadEntity($user);
+  }
+
+  /**
+   * Creates a new entity.
+   *
+   * @param string $entity_type
+   *   The entity type to be created.
+   * @param array $values
+   *   An array of settings.
+   *   Example: 'id' => 'foo'.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   A new entity.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  protected function createEntity($entity_type, array $values) {
+    /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
+    $storage = \Drupal::service('entity_type.manager')->getStorage($entity_type);
+    $entity = $storage->create($values);
+    $status = $entity->save();
+    $this->assertEquals(SAVED_NEW, $status, new FormattableMarkup('Created %label entity %type.', [
+      '%label' => $entity->getEntityType()->getLabel(),
+      '%type' => $entity->id(),
+    ]));
+    // The newly saved entity isn't identical to a loaded one, and would fail
+    // comparisons.
+    $entity = $storage->load($entity->id());
+
+    return $entity;
   }
 
 }
