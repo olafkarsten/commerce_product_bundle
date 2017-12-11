@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'commerce_product_variation_attributes' widget.
+ * Plugin implementation of the 'commerce_product_bundle_items' widget.
  *
  * @FieldWidget(
  *   id = "commerce_product_bundle_items",
@@ -393,10 +393,13 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
   public function addBundleItemSelections($entity_type, OrderItemInterface $order_item, array $form, FormStateInterface $form_state) {
     $bundle_item_selections = [];
     foreach ($form_state->getValue('purchased_entity')[0]['bundle_items'] as $item => $selection) {
+      // Cast values to string like OrderItem does for other fields.
+      // Value type (string) and order are required when matching order items.
+      // @see \Drupal\commerce_cart\OrderItemMatcher
       $bundle_item_selections[] = [
-        'bundle_item' => $item,
-        'selected_entity' => $selection['variation'],
-        'selected_qty' => $selection['qty'],
+        'bundle_item' => (string) $item,
+        'selected_qty' => (string) $selection['qty'],
+        'selected_entity' => (string) $selection['variation'],
       ];
     }
     $order_item->set('field_bundle_item_selections', $bundle_item_selections);

@@ -12,7 +12,7 @@ use Drupal\Core\TypedData\DataDefinition;
  * @FieldType(
  *   id = "commerce_product_bundle_item_selection",
  *   label = @Translation("Bundle item selection"),
- *   description = @Translation("Stores selections from the parent bundle item's options."),
+ *   description = @Translation("Represents a selection from the parent bundle item's options."),
  *   category = @Translation("Commerce"),
  *   default_widget = "commerce_product_bundle_item_selection_default",
  *   default_formatter = "commerce_product_bundle_item_selection_default",
@@ -29,7 +29,7 @@ class BundleItemSelection extends FieldItemBase {
       ->setRequired(FALSE);
 
     $properties['selected_qty'] = DataDefinition::create('string')
-      ->setLabel(t('Selected tuantity'))
+      ->setLabel(t('Selected quantity'))
       ->setRequired(FALSE);
 
     $properties['selected_entity'] = DataDefinition::create('string')
@@ -52,10 +52,10 @@ class BundleItemSelection extends FieldItemBase {
           'scale' => 0,
         ],
         'selected_qty' => [
-          'description' => 'The quantity.',
+          'description' => 'The selected quantity.',
           'type' => 'numeric',
-          'precision' => 19,
-          'scale' => 0,
+          'precision' => 17,
+          'scale' => 2,
         ],
         'selected_entity' => [
           'description' => 'The selected entity id.',

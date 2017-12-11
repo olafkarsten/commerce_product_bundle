@@ -1,0 +1,135 @@
+<?php
+
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+
+/**
+ * Update the 'commerce_product_bundle_item_selection' 'selected_qty' column.
+ */
+function commerce_product_bundle_update_8001() {
+  $database = \Drupal::database();
+  $field_tables = [];
+  $field_tables_processed = 0;
+  $keys = [
+    'primary key' => [
+      'entity_id',
+      'deleted',
+      'delta',
+      'langcode',
+    ],
+  ];
+  $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+  $selection_definition = $field_type_manager->getDefinition('commerce_product_bundle_item_selection');
+  /** @var \Drupal\commerce_product_bundle\Plugin\Field\FieldType\BundleItemSelection $selection_item_class */
+  $selection_item_class = $selection_definition['class'];
+  $column_id = 'selected_qty';
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager */
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $entity_field_map = $entity_field_manager->getFieldMapByFieldType('commerce_product_bundle_item_selection');
+  // The key-value collection for tracking installed storage schema.
+  $entity_storage_schema_sql = \Drupal::keyValue('entity.storage_schema.sql');
+  $entity_definitions_installed = \Drupal::keyValue('entity.definitions.installed');
+
+  foreach ($entity_field_map as $entity_type_id => $field_map) {
+    $entity_storage = $entity_type_manager->getStorage($entity_type_id);
+    // Only SQL storage based entities are supported / throw known exception.
+    if (!($entity_storage instanceof SqlContentEntityStorage)) {
+      continue;
+    }
+
+    $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+    $field_storage_definitions = $entity_field_manager->getFieldStorageDefinitions($entity_type_id);
+    /** @var \Drupal\Core\Entity\Sql\DefaultTableMapping $table_mapping */
+    $table_mapping = $entity_storage->getTableMapping($field_storage_definitions);
+    /** @var \Drupal\Core\Field\FieldStorageDefinitionInterface $field_storage_definition */
+    foreach (array_intersect_key($field_storage_definitions, $field_map) as $field_storage_definition) {
+      $field_name = $field_storage_definition->getName();
+      try {
+        $table = $table_mapping->getFieldTableName($field_name);
+        $selected_qty_field = $table_mapping->getFieldColumnName($field_storage_definition, $column_id);
+      }
+      catch (\Drupal\Core\Entity\Sql\SqlContentEntityStorageException $e) {
+        continue;
+      }
+      // See if the field has a revision table.
+      $revision_table = NULL;
+      if ($entity_type->isRevisionable() && $field_storage_definition->isRevisionable()) {
+        if ($table_mapping->requiresDedicatedTableStorage($field_storage_definition)) {
+          $revision_table = $table_mapping->getDedicatedRevisionTableName($field_storage_definition);
+        }
+        elseif ($table_mapping->allowsSharedTableStorage($field_storage_definition)) {
+          $revision_table = $entity_type->getRevisionDataTable() ?: $entity_type->getRevisionTable();
+        }
+      }
+      // Load the installed field schema so that it can be updated.
+      $schema_key = "$entity_type_id.field_schema_data.$field_name";
+      $field_schema_data = $entity_storage_schema_sql->get($schema_key);
+
+      // Update 'selected_qty' field from integer to decimal.
+      $field_schema = $selection_item_class::schema($field_storage_definition);
+      $spec = $field_schema['columns'][$column_id];
+      $db_column = $field_name . '_' . $column_id;
+
+      if ($field_schema_data) {
+        $field_schema_data[$table]['fields'][$selected_qty_field] = $spec;
+        $field_schema_data[$table]['fields'][$selected_qty_field]['precision'] = '17';
+        $field_schema_data[$table]['fields'][$selected_qty_field]['scale'] = '2';
+        if ($revision_table) {
+          $field_schema_data[$revision_table]['fields'][$selected_qty_field] = $spec;
+          $field_schema_data[$revision_table]['fields'][$selected_qty_field]['precision'] = '17';
+          $field_schema_data[$revision_table]['fields'][$selected_qty_field]['scale'] = '2';
+        }
+
+        // Save changes to the installed field schema.
+        $entity_storage_schema_sql->set($schema_key, $field_schema_data);
+
+        if ($table_mapping->allowsSharedTableStorage($field_storage_definition)) {
+          $key = "$entity_type_id.field_storage_definitions";
+          if ($definitions = $entity_definitions_installed->get($key)) {
+            $definitions[$field_name] = $field_storage_definition;
+            $entity_definitions_installed->set($key, $definitions);
+          }
+        }
+
+        if ($database->schema()->tableExists($table)) {
+          $field_tables[$table] = $database->select($table, 't')
+            ->fields('t')
+            ->execute()
+            ->fetchAll();
+          $database
+            ->truncate($table)
+            ->execute();
+          db_drop_primary_key($table);
+          $database
+            ->schema()
+            ->changeField($table, $db_column, $db_column, $field_schema_data[$table]['fields'][$selected_qty_field], $keys);
+        }
+        if ($database->schema()->tableExists($revision_table)) {
+          $field_tables[$revision_table] = $database->select($revision_table, 't')
+            ->fields('t')
+            ->execute()
+            ->fetchAll();
+          $database
+            ->truncate($revision_table)
+            ->execute();
+          db_drop_primary_key($revision_table);
+          $database
+            ->schema()
+            ->changeField($revision_table, $db_column, $db_column, $field_schema_data[$revision_table]['fields'][$selected_qty_field], $keys);
+        }
+      }
+    }
+    foreach ($field_tables as $table => $rows) {
+      foreach ($rows as $row) {
+        $database->insert($table)
+          ->fields((array) $row)
+          ->execute();
+      }
+      $field_tables_processed++;
+    }
+
+    return t('@i bundle_item_selection fields were updated.', ['@i' => $field_tables_processed]);
+  }
+
+}
