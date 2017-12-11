@@ -44,11 +44,13 @@ class ProductBundleLazyBuilders {
    *   The product bundle ID.
    * @param string $view_mode
    *   The view mode used to render the product bundle.
+   * @param bool $combine
+   *   TRUE to combine order items containing the same product bundle.
    *
    * @return array
    *   A renderable array containing the add to cart form.
    */
-  public function addToCartForm($product_bundle_id, $view_mode) {
+  public function addToCartForm($product_bundle_id, $view_mode, $combine) {
     /** @var \Drupal\commerce_order\OrderItemStorageInterface $order_item_storage */
     $order_item_storage = $this->entityTypeManager->getStorage('commerce_order_item');
 
@@ -58,10 +60,9 @@ class ProductBundleLazyBuilders {
     $form_state_additions = [
       'product_bundle' => $product_bundle,
       'view_mode' => $view_mode,
-      // This is where we could pass settings into the form.
-      // 'settings' => [
-      //   'combine' => $combine,  @codingStandardsIgnoreLine
-      // ],
+      'settings' => [
+        'combine' => $combine,
+      ],
     ];
     return $this->entityFormBuilder->getForm($order_item, 'add_to_cart', $form_state_additions);
   }
