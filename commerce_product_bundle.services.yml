@@ -2,3 +2,8 @@ services:
   commerce_product_bundle.lazy_builders:
     class: Drupal\commerce_product_bundle\ProductBundleLazyBuilders
     arguments: ['@entity_type.manager', '@entity.form_builder']
+
+  commerce_product_bundle.cart_event_subscriber:
+    class: Drupal\commerce_product_bundle\EventSubscriber\CartEventSubscriber
+    tags:
+     - { name: event_subscriber }
