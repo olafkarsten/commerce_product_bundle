@@ -49,10 +49,10 @@ class AddToCartFormatter extends FormatterBase {
   public function settingsSummary() {
     $summary = [];
     if ($this->getSetting('combine')) {
-      $summary[] = $this->t('Combine order items containing the same product bundle.');
+      $summary[] = $this->t('Combine order items containing the same product bundle items.');
     }
     else {
-      $summary[] = $this->t('Do not combine order items containing the same product bundle.');
+      $summary[] = $this->t('Do not combine order items containing the same product bundle items.');
     }
     return $summary;
   }
