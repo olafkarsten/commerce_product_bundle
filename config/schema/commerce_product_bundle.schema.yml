@@ -40,4 +40,4 @@ field.formatter.settings.commerce_product_bundle_add_to_cart:
       label: 'View mode'
     combine:
       type: boolean
-      label: 'Whether to attempt to combine order items containing the same product variation'
+      label: 'Whether to attempt to combine order items containing the same product bundle items'
