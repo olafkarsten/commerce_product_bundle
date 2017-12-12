@@ -46,7 +46,7 @@ class ProductBundleLazyBuilders {
    * @param string $view_mode
    *   The view mode used to render the product bundle.
    * @param bool $combine
-   *   TRUE to combine order items containing the same product bundle.
+   *   TRUE to combine order items containing the same product bundle items.
    *
    * @return array
    *   A renderable array containing the add to cart form.
