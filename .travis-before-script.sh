@@ -7,7 +7,6 @@ set -e $DRUPAL_TI_DEBUG
 drupal_ti_ensure_drupal
 
 cd $DRUPAL_TI_DRUPAL_DIR
-composer config repositories.drupal composer https://packages.drupal.org/8
 composer require "drupal/commerce_stock:dev-1.x"
 
 # Turn on PhantomJS for functional Javascript tests
