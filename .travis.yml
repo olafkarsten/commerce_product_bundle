@@ -25,7 +25,7 @@ matrix:
 
 env:
   global:
-    # - PHANTOMJS2_VERSION="2.0.0"
+    - PHANTOMJS2_VERSION="2.0.0"
     # add composer's global bin directory to the path
     # see: https://github.com/drush-ops/drush#install---composer
     - PATH="$PATH:$HOME/.composer/vendor/bin"
@@ -90,9 +90,10 @@ env:
   matrix:
     # [[[ SELECT ANY OR MORE OPTIONS ]]]
     #- DRUPAL_TI_RUNNERS="phpunit"
-    - DRUPAL_TI_RUNNERS="phpunit-core"
+    #- DRUPAL_TI_RUNNERS="phpunit-core"
+    #- DRUPAL_TI_RUNNERS="simpletest"
     #- DRUPAL_TI_RUNNERS="behat"
-    #- DRUPAL_TI_RUNNERS="phpunit simpletest behat"
+    - DRUPAL_TI_RUNNERS="phpunit-core simpletest"
 
 mysql:
   database: drupal_travis_db
@@ -103,7 +104,6 @@ before_install:
   # Remove xdebug. We aren't generating code coverage, and it slows down Composer.
   - phpenv config-rm xdebug.ini || true
   - composer self-update --quiet
-  - composer config repositories.drupal composer https://packages.drupal.org/8
   - composer global require "hirak/prestissimo:^0.3"
   - composer global require "lionsad/drupal_ti:1.*"
   - composer global require "squizlabs/php_codesniffer:2.*"
@@ -111,6 +111,7 @@ before_install:
 
 install:
   - drupal-ti install
+  
   # Installed after Drush to prevent Composer conflicts around symfony/yaml.
   - composer global require "drupal/coder:8.2.*"
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
@@ -123,7 +124,8 @@ script:
   - phpcs --standard=phpcs.xml src -s
   - phpcs --standard=phpcs.xml tests -s
 
-  - drupal-ti script
+   - drupal-ti script
+   - drupal-ti --include ".travis-simpletest-js.sh"
 
 after_script:
   - drupal-ti after_script
