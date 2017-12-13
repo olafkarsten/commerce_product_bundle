@@ -38,3 +38,6 @@ field.formatter.settings.commerce_product_bundle_add_to_cart:
     view_mode:
       type: string
       label: 'View mode'
+    combine:
+      type: boolean
+      label: 'Whether to attempt to combine order items containing the same product bundle items'
