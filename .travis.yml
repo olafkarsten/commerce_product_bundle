@@ -111,7 +111,7 @@ before_install:
 
 install:
   - drupal-ti install
-  
+
   # Installed after Drush to prevent Composer conflicts around symfony/yaml.
   - composer global require "drupal/coder:8.2.*"
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
@@ -124,8 +124,8 @@ script:
   - phpcs --standard=phpcs.xml src -s
   - phpcs --standard=phpcs.xml tests -s
 
-   - drupal-ti script
-   - drupal-ti --include ".travis-simpletest-js.sh"
+  - drupal-ti script
+  - drupal-ti --include ".travis-simpletest-js.sh"
 
 after_script:
   - drupal-ti after_script
