@@ -10,7 +10,7 @@ language: php
 
 sudo: false
 
-dist: precise
+dist: trusty
 
 php:
   - 7.1
@@ -102,7 +102,6 @@ mysql:
 before_install:
   # Remove xdebug. We aren't generating code coverage, and it slows down Composer.
   - phpenv config-rm xdebug.ini || true
-  # Add the oauth token to prevent GitHub timeouts.
   - composer self-update --quiet
   - composer config repositories.drupal composer https://packages.drupal.org/8
   - composer global require "hirak/prestissimo:^0.3"
