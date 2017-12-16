@@ -70,7 +70,7 @@ class ProductBundleLazyBuilders {
     // between requests due to an availability change, for example).
     $form_object->setFormId($form_object->getBaseFormId() . '_commerce_product_bundle_' . $product_bundle_id);
     $form_state = (new FormState())->setFormState([
-     'product_bundle' => $product_bundle,
+      'product_bundle' => $product_bundle,
       'view_mode' => $view_mode,
       'settings' => [
         'combine' => $combine,
