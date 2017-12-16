@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_product_bundle\EventSubscriber;
+namespace Drupal\commerce_product_bundle_cart\EventSubscriber;
 
 use Drupal\commerce_cart\Event\OrderItemComparisonFieldsEvent;
 use Drupal\commerce_cart\Event\CartEvents;
