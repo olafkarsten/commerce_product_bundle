@@ -22,14 +22,3 @@ function commerce_product_bundle_cart_help($route_name, RouteMatchInterface $rou
     default:
   }
 }
-
-/**
- * Implements hook_theme().
- */
-function commerce_product_bundle_cart_theme() {
-  return [
-    'commerce_product_bundle_cart' => [
-      'render element' => 'children',
-    ],
-  ];
-}
