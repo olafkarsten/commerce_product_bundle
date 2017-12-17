@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains commerce_product_bundle_cart.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function commerce_product_bundle_cart_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the commerce_product_bundle_cart module.
+    case 'help.page.commerce_product_bundle_cart':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Commerce Cart integration for product bundles.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_product_bundle_cart_theme() {
+  return [
+    'commerce_product_bundle_cart' => [
+      'render element' => 'children',
+    ],
+  ];
+}
