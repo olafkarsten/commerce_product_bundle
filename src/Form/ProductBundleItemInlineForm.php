@@ -19,11 +19,6 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
       'label' => t('Product'),
       'weight' => 2,
     ];
-    $fields['variations'] = [
-      'type' => 'field',
-      'label' => t('variations'),
-      'weight' => 3,
-    ];
     $fields['unit_price'] = [
       'type' => 'field',
       'label' => t('Unit Price'),
