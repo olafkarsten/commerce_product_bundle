@@ -41,6 +41,7 @@ use Drupal\user\UserInterface;
  *       "edit" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleItemDeleteForm",
  *     },
+ *     "inline_form" = "Drupal\commerce_product_bundle\Form\ProductBundleItemInlineForm",
  *     "route_provider" = {
  *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
