@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\commerce_product_bundle\Kernel\Entity;
 
+use Drupal\commerce_price\Price;
 use Drupal\commerce_product_bundle\Entity\Productbundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
 use Drupal\field\Entity\FieldConfig;
@@ -30,6 +31,7 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundleItem = ProductBundleItem::create([
       'type' => 'default',
     ]);
+    $bundleItem->setUnitPrice(new Price('44.44', 'USD'));
     $bundleItem->save();
 
     $bundle = Productbundle::create([
@@ -78,6 +80,14 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundle = $this->reloadEntity($bundle);
     $items = $bundle->getBundleItems();
     $this->assertEquals($items[0]->Id(), $bundleItem->Id());
+
+    $this->assertNull($bundle->getPrice());
+    // 0.00 is a valid Price. Check that we don't inadvertently filter it by some
+    // conditionals.
+    $bundle->setPrice(new Price('0.00', 'USD'));
+    $this->assertEquals($bundle->getPrice(), new Price('0.00', 'USD'));
+    $bundle->setPrice(new Price('3.33', 'USD'));
+    $this->assertEquals($bundle->getPrice(), new Price('3.33', 'USD'));
 
     $bundle->delete();
     $this->assertFalse(ProductBundle::load($bundle->Id()));

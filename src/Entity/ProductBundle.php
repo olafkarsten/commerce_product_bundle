@@ -186,19 +186,19 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPrice() {
-    if (!$this->get('bundle_price')->isEmpty() && !$this->get('bundle_price')->first()->toPrice()->isZero()) {
-      return $this->get('bundle_price')->first()->toPrice();
-    }
-    else {
-      $currency_code = \Drupal::service('commerce_store.current_store')->getStore()->getDefaultCurrencyCode();
-      $bundle_price = new Price('0.00', $currency_code);
-      foreach ($this->getBundleItems() as $item) {
-        $bundle_price = $bundle_price->add($item->getUnitPrice());
-      }
+  public function setPrice(Price $price) {
+    $this->set('bundle_price', $price);
+    return $this;
+  }
 
-      return $bundle_price;
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrice() {
+    if ($this->get('bundle_price')->isEmpty()) {
+      return NULL;
     }
+    return $this->get('bundle_price')->first()->toPrice();
   }
 
   /**

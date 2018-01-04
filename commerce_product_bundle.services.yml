@@ -2,3 +2,9 @@ services:
   commerce_product_bundle.lazy_builders:
     class: Drupal\commerce_product_bundle\ProductBundleLazyBuilders
     arguments: ['@entity_type.manager', '@form_builder']
+
+  commerce_product_bundle.bundle_price_resolver:
+      class: Drupal\commerce_product_bundle\Resolver\BundlePriceResolver
+      arguments: ['@commerce_store.current_store']
+      tags:
+         - { name: commerce_price.price_resolver, priority: -50 }
