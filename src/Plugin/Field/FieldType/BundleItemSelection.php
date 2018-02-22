@@ -22,6 +22,30 @@ use Drupal\Core\TypedData\MapDataDefinition;
 class BundleItemSelection extends FieldItemBase {
 
   /**
+   * The product variation storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $variationStorage;
+
+  /**
+   * The product bundle item storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $bundleItemStorage;
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(DataDefinitionInterface $definition, $name = NULL, TypedDataInterface $parent = NULL){
+    parent::__construct($definition, $name, $parent);
+    $this->variationStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_variation');
+    $this->bundleItemStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_bundle_i');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
@@ -37,8 +61,8 @@ class BundleItemSelection extends FieldItemBase {
       ->setLabel(t('Title'))
       ->setRequired(FALSE);
 
-    $properties['purchased_entity'] = DataDefinition::create('string')
-      ->setLabel(t('Purchased Entity'))
+    $properties['purchasable_entity'] = DataDefinition::create('string')
+      ->setLabel(t('purchasable Entity'))
       ->setRequired(FALSE);
 
     $properties['unit_price_number'] = DataDefinition::create('string')
@@ -76,20 +100,18 @@ class BundleItemSelection extends FieldItemBase {
           'precision' => 17,
           'scale' => 2,
           'unsigned' => TRUE,
-          'not null' => TRUE,
         ],
         'title' => [
-          'description' => 'The title of the purchased entity.',
+          'description' => 'The title of the purchasable entity.',
           'type' => 'varchar',
           'length' => 512,
         ],
-        'purchased_entity' => [
-          'description' => 'The purchased entity id.',
+        'purchasable_entity' => [
+          'description' => 'The purchasable entity ID.',
           'type' => 'numeric',
           'precision' => 19,
           'scale' => 0,
           'unsigned' => TRUE,
-          'not null' => TRUE,
         ],
         'unit_price_number' => [
           'description' => 'The unit price.',
@@ -115,8 +137,33 @@ class BundleItemSelection extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  public static function mainPropertyName() {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isEmpty() {
-    return empty($this->bundle_item) || empty($this->qty) || empty($this->purchased_entity);
+    return empty($this->bundle_item) || empty($this->qty) || empty($this->purchasable_entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValue($values, $notify = TRUE){
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
+    $bundleItem = $this->bundleItemStorage->load($values['bundle_item']);
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
+    $bundle = $bundleItem->getBundle();
+    $bundlePrice = $bundle->getPrice();
+    /** @var \Drupal\commerce\PurchasableEntityInterface $purchasableEntity */
+    $purchasableEntity = $this->variationStorage->load($values['purchasable_entity']);
+    $values['title'] = $bundleItem->getTitle();
+    // In case the bundle has a static price, there is nothing we have to keep here.
+    $values['unit_price_number'] = $bundlePrice ? null : $purchasableEntity->getPrice()->getNumber();
+    $values['unit_price_currency_code'] = $bundlePrice ? null : $purchasableEntity->getPrice()->getCurrencyCode();
+    parent::setValue($values, $notify);
   }
 
 }
