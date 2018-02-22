@@ -3,18 +3,20 @@ status: true
 dependencies:
   config:
     - commerce_order.commerce_order_item_type.commerce_product_bundle_default
-    - field.storage.commerce_order_item.field_bundle_item_selections
+    - field.storage.commerce_order_item.bundle_order_item_reference
   module:
     - commerce_product_bundle
-id: commerce_order_item.commerce_product_bundle_default.field_bundle_item_selections
-field_name: field_bundle_item_selections
+id: commerce_order_item.commerce_product_bundle_default.bundle_order_item_reference
+field_name: bundle_order_item_reference
 entity_type: commerce_order_item
 bundle: commerce_product_bundle_default
-label: 'Bundle item selections'
+label: 'Bundle item reference'
 description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings: {  }
-field_type: commerce_product_bundle_item_selection
+settings:
+  handler: 'default:commerce_order_item'
+  handler_settings: {  }
+field_type: entity_reference

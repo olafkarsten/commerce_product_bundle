@@ -91,8 +91,6 @@ class BundleItemSelection extends FieldItemBase {
           'type' => 'numeric',
           'precision' => 19,
           'scale' => 0,
-          'unsigned' => TRUE,
-          'not null' => TRUE,
         ],
         'qty' => [
           'description' => 'The selected quantity.',
@@ -100,6 +98,7 @@ class BundleItemSelection extends FieldItemBase {
           'precision' => 17,
           'scale' => 2,
           'unsigned' => TRUE,
+
         ],
         'title' => [
           'description' => 'The title of the purchasable entity.',
@@ -111,7 +110,6 @@ class BundleItemSelection extends FieldItemBase {
           'type' => 'numeric',
           'precision' => 19,
           'scale' => 0,
-          'unsigned' => TRUE,
         ],
         'unit_price_number' => [
           'description' => 'The unit price.',

@@ -391,18 +391,19 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    *   The current state of the form.
    */
   public function addBundleItemSelections($entity_type, OrderItemInterface $order_item, array $form, FormStateInterface $form_state) {
-    $bundle_item_selections = [];
+    $bundle_order_items = [];
     foreach ($form_state->getValue('purchased_entity')[0]['bundle_items'] as $item => $selection) {
       // Cast values to string like OrderItem does for other fields.
       // Value type (string) and order are required when matching order items.
       // @see \Drupal\commerce_cart\OrderItemMatcher
-      $bundle_item_selections[] = [
-        'bundle_item' => (string) $item,
-        'selected_qty' => (string) $selection['qty'],
-        'selected_entity' => (string) $selection['variation'],
-      ];
+      /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
+      $variation = $this->variationStorage->load($selection['variation']);
+      /** @var  \Drupal\commerce_order\Entity\OrderItemInterface $bundle_order_item $bundle_order_item*/
+      $bundle_order_item = $this->orderItemStorage->createFromPurchasableEntity($variation);
+      $bundle_order_item->setQuantity((string) $selection['qty']);
+      $bundle_order_items[] = $bundle_order_item;
     }
-    $order_item->set('field_bundle_item_selections', $bundle_item_selections);
+    $order_item->set('bundle_order_item_reference', $bundle_order_items);
   }
 
 }

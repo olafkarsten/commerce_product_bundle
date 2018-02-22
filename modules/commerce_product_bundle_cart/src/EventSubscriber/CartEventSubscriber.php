@@ -28,7 +28,7 @@ class CartEventSubscriber implements EventSubscriberInterface {
   public function filterOrderItemComparisonFields(OrderItemComparisonFieldsEvent $event) {
     if ($event->getOrderItem()->getPurchasedEntity() instanceof BundleInterface) {
       $fields = $event->getComparisonFields();
-      $fields[] = 'field_bundle_item_selections';
+      $fields[] = 'bundle_order_item_reference';
       $event->setComparisonFields($fields);
     }
   }

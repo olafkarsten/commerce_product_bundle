@@ -54,6 +54,13 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
   protected $variationStorage;
 
   /**
+   * The order item storage
+   *
+   * @var \Drupal\commerce_order\OrderItemStorageInterface
+   */
+  protected $orderItemStorage;
+
+  /**
    * Constructs a new ProductBundleWidgetBase object.
    *
    * @param string $plugin_id
@@ -75,6 +82,7 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     $this->bundleItemStorage = $entity_type_manager->getStorage('commerce_product_bundle_i');
     $this->productStorage = $entity_type_manager->getStorage('commerce_product');
     $this->variationStorage = $entity_type_manager->getStorage('commerce_product_variation');
+    $this->orderItemStorage = $entity_type_manager->getStorage('commerce_order_item');
   }
 
   /**
