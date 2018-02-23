@@ -148,6 +148,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
 
     $min_qty = $bundle_item->getMinimumQuantity();
     $max_qty = $bundle_item->getMaximumQuantity();
+    // Whether it makes sense to show a qty field per bundle item.
     if ($min_qty === $max_qty) {
       $bundle_item_form['qty'] = [
         '#type' => 'value',
@@ -398,8 +399,8 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       // @see \Drupal\commerce_cart\OrderItemMatcher
       $bundle_item_selections[] = [
         'bundle_item' => (string) $item,
-        'selected_qty' => (string) $selection['qty'],
-        'selected_entity' => (string) $selection['variation'],
+        'qty' => (string) $selection['qty'],
+        'purchasable_entity' => (string) $selection['variation'],
       ];
     }
     $order_item->set('field_bundle_item_selections', $bundle_item_selections);
