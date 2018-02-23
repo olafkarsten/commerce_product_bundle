@@ -102,9 +102,9 @@ class BundleItemSelectionDefaultFormatter extends FormatterBase implements Conta
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
     foreach ($items as $delta => $item) {
-      $qty = $item->selected_qty;
+      $qty = $item->qty;
       $bundle_item = $this->bundleItemStorage->load($item->bundle_item)->label();
-      $variation = $this->productVariationStorage->load($item->selected_entity)->label();
+      $variation = $this->productVariationStorage->load($item->purchasable_entity)->label();
       $elements[$delta] = [
         '#markup' => "{$bundle_item}: ({$qty}) {$variation}",
         '#cache' => [
