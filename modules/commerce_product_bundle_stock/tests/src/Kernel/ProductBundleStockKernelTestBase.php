@@ -35,6 +35,7 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
    * {@inheritdoc}
    */
   protected function setUp() {
+    $this->markTestSkipped('Broken Due to commerce_stock update. #2947320');
     parent::setUp();
 
     $this->installEntitySchema('commerce_stock_location_type');
