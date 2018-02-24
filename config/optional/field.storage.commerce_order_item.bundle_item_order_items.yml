@@ -3,15 +3,14 @@ status: true
 dependencies:
   module:
     - commerce_order
-    - commerce_product_bundle
-id: commerce_order_item.field_bundle_item_order_items
-field_name: field_bundle_item_order_items
+id: commerce_order_item.bundle_item_order_items
+field_name: bundle_item_order_items
 entity_type: commerce_order_item
 type: entity_reference
 settings:
   target_type: commerce_order_item
 module: core
-locked: false
+locked: true
 cardinality: -1
 translatable: true
 indexes: {  }
