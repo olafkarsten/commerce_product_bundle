@@ -3,16 +3,16 @@ status: true
 dependencies:
   config:
     - commerce_order.commerce_order_item_type.commerce_product_bundle_default
-    - field.field.commerce_order_item.commerce_product_bundle_default.bundle_order_item_reference
+    - field.field.commerce_order_item.commerce_product_bundle_default.field_bundle_item_order_items
 id: commerce_order_item.commerce_product_bundle_default.default
 targetEntityType: commerce_order_item
 bundle: commerce_product_bundle_default
 mode: default
-content: {  }
+content: { }
 hidden:
   adjustments: true
-  bundle_order_item_reference: true
   purchased_entity: true
+  field_bundle_item_order_items: true
   quantity: true
   total_price: true
   unit_price: true

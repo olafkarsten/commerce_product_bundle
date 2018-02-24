@@ -8,3 +8,5 @@ label: 'Default product bundle'
 id: commerce_product_bundle_default
 purchasableEntityType: commerce_product_bundle
 orderType: default
+traits: {  }
+locked: true
