@@ -12,14 +12,17 @@ bundle: commerce_product_bundle_default
 mode: default
 content:
   bundle_item_order_items:
-    weight: 3
+    type: inline_entity_form_complex
+    weight: 1
     settings:
+      override_labels: true
+      label_singular: 'bundle items order item'
+      label_plural: 'bundle items order items'
+      allow_new: true
       match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+      allow_existing: false
+      form_mode: default
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   purchased_entity:
     type: entity_reference_autocomplete
     weight: -1

@@ -16,13 +16,11 @@ translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:commerce_order_item'
+  handler: 'default:cpb_order_item'
   handler_settings:
-    target_bundles:
-      default: default
+    target_bundles: null
     sort:
       field: order_item_id
       direction: ASC
     auto_create: false
-    auto_create_bundle: ''
 field_type: entity_reference

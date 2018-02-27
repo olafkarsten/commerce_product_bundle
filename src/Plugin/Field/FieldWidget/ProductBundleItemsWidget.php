@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ProductBundleItemsWidget extends ProductBundleWidgetBase implements ContainerFactoryPluginInterface {
+class ProductBundleItemsWidget extends ProductBundleWidgetBase {
 
   /**
    * NOTES:.
@@ -131,12 +130,11 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
    *   A renderable form array for the given bundle item.
    */
   private function getBundleItemForm(BundleItemInterface $bundle_item, array &$form, FormStateInterface $form_state, array $parents) {
+
     $bundle_item_form = [
-      'title' => [
-        '#type' => 'markup',
-        '#markup' => $bundle_item->getTitle(),
-        '#prefix' => '<p>',
-        '#suffix' => '</p>',
+      'bundle_item' => [
+        '#type' => 'value',
+        '#value' => $bundle_item,
       ],
     ];
 
@@ -188,6 +186,14 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
         '#type' => 'value',
         '#value' => $selected_variation->id(),
       ];
+      $bundle_item->setCurrentVariation($selected_variation);
+      $bundle_item_form['title'] = [
+        '#type' => 'markup',
+        '#markup' => $bundle_item->getTitle(),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+      ];
+
       return $bundle_item_form;
     }
 
@@ -215,6 +221,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       '#type' => 'value',
       '#value' => $selected_variation->id(),
     ];
+    $bundle_item->setCurrentVariation($selected_variation);
     // Set the selected variation in the form state for our AJAX callback.
     $form_state->set('purchased_entity][widget][0][bundle_items][' . $bundle_item->id() . '][selected_variation', $selected_variation->id());
 
@@ -396,14 +403,21 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase implements Contai
       // Cast values to string like OrderItem does for other fields.
       // Value type (string) and order are required when matching order items.
       // @see \Drupal\commerce_cart\OrderItemMatcher
-      /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
+      /* @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
       $variation = $this->variationStorage->load($selection['variation']);
-      /** @var  \Drupal\commerce_order\Entity\OrderItemInterface $bundle_order_item $bundle_order_item*/
-      $bundle_order_item = $this->orderItemStorage->createFromPurchasableEntity($variation);
-      $bundle_order_item->setQuantity((string) $selection['qty']);
+      /* @var  \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
+      $bundle_item = $selection['bundle_item'];
+
+      $bundle_order_item = $this->bundleItemOrderItemStorage->create([
+        'title' => $bundle_item->getTitle(),
+        'bundle_item' => $bundle_item,
+        'purchased_entity' => $variation,
+        'unit_price' => $bundle_item->getUnitPrice(),
+        'quantity' => (string) $selection['qty'],
+      ]);
       $bundle_order_items[] = $bundle_order_item;
     }
-    $order_item->set('bundle_order_item_reference', $bundle_order_items);
+    $order_item->set('bundle_item_order_items', $bundle_order_items);
   }
 
 }

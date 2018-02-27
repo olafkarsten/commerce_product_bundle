@@ -13,13 +13,9 @@ bundle: commerce_product_bundle_default
 mode: add_to_cart
 content:
   purchased_entity:
-    type: entity_reference_autocomplete
+    type: commerce_product_bundle_items
     weight: -1
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    region: content
+    settings: {  }
     third_party_settings: {  }
   quantity:
     type: commerce_quantity
