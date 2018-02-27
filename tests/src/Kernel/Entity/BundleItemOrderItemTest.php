@@ -19,13 +19,6 @@ use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestB
  */
 class BundleItemOrderItemTest extends CommerceProductBundleKernelTestBase {
 
-  public static $modules = [
-    'entity_reference_revisions',
-    'profile',
-    'commerce_order',
-    'state_machine',
-  ];
-
   /**
    * The product bundle entity.
    *
@@ -60,10 +53,6 @@ class BundleItemOrderItemTest extends CommerceProductBundleKernelTestBase {
   protected function setUp() {
     parent::setUp();
     $this->installEntitySchema('cpb_order_item');
-    $this->installEntitySchema('profile');
-    $this->installEntitySchema('commerce_order');
-    $this->installEntitySchema('commerce_order_item');
-    $this->installConfig('commerce_order');
 
     $variation = ProductVariation::create(['type' => 'default']);
     $variation->save();

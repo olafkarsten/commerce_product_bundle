@@ -16,7 +16,7 @@ interface BundleItemOrderItemInterface extends ContentEntityInterface, EntityCha
    * Gets the Bundle Item.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface|null
-   *  The bundle item, or NULL.
+   *   The bundle item, or NULL.
    */
   public function getBundleItem();
 
