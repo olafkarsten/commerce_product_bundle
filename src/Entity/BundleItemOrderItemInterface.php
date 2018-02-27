@@ -15,7 +15,8 @@ interface BundleItemOrderItemInterface extends ContentEntityInterface, EntityCha
   /**
    * Gets the Bundle Item.
    *
-   * @return mixed
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface|null
+   *  The bundle item, or NULL.
    */
   public function getBundleItem();
 
@@ -90,4 +91,5 @@ interface BundleItemOrderItemInterface extends ContentEntityInterface, EntityCha
    *   The bundle item order item creation timestamp.
    */
   public function getCreatedTime();
+
 }
