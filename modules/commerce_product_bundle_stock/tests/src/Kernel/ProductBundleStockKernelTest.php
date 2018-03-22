@@ -5,6 +5,7 @@ namespace Drupal\Tests\commerce_product_bundle_stock\Kernel;
 /**
  * Tests the product bundle stock service manager.
  *
+ * @requires module commerce_stock
  * @group commerce_product_bundle
  */
 class ProductBundleStockKernelTest extends ProductBundleStockKernelTestBase {
