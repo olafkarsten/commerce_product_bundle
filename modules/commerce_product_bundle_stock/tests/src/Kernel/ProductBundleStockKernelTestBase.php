@@ -28,7 +28,7 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
     'commerce_stock',
     'commerce_stock_local',
     'commerce_stock_field',
-    'commerce_product_bundle_stock',
+    //'commerce_product_bundle_stock',
   ];
 
   /**
