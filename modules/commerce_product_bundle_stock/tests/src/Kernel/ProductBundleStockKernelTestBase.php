@@ -6,8 +6,6 @@ use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestB
 
 /**
  * Provides a base class for Commerce Product Bundle Stock tests.
- *
- * @requires module commerce_stock
  */
 abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKernelTestBase {
 
@@ -28,16 +26,13 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
     'commerce_stock',
     'commerce_stock_local',
     'commerce_stock_field',
-    //'commerce_product_bundle_stock',
+    'commerce_product_bundle_stock',
   ];
 
   /**
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->markTestSkipped(
-      "Needs debugging. Seems commerce_stock isn't loaded."
-    );
     parent::setUp();
 
     $this->installEntitySchema('commerce_stock_location_type');

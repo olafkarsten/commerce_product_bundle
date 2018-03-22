@@ -13,7 +13,6 @@ use Drupal\commerce_product_bundle_stock\ProductBundleStockProxy;
  *
  * @coversDefaultClass \Drupal\commerce_product_bundle_stock\ProductBundleStockProxy
  *
- * @requires module commerce_stock
  * @group commerce_product_bundle
  */
 class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase {
@@ -31,9 +30,6 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
    * @ToDo Try to mock at least parts of it, instead of relying on real objects.
    */
   public function setup() {
-    $this->markTestSkipped(
-      "Needs debugging. Seems commerce_stock isn't loaded."
-    );
     parent::setup();
 
     $variations = [];

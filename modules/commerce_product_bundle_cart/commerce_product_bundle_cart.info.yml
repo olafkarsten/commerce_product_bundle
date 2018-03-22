@@ -4,5 +4,5 @@ description: Provides commerce cart integration for commerce product bundles.
 core: 8.x
 package: Commerce Product Bundle
 dependencies:
-  - commerce_product_bundle
-  - commerce_cart
+  - commerce:commerce_product_bundle
+  - commerce:commerce_cart

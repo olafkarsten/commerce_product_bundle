@@ -4,6 +4,5 @@ description: 'Extends Drupal Commerce with a product bundle functionality.'
 core: 8.x
 package: Commerce Product Bundle
 dependencies:
-  - commerce
-  - commerce_product
-  - system (>=8.3.0)
+  - commerce:commerce
+  - commerce:commerce_product
