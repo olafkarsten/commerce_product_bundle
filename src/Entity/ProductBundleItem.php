@@ -60,7 +60,6 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *     "langcode" = "langcode",
- *     "status" = "status",
  *   },
  *   links = {
  *     "canonical" = "/product-bundle-items/{commerce_product_bundle_i}",
@@ -143,13 +142,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function getType() {
-    return $this->get('type');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getTitle() {
     return $this->get('title')->value;
   }
@@ -191,15 +183,15 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function isActive() {
-    return (bool) $this->getEntityKey('status');
+  public function isRequired() {
+    return $this->get('required')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setActive($active) {
-    $this->set('status', $active ? TRUE : FALSE);
+  public function setRequired($required) {
+    $this->set('required', (bool) $required);
 
     return $this;
   }
@@ -567,9 +559,21 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the product bundle item is published.'))
+    $fields['required'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Required?'))
+      ->setDescription(t('A boolean indicating whether the product bundle item is required or optional.'))
+      ->setSettings([
+        'on_label' => t('Yes, required'),
+        'off_label' => t('No, optional'),
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 20,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
       ->setDefaultValue(TRUE);
 
     // The product bundle backreference, populated by ProductBundle::postSave().

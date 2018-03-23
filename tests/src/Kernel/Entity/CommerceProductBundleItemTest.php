@@ -22,8 +22,8 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
   /**
    * @covers ::getTitle
    * @covers ::setTitle
-   * @covers ::isActive
-   * @covers ::setActive
+   * @covers ::isRequired
+   * @covers ::setRequired
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
    * @covers ::setMaximumQuantity
@@ -54,9 +54,9 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
-    $this->assertEquals(TRUE, $bundleItem->isActive());
-    $bundleItem->setActive(FALSE);
-    $this->assertEquals(FALSE, $bundleItem->isActive());
+    $this->assertEquals(TRUE, $bundleItem->isRequired());
+    $bundleItem->setRequired(FALSE);
+    $this->assertEquals(FALSE, $bundleItem->isRequired());
 
     // Wether edge case of 0.0 price value works.
     $this->assertNull($bundleItem->getUnitPrice());

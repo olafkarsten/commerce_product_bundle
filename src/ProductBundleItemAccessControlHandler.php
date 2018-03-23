@@ -18,7 +18,7 @@ class ProductBundleItemAccessControlHandler extends BaseEntityAccessControlHandl
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    if ($operation == 'view' && $entity->isActive()) {
+    if ($operation == 'view') {
       return AccessResult::allowed();
     }
     return parent::checkAccess($entity, $operation, $account);

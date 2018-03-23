@@ -16,14 +16,6 @@ use Drupal\user\EntityOwnerInterface;
 interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterface {
 
   /**
-   * Gets the product bundle item type.
-   *
-   * @return string
-   *   The product bundle item type.
-   */
-  public function getType();
-
-  /**
    * Gets the product bundle item title.
    *
    * @return string
@@ -43,6 +35,25 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
   public function setTitle($title);
 
   /**
+   * Set whether the product bundle item is required or not.
+   *
+   * @param bool $required
+   *   Set TRUE if required, FALSE if optional.
+   *
+   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
+   *   The called product bundle item entity.
+   */
+  public function setRequired($required);
+
+  /**
+   * Whether the product bundle item is required or not.
+   *
+   * @return bool
+   *   TRUE if required, FALSE if optional.
+   */
+  public function isRequired();
+
+  /**
    * Gets the product bundle item creation timestamp.
    *
    * @return int
@@ -60,27 +71,6 @@ interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterfa
    *   The called product bundle item entity.
    */
   public function setCreatedTime($timestamp);
-
-  /**
-   * Returns the product bundle item active status indicator.
-   *
-   * Unactivated product bundle item are only visible to restricted users.
-   *
-   * @return bool
-   *   TRUE if the product bundle item is active.
-   */
-  public function isActive();
-
-  /**
-   * Sets the active status of a product bundle item.
-   *
-   * @param bool $active
-   *   TRUE to set this product bundle item to activate, FALSE to set it to unactivated.
-   *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The called product bundle item entity.
-   */
-  public function setActive($active);
 
   /**
    * Gets the parent bundle entity.
