@@ -30,9 +30,9 @@ class BundleItemSelectionDefaultWidget extends WidgetBase {
     /** @var int $bundle_item */
     $bundle_item = $items[$delta]->bundle_item;
     /** @var int $selected_qty */
-    $selected_qty = $items[$delta]->selected_qty;
-    /** @var int $selected_entity */
-    $selected_entity = $items[$delta]->selected_entity;
+    $selected_qty = $items[$delta]->qty;
+    /** @var int $purchasable_entity */
+    $purchasable_entity = $items[$delta]->purchasable_entity;
 
     $element['bundle_item'] = [
       '#type' => 'entity_autocomplete',
@@ -41,14 +41,14 @@ class BundleItemSelectionDefaultWidget extends WidgetBase {
       '#target_type' => 'commerce_product_bundle_i',
       '#default_value' => $bundle_item ? $bundleItemStorage->load($bundle_item) : NULL,
     ];
-    $element['selected_entity'] = [
+    $element['purchasable_entity'] = [
       '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Selected entity'),
+      '#title' => $this->t('Purchasable entity'),
       '#weight' => 2,
       '#target_type' => 'commerce_product_variation',
-      '#default_value' => $selected_entity ? $variationStorage->load($selected_entity) : NULL,
+      '#default_value' => $purchasable_entity ? $variationStorage->load($purchasable_entity) : NULL,
     ];
-    $element['selected_qty'] = [
+    $element['qty'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Selected quantity'),
       '#weight' => 1,
