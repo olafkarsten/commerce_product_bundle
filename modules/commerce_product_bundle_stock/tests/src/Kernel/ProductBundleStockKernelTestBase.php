@@ -33,6 +33,7 @@ abstract class ProductBundleStockKernelTestBase extends CommerceProductBundleKer
 
   /**
    * {@inheritdoc}
+   *
    * @requires module commerce_stock
    */
   protected function setUp() {
