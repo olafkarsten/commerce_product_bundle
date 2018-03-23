@@ -10,6 +10,8 @@
   },
   "require": {
     "drupal/commerce": "~2.0",
+    "drupal/commerce_product_bundle": "~1.0",
+    "drupal/commerce_stock": "~1.0"
   },
   "minimum-stability": "dev"
 }
