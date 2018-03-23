@@ -9,7 +9,7 @@
     "issues": "https://www.drupal.org/project/issues/commerce_product_bundle"
   },
   "require": {
-    "drupal/commerce": "~2.0",
+    "drupal/commerce": "~2.0"
   },
   "minimum-stability": "dev"
 }
