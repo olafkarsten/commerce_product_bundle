@@ -10,6 +10,8 @@ language: php
 
 sudo: false
 
+dist: precise
+
 php:
   - 7.1
   - 7.0
