@@ -13,9 +13,7 @@ use Drupal\commerce_product_bundle_stock\ProductBundleStockProxy;
  *
  * @coversDefaultClass \Drupal\commerce_product_bundle_stock\ProductBundleStockProxy
  *
- * @group commerce_product_bundle
- *
- * @requires module commerce_stock
+ * //@group commerce_product_bundle
  */
 class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase {
 
@@ -30,8 +28,6 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
    * Sets up the the product bundle we need for test.
    *
    * @ToDo Try to mock at least parts of it, instead of relying on real objects.
-   *
-   * @requires module commerce_stock
    */
   public function setup() {
     parent::setup();
@@ -100,8 +96,6 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
    * @covers ::getIsInStock
    *
    * @ToDo Add tests with real stock checking.
-   *
-   * @requires module commerce_stock
    */
   public function testProductBundleStockProxy() {
     $stockServiceManager = \Drupal::service('commerce_stock.service_manager');

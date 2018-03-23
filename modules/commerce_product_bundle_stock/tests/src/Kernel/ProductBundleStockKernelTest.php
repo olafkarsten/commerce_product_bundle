@@ -5,7 +5,7 @@ namespace Drupal\Tests\commerce_product_bundle_stock\Kernel;
 /**
  * Tests the product bundle stock service manager.
  *
- * @group commerce_product_bundle
+ * //@group commerce_product_bundle
  *
  * @requires module commerce_stock
  */
