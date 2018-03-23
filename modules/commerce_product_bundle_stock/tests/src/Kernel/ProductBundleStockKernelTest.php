@@ -5,12 +5,16 @@ namespace Drupal\Tests\commerce_product_bundle_stock\Kernel;
 /**
  * Tests the product bundle stock service manager.
  *
- * @group commerce_product_bundle
+ * @group commerce_product_bundle_stock
+ *
+ * @requires module commerce_stock
  */
 class ProductBundleStockKernelTest extends ProductBundleStockKernelTestBase {
 
   /**
    * Wether the service gets collected by the StockServiceManager.
+   *
+   * @requires module commerce_stock
    */
   public function testServiceIsRegistered() {
     /** @var \Drupal\commerce_stock\StockServiceManagerInterface $serviceManager */

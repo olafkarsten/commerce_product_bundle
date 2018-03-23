@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\commerce_product_bundle\Unit;
+namespace Drupal\Tests\commerce_product_bundle\Kernel\Resolver;
 
 use Drupal\commerce\Context;
 use Drupal\commerce_product_bundle\Resolver\BundlePriceResolver;

@@ -13,7 +13,7 @@ use Drupal\commerce_product_bundle_stock\ProductBundleStockProxy;
  *
  * @coversDefaultClass \Drupal\commerce_product_bundle_stock\ProductBundleStockProxy
  *
- * @group commerce_product_bundle
+ * @group commerce_product_bundle_stock
  */
 class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase {
 

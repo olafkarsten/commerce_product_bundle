@@ -8,6 +8,8 @@ use Drupal\Tests\commerce_product_bundle\Functional\ProductBundleBrowserTestBase
 
 /**
  * Defines base class for commerce stock test cases.
+ *
+ * @requires module commerce_stock
  */
 abstract class ProductBundleStockBrowserTestBase extends ProductBundleBrowserTestBase {
 
