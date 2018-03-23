@@ -8,4 +8,3 @@ dependencies:
   - commerce:commerce_product
   - commerce:commerce_stock
   - commerce:commerce_product_bundle
-

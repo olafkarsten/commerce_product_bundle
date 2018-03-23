@@ -16,7 +16,6 @@ use Drupal\commerce_product_bundle_stock\ProductBundleStockProxy;
  * @group commerce_product_bundle
  *
  * @requires module commerce_stock
- *
  */
 class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase {
 
