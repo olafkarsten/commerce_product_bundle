@@ -6,6 +6,7 @@ dependencies:
     - core.entity_form_mode.commerce_order_item.add_to_cart
   module:
     - commerce_product_bundle
+    - commerce_order
 id: commerce_order_item.commerce_product_bundle_default.add_to_cart
 targetEntityType: commerce_order_item
 bundle: commerce_product_bundle_default
@@ -17,9 +18,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   quantity:
-    type: number
+    type: commerce_quantity
     weight: 1
+    region: content
     settings:
+      step: '1'
       placeholder: ''
     third_party_settings: {  }
 hidden:

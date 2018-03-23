@@ -21,6 +21,29 @@ use Drupal\Core\TypedData\DataDefinition;
 class BundleItemSelection extends FieldItemBase {
 
   /**
+   * The product variation storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $variationStorage;
+
+  /**
+   * The product bundle item storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $bundleItemStorage;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(DataDefinitionInterface $definition, $name = NULL, TypedDataInterface $parent = NULL) {
+    parent::__construct($definition, $name, $parent);
+    $this->variationStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_variation');
+    $this->bundleItemStorage = \Drupal::service('entity_type.manager')->getStorage('commerce_product_bundle_i');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
@@ -70,8 +93,29 @@ class BundleItemSelection extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  public static function mainPropertyName() {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isEmpty() {
     return empty($this->bundle_item) || empty($this->selected_qty) || empty($this->selected_entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValue($values, $notify = TRUE) {
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
+    $bundleItem = $this->bundleItemStorage->load($values['bundle_item']);
+    $purchasableEntity = $this->variationStorage->load($values['purchasable_entity']);
+    $bundleItem->setCurrentVariation($purchasableEntity);
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
+    /** @var \Drupal\commerce\PurchasableEntityInterface $purchasableEntity */
+
+    parent::setValue($values, $notify);
   }
 
 }

@@ -32,7 +32,12 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
     'commerce_price',
     'commerce_store',
     'commerce_product',
+    'commerce_order',
     'commerce_product_bundle',
+    'entity_reference_revisions',
+    'profile',
+    'commerce_order',
+    'state_machine',
   ];
 
   /**
@@ -52,12 +57,14 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
     $this->installEntitySchema('commerce_product_variation_type');
     $this->installEntitySchema('commerce_product');
     $this->installEntitySchema('commerce_product_type');
-    $this->installConfig(['commerce_product']);
     $this->installEntitySchema('commerce_product_bundle');
     $this->installEntitySchema('commerce_product_bundle_type');
     $this->installEntitySchema('commerce_product_bundle_i');
     $this->installEntitySchema('commerce_product_bundle_i_type');
-    $this->installConfig(['commerce_product_bundle']);
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('commerce_order');
+    $this->installEntitySchema('commerce_order_item');
+    $this->installConfig(['commerce_order', 'commerce_product', 'commerce_product_bundle']);
 
     $user = $this->createUser();
     $this->user = $this->reloadEntity($user);
