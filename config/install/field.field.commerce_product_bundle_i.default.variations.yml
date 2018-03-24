@@ -8,8 +8,10 @@ id: commerce_product_bundle_i.default.variations
 field_name: variations
 entity_type: commerce_product_bundle_i
 bundle: default
-label: 'Variations'
-description: ''
+label: 'Product Variations'
+description: 'By selecting some of the product variations,
+you actually restrict the available variations a user can choose from. Leave
+this at - All - to get all available variations.'
 required: false
 translatable: false
 default_value: {  }

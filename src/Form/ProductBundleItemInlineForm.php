@@ -52,11 +52,7 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
       'wrapper' => 'product_variations_refresh',
     ];
     $entity_form['variations']['#attributes'] = ['id' => 'product_variations_refresh'];
-    $entity_form['variations']['#states'] = [
-      'visible' => [
-        ':input[name="bundle_items[form][inline_entity_form][product][0][target_id]"]' => ['filled' => TRUE],
-      ],
-    ];
+
 
     // bundle_items[form][inline_entity_form][product][0][target_id]
     // Get variations's default options and add to form_state for ajax callback.
@@ -70,10 +66,15 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
     $triggering_element = $form_state->getTriggeringElement();
     $entity_form['variations']['widget']['#disabled'] = FALSE;
     if (isset($triggering_element) && $triggering_element['#ief_form'] == "add") {
+      $entity_form['variations']['#states'] = [
+        'visible' => [
+          ':input[name="bundle_items[form][inline_entity_form][product][0][target_id]"]' => ['filled' => TRUE],
+        ],
+      ];
       $entity_form['variations']['widget']['#disabled'] = TRUE;
     }
     if (isset($productDefaultId) && $triggering_element) {
-      $entity_form['variations']['widget']['#options'] = $this->variationsOptions($variationsAllOptions, $productDefaultId);
+      $entity_form['variations']['widget']['#options'] = $this->variationsOptions($productDefaultId);
     }
 
     return $entity_form;
@@ -90,8 +91,8 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
    * @return array
    *   Selection array.
    */
-  public static function variationsOptions($options, $productId) {
-    $values['_none'] = $options['_none'];
+  public static function variationsOptions($productId) {
+    $values['_none'] = '- ' . \Drupal::translation()->translate('All') . ' -';
     $product = Product::load($productId);
     $variations = $product->getVariations();
     /** @var \Drupal\commerce_product\Entity\ProductVariation $variation */
@@ -129,11 +130,8 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
     if ($element['#op'] == 'edit') {
       $productId = $bundleItems['form']['inline_entity_form']['entities'][$inlineEntityFormId]['form']['product'][0]['target_id'];
     }
-
     if ($productId) {
-      // Construct variations's options to just display product's variations.
-      $variationsAllOptions = $form_state->getBuildInfo()['args']['variationsAllOptions'];
-      $variationsForm['widget']['#options'] = ProductBundleItemInlineForm::variationsOptions($variationsAllOptions, $productId);
+      $variationsForm['widget']['#options'] = ProductBundleItemInlineForm::variationsOptions($productId);
     }
     return $variationsForm;
 
