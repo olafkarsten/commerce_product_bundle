@@ -53,14 +53,6 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
     ];
     $entity_form['variations']['#attributes'] = ['id' => 'product_variations_refresh'];
 
-
-    // bundle_items[form][inline_entity_form][product][0][target_id]
-    // Get variations's default options and add to form_state for ajax callback.
-    $variationsAllOptions = $entity_form['variations']['widget']['#options'];
-    $build_info = $form_state->getBuildInfo();
-    $build_info['args']['variationsAllOptions'] = $variationsAllOptions;
-    $form_state->setBuildInfo($build_info);
-
     // Init form's variations state.
     $productDefaultId = isset($entity_form['#default_value']) ? $entity_form['#default_value']->get('product')->getValue()[0]['target_id'] : NULL;
     $triggering_element = $form_state->getTriggeringElement();
@@ -83,8 +75,6 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
   /**
    * Get variations select options which belong to a product.
    *
-   * @param int $options
-   *   Variations's all options.
    * @param int $productId
    *   Product entity id.
    *
