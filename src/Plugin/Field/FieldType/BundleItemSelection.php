@@ -5,6 +5,8 @@ namespace Drupal\commerce_product_bundle\Plugin\Field\FieldType;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
  * Plugin implementation of the 'commerce_product_bundle_item_selection' field type.
