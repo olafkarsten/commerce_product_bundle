@@ -347,7 +347,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    *   references, false otherwise.
    */
   protected function getVariationIndex(ProductVariationInterface $variation) {
-    return array_search($variation->id(), $this->getVariationIds() ?: []);
+    $result = array_search($variation->id(), $this->getVariationIds() ?: []);
+    return $result;
   }
 
   /**
@@ -362,7 +363,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
 
     return array_map(function ($variation) {
       return $variation->id();
-    }, $this->get('variations')->referencedEntities());
+    }, $this->getVariations());
 
   }
 
