@@ -40,7 +40,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "uuid" = "uuid",
  *     "label" = "title",
  *   },
- *   field_ui_base_route = "entity.cpb_order_item.edit_form"
  * )
  */
 class BundleItemOrderItem extends CommerceContentEntityBase implements BundleItemOrderItemInterface {

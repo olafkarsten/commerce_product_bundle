@@ -39,9 +39,3 @@ entity.commerce_product_bundle_i_type.edit_form:
   route_name: entity.commerce_product_bundle_i_type.edit_form
   base_route: entity.commerce_product_bundle_i_type.edit_form
   title: 'Edit'
-
-# Bundle Item Order Item routing definition
-entity.cpb_order_item.edit_form:
-  route_name: entity.cpb_order_item.edit_form
-  base_route: entity.cpb_order_item.edit_form
-  title: 'Edit'
