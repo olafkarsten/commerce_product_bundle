@@ -33,14 +33,14 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function createTransaction(PurchasableEntityInterface $bundle, $location_id, $zone, $quantity, $unit_cost, $transaction_type_id, array $metadata) {
+  public function createTransaction(PurchasableEntityInterface $bundle, $location_id, $zone, $quantity, $unit_cost, $currency_code, $transaction_type_id, array $metadata) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
     foreach ($bundle->getBundleItems() as $item) {
       $entity = $item->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
       $updater = $service->getStockUpdater();
       $item_quantity = $quantity * $item->getQuantity();
-      $updater->createTransaction($entity, $location_id, $zone, $item_quantity, $unit_cost, $transaction_type_id, $metadata);
+      $updater->createTransaction($entity, $location_id, $zone, $item_quantity, $unit_cost, $currency_code, $transaction_type_id, $metadata);
     }
   }
 
