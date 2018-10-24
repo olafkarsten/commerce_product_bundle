@@ -181,7 +181,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
       'variations' => $variations,
     ]);
     $product->save();
-    $product=$this->reloadEntity($product);
+    $product = $this->reloadEntity($product);
     $bundleItem->setProduct($product);
     $this->assertTrue($bundleItem->hasProduct());
 
