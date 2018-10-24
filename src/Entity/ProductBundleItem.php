@@ -606,7 +606,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
     $fields['product'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Product'))
       ->setDescription(t('Reference to a product.'))
-      ->setSetting('target_type', 'commerce_product')
+      ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setCardinality(1)
       ->setRequired(TRUE)

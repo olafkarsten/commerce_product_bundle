@@ -119,6 +119,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
       'variations' => [$variation],
     ]);
     $product->save();
+    $product = $this->reloadEntity($product);
     $bundleItem->setProduct($product);
 
     $bundleItem->setMinimumQuantity(111);
@@ -180,15 +181,12 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
       'variations' => $variations,
     ]);
     $product->save();
-
+    $product=$this->reloadEntity($product);
     $bundleItem->setProduct($product);
     $this->assertTrue($bundleItem->hasProduct());
 
     $this->assertEquals($product->id(), $bundleItem->getProductId());
     $this->assertFalse($bundleItem->hasVariations());
-    // Wether the bundleItem returns only the enabled variations.
-    $this->assertCount(3, $bundleItem->getVariations());
-
     $bundleItem->setVariations($variations);
     // Uncomment after https://www.drupal.org/project/commerce_product_bundle/issues/2837499
     // $this->assertCount(3, $bundleItem->getVariations());

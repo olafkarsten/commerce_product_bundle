@@ -9,7 +9,7 @@ label: 'Commerce Product Bundle Item Order Item Table'
 module: views
 description: 'Table view of bundle item order items of a commerce order item.'
 tag: ''
-base_table: commerce_product_bundle_item_order_item
+base_table: cbp_item_order_items
 base_field: id
 core: 8.x
 display:
@@ -112,7 +112,7 @@ display:
       fields:
         bundle_item:
           id: bundle_item
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: bundle_item
           relationship: none
           group_type: group
@@ -177,7 +177,7 @@ display:
           plugin_id: field
         purchased_entity:
           id: purchased_entity
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: purchased_entity
           relationship: none
           group_type: group
@@ -242,7 +242,7 @@ display:
           plugin_id: field
         unit_price__number:
           id: unit_price__number
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: unit_price__number
           relationship: none
           group_type: group
@@ -292,7 +292,7 @@ display:
           type: commerce_price_default
           settings:
             strip_trailing_zeroes: false
-            display_currency_code: false
+            currency_display: symbol
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -308,7 +308,7 @@ display:
           plugin_id: field
         quantity:
           id: quantity
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: quantity
           relationship: none
           group_type: group
@@ -376,7 +376,7 @@ display:
           plugin_id: field
         total_price__number:
           id: total_price__number
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: total_price__number
           relationship: none
           group_type: group
@@ -426,7 +426,7 @@ display:
           type: commerce_price_default
           settings:
             strip_trailing_zeroes: false
-            display_currency_code: false
+            currency_display: symbol
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -449,7 +449,7 @@ display:
       arguments:
         order_item_id:
           id: order_item_id
-          table: commerce_product_bundle_item_order_item
+          table: cbp_item_order_items
           field: order_item_id
           relationship: none
           group_type: group
