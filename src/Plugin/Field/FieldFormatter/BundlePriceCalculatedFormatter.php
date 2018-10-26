@@ -45,7 +45,7 @@ class BundlePriceCalculatedFormatter extends PriceCalculatedFormatter {
     // product bundle items.
     for ($delta = $items->isEmpty() ? 0 : 1; $delta <= count($items); $delta = $delta + 1) {
       $resolved_price = $this->chainPriceResolver->resolve($purchasable_entity, 1, $context);
-      if($resolved_price){
+      if ($resolved_price) {
         $number = $resolved_price->getNumber();
         $currency_code = $resolved_price->getCurrencyCode();
         $options = $this->getFormattingOptions();
