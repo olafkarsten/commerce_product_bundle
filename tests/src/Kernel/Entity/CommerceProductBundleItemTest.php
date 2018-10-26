@@ -121,6 +121,14 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $product->save();
     $product = $this->reloadEntity($product);
     $bundleItem->setProduct($product);
+    $this->assertTrue($bundleItem->hasProduct());
+    $this->assertEquals($product->id(), $bundleItem->getProductId());
+
+    // I have no clue why we need to save and reload the bundleItem to pass
+    // the next assertion. But otherwise it has two violations - one is the
+    // product reference.
+    $bundleItem->save();
+    $bundleItem = $this->reloadEntity($bundleItem);
 
     $bundleItem->setMinimumQuantity(111);
     $violations = $bundleItem->validate();
