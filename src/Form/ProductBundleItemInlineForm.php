@@ -4,6 +4,7 @@ namespace Drupal\commerce_product_bundle\Form;
 
 use Drupal\commerce_product\Entity\Product;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\Element\EntityAutocomplete;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\inline_entity_form\Form\EntityInlineForm;
 
@@ -46,29 +47,67 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
    */
   public function entityForm(array $entity_form, FormStateInterface $form_state) {
     $entity_form = parent::entityForm($entity_form, $form_state);
-    $entity_form['product']['widget'][0]['target_id']['#ajax'] = [
-      'callback' => [get_class($this), 'variationsRefresh'],
-      'event' => 'autocompleteclose',
-      'wrapper' => 'product_variations_refresh',
-    ];
-    $entity_form['variations']['#attributes'] = ['id' => 'product_variations_refresh'];
 
-    // Init form's variations state.
-    $productDefaultId = isset($entity_form['#default_value']) ? $entity_form['#default_value']->get('product')->getValue()[0]['target_id'] : NULL;
-    $triggering_element = $form_state->getTriggeringElement();
-    $entity_form['variations']['widget']['#disabled'] = FALSE;
-    if (isset($triggering_element) && $triggering_element['#ief_form'] == "add") {
-      $entity_form['variations']['#states'] = [
-        'visible' => [
-          ':input[name="bundle_items[form][inline_entity_form][product][0][target_id]"]' => ['filled' => TRUE],
-        ],
+    // This if/else make sure that the form can find the right position of
+    // widget element.
+    if (isset($entity_form['product']['widget'][0])) {
+      $entity_form['product']['widget'][0]['target_id']['#ajax'] = [
+        'callback' => [get_class($this), 'variationsRefresh'],
+        'event' => 'autocompleteclose',
+        'wrapper' => $entity_form['#ief_row_delta'] . 'product_variations_refresh',
       ];
+    }
+    else {
+      $entity_form['product']['widget']['#ajax'] = [
+        'callback' => [get_class($this), 'variationsRefresh'],
+        'wrapper' => $entity_form['#ief_row_delta'] . 'product_variations_refresh',
+      ];
+    }
+    $entity_form['variations']['#attributes']['id'] = $entity_form['#ief_row_delta'] . 'product_variations_refresh';
+    $entity_form['variations']['widget']['#disabled'] = FALSE;
+
+    /** @var \Drupal\commerce_product_bundle\Entity\ProductBundleItem $productBundleItem */
+    $productBundleItem = $entity_form['#entity'];
+    if ($productBundleItem->hasProduct()) {
+      $product = $productBundleItem->getProduct();
+      if (!empty($product)) {
+        $productId = $productBundleItem->getProductId();
+      }
+    }
+
+    $userInput = $form_state->getUserInput();
+
+    if ($entity_form['#op'] == 'add') {
+      if (isset($userInput['bundle_items']['form']['inline_entity_form']['product'])) {
+        $productId = $userInput['bundle_items']['form']['inline_entity_form']['product'];
+        if (isset($productId[0]['target_id'])) {
+          $productId = EntityAutocomplete::extractEntityIdFromAutocompleteInput($productId[0]['target_id']);
+        }
+      }
+    }
+    elseif ($entity_form['#op'] == 'edit') {
+      if (isset($userInput['bundle_items']['form']['inline_entity_form']['entities'])) {
+        $entities = $userInput['bundle_items']['form']['inline_entity_form']['entities'];
+        if (isset($entities[$entity_form['#ief_row_delta']]['form']['product'])) {
+          $productId = $entities[$entity_form['#ief_row_delta']]['form']['product'];
+          if (isset($productId[0]['target_id'])) {
+            $productId = EntityAutocomplete::extractEntityIdFromAutocompleteInput($productId[0]['target_id']);
+          }
+        }
+      }
+    }
+
+    $triggering_element = $form_state->getTriggeringElement();
+    // isset($triggering_element) is for edit or add page.
+    // isset($userInput['_triggering_element_value']) is for changing product.
+    // $userInput['op'] == 'Save') is for clicking product_bundle's form
+    // save directly.
+    if (!empty($productId) && (isset($triggering_element) || isset($userInput['_triggering_element_value']) || $userInput['op'] == 'Save')) {
+      $entity_form['variations']['widget']['#options'] = $this->variationsOptions($productId);
+    }
+    else {
       $entity_form['variations']['widget']['#disabled'] = TRUE;
     }
-    if (isset($productDefaultId) && $triggering_element) {
-      $entity_form['variations']['widget']['#options'] = $this->variationsOptions($productDefaultId);
-    }
-
     return $entity_form;
   }
 
@@ -104,23 +143,31 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
    *   Form element
    */
   public static function variationsRefresh(array $form, FormStateInterface $form_state) {
+    $element = [];
     $triggering_element = $form_state->getTriggeringElement();
 
-    // Several steps to get the right inline_entity_form.
-    $array_parents = array_slice($triggering_element['#array_parents'], 0, -4);
-    $inlineEntityFormId = $array_parents[3];
-    $element = NestedArray::getValue($form, $array_parents);
+    // Remove the action and the actions container.
+    $array_parents = array_slice($triggering_element['#array_parents'], 0, -2);
+    while (!(isset($element['#type']) && ($element['#type'] == 'inline_entity_form'))) {
+      $element = NestedArray::getValue($form, $array_parents);
+      array_pop($array_parents);
+    }
 
     // Get the origin variations form.
     $variationsForm = $element['variations'];
     $bundleItems = $form_state->getValue('bundle_items');
     if ($element['#op'] == 'add') {
-      $productId = $bundleItems['form']['inline_entity_form']['product'][0]['target_id'];
+      if (isset($bundleItems['form']['inline_entity_form']['product'][0]['target_id'])) {
+        $productId = $bundleItems['form']['inline_entity_form']['product'][0]['target_id'];
+      }
     }
-    if ($element['#op'] == 'edit') {
-      $productId = $bundleItems['form']['inline_entity_form']['entities'][$inlineEntityFormId]['form']['product'][0]['target_id'];
+    elseif ($element['#op'] == 'edit') {
+      $entities = $bundleItems['form']['inline_entity_form']['entities'];
+      if (isset($entities[$element['#ief_row_delta']]['form']['product'][0]['target_id'])) {
+        $productId = $entities[$element['#ief_row_delta']]['form']['product'][0]['target_id'];
+      }
     }
-    if ($productId) {
+    if (!empty($productId)) {
       $variationsForm['widget']['#options'] = ProductBundleItemInlineForm::variationsOptions($productId);
     }
     return $variationsForm;
@@ -132,30 +179,43 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
    */
   public function entityFormValidate(array &$entity_form, FormStateInterface $form_state) {
     parent::entityFormValidate($entity_form, $form_state);
-
-    // Validate all variations belong to one product.
-    $triggering_element = $form_state->getTriggeringElement();
-    if (!empty($triggering_element['#ief_submit_trigger'])) {
-      $ief_row_delta = $triggering_element['#ief_row_delta'];
-      $bundle_items = $form_state->getValue('bundle_items');
-      if (isset($ief_row_delta)) {
-        $productId = $bundle_items['form']['inline_entity_form']['entities'][$ief_row_delta]['form']['product'][0]['target_id'];
-        $formVariationsIds = $bundle_items['form']['inline_entity_form']['entities'][$ief_row_delta]['form']['variations'];
+    $bundleItems = $form_state->getUserInput()['bundle_items'];
+    if ($entity_form['#op'] == 'add') {
+      if (isset($bundleItems['form']['inline_entity_form']['variations'])) {
+        $formVariationsIds = $bundleItems['form']['inline_entity_form']['variations'];
       }
-      else {
-        $productId = $bundle_items['form']['inline_entity_form']['product'][0]['target_id'];
-        $formVariationsIds = $bundle_items['form']['inline_entity_form']['variations'];
+      $productId = $bundleItems['form']['inline_entity_form']['product'];
+      if (isset($productId[0]['target_id'])) {
+        $productId = EntityAutocomplete::extractEntityIdFromAutocompleteInput($productId[0]['target_id']);
       }
-      $product = Product::load($productId);
-      $variationsIds = $product->getVariationIds();
-      foreach ($formVariationsIds as $value) {
-        if (!in_array($value['target_id'], $variationsIds)) {
-          $message = t('All variations must belong to the same product');
-          $form_state->setError($triggering_element, $message);
-        }
+    }
+    elseif ($entity_form['#op'] == 'edit') {
+      if (isset($bundleItems['form']['inline_entity_form']['entities'][$entity_form['#ief_row_delta']]['form']['variations'])) {
+        $formVariationsIds = $bundleItems['form']['inline_entity_form']['entities'][$entity_form['#ief_row_delta']]['form']['variations'];
+      }
+      $productId = $bundleItems['form']['inline_entity_form']['entities'][$entity_form['#ief_row_delta']]['form']['product'];
+      if (isset($productId[0]['target_id'])) {
+        $productId = EntityAutocomplete::extractEntityIdFromAutocompleteInput($productId[0]['target_id']);
       }
     }
 
+    if (isset($productId)) {
+      $product = Product::load($productId);
+      if (isset($product)) {
+        $variationsIds = $product->getVariationIds();
+      }
+      else {
+        $form_state->setError($entity_form, "The product $productId didn't exist");
+      }
+    }
+    if (!empty($formVariationsIds) && $formVariationsIds[0] != '_none') {
+      foreach ($formVariationsIds as $value) {
+        if (!in_array($value, $variationsIds)) {
+          $message = t("Each bundle items's variations must belong to the same product");
+          $form_state->setError($entity_form, $message);
+        }
+      }
+    }
   }
 
 }
