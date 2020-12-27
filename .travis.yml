@@ -133,6 +133,7 @@ install:
 
   # Installed after Drush to prevent Composer conflicts around symfony/yaml.
   - composer global require "drupal/coder:8.3.*"
+  - composer global require dealerdirect/phpcodesniffer-composer-installer
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
 before_script:
@@ -140,6 +141,7 @@ before_script:
   - drupal-ti before_script
 
 script:
+  - phpcs -i
   - phpcs --standard=phpcs.xml src -s
   - phpcs --standard=phpcs.xml modules -s
   - phpcs --standard=phpcs.xml tests -s
