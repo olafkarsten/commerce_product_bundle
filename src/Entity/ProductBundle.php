@@ -243,6 +243,21 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
   }
 
   /**
+   * Gets the index of the given bundle item.
+   *
+   * @param \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item
+   *   The bundle item.
+   *
+   * @return int|bool
+   *   The index of the given bundle item, or FALSE if not found.
+   */
+  protected function getBundleItemIndex(BundleItemInterface $bundle_item) {
+    return array_search($bundle_item->id(), $this->getBundleItemIds());
+  }
+
+
+
+  /**
    * {@inheritdoc}
    */
   public function hasBundleItems() {
