@@ -27,7 +27,7 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
   /**
    * Sets up the the product bundle we need for test.
    *
-   * @ToDo Try to mock at least parts of it, instead of relying on real objects.
+   * @todo Try to mock at least parts of it, instead of relying on real objects.
    */
   public function setup() {
     parent::setup();
@@ -110,7 +110,7 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
    * @covers ::getIsAlwaysInStock
    * @covers ::getIsInStock
    *
-   * @ToDo Add tests with real stock checking.
+   * @todo Add tests with real stock checking.
    */
   public function testProductBundleStockProxy() {
     $stockServiceManager = \Drupal::service('commerce_stock.service_manager');

@@ -230,8 +230,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setVariations($variations);
     $this->assertEquals($product->id(), $bundleItem->getProduct()->id());
 
-    // @ToDo Test the bundle <> back reference.
-
+    // @todo Test the bundle <> back reference.
     $freshBundleItem = ProductBundleItem::create([
       'type' => 'default',
     ]);

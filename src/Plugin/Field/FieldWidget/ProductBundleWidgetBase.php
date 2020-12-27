@@ -106,7 +106,7 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     $entity_type = $field_definition->getTargetEntityTypeId();
     $field_name = $field_definition->getName();
 
-    // @todo: Check that this field is only a commerce_product_bundle type field.
+    // @todo Check that this field is only a commerce_product_bundle type field.
     return $entity_type == 'commerce_order_item' && $field_name == 'purchased_entity';
   }
 
@@ -118,7 +118,6 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     // in formElement().
     // @todo Ensure the structure and values of this array are correct.
     // @todo Add bundle_items -> variations to field_selected_variations here.
-
     foreach ($values as $key => $value) {
       $values[$key] = [
         'target_id' => $value['bundle'],

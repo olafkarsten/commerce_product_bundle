@@ -45,7 +45,7 @@ class BundleItemOrderItemSubscriber implements EventSubscriberInterface {
    *   The order item event.
    */
   public function deleteBundleItemOrderItem(OrderItemEvent $event) {
-    /* @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
+    /** @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
     $order_item = $event->getOrderItem();
     if ($order_item->bundle() === 'commerce_product_bundle_default') {
       if ($order_item->hasField('bundle_item_order_items')) {
