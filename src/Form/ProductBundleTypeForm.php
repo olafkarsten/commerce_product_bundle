@@ -124,13 +124,13 @@ class ProductBundleTypeForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label product bundle type.', [
+        $this->messenger()->addStatus($this->t('Created the %label product bundle type.', [
           '%label' => $product_bundle_type->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label product bundle type.', [
+        $this->messenger()->addStatus($this->t('Saved the %label product bundle type.', [
           '%label' => $product_bundle_type->label(),
         ]));
     }

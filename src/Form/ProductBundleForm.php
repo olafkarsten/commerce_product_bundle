@@ -31,13 +31,13 @@ class ProductBundleForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label product bundle.', [
+        $this->messenger()->addStatus($this->t('Created the %label product bundle.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label product bundle.', [
+        $this->messenger()->addStatus($this->t('Saved the %label product bundle.', [
           '%label' => $entity->label(),
         ]));
     }
