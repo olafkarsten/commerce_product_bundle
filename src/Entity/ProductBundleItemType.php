@@ -38,6 +38,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "description",
+ *   },
  *   links = {
  *     "canonical" = "/admin/commerce/config/product-bundle-item-types/{commerce_product_bundle_i_type}",
  *     "add-form" = "/admin/commerce/config/product-bundle-item-types/add",

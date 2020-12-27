@@ -33,7 +33,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     },
  *     "inline_form" = "Drupal\commerce_product_bundle\Form\BundleItemOrderItemInlineForm",
  *   },
- *   base_table = "commerce_product_bundle_item_order_item",
+ *   base_table = "cpb_item_order_item",
  *   admin_permission = "administer commerce_order",
  *   entity_keys = {
  *     "id" = "id",
@@ -208,6 +208,7 @@ class BundleItemOrderItem extends CommerceContentEntityBase implements BundleIte
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'placeholder' => '',
+          'match_limit' => 10,
         ],
       ])
       ->setDisplayConfigurable('form', TRUE)
@@ -224,6 +225,7 @@ class BundleItemOrderItem extends CommerceContentEntityBase implements BundleIte
         'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
+          'match_limit' => 10,
           'placeholder' => '',
         ],
       ])

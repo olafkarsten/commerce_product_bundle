@@ -388,7 +388,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
     }
     foreach ($this->getVariations() as $variation) {
       // Return the first active variation.
-      if ($variation->isActive()) {
+      if ($variation->isPublished()) {
         return $variation;
       }
     }
@@ -532,6 +532,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
           'match_operator'    => 'CONTAINS',
           'size'              => '60',
           'autocomplete_type' => 'tags',
+          'match_limit' => 10,
           'placeholder'       => '',
         ],
       ])
@@ -622,6 +623,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'autocomplete_type' => 'tags',
+          'match_limit' => 10,
           'placeholder' => '',
         ],
       ])

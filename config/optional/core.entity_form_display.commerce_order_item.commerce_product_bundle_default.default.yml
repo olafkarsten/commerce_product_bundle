@@ -29,6 +29,7 @@ content:
     settings:
       match_operator: CONTAINS
       size: 60
+      match_limit: 10
       placeholder: ''
     region: content
     third_party_settings: {  }

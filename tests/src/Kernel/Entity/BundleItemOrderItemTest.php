@@ -52,6 +52,7 @@ class BundleItemOrderItemTest extends CommerceProductBundleKernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
+
     $this->installEntitySchema('cpb_order_item');
 
     $variation = ProductVariation::create(['type' => 'default']);

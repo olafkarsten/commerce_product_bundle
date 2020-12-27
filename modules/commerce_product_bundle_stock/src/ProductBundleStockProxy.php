@@ -26,16 +26,28 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * @param \Drupal\commerce_stock\StockServiceManagerInterface $stock_service_manager
    *   The stock service manager.
    */
-  public function __construct(StockServiceManagerInterface $stock_service_manager) {
+  public function __construct(
+    StockServiceManagerInterface $stock_service_manager
+  ) {
     $this->stockServiceManager = $stock_service_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createTransaction(PurchasableEntityInterface $bundle, $location_id, $zone, $quantity, $unit_cost, $currency_code, $transaction_type_id, array $metadata) {
+  public function createTransaction(
+    PurchasableEntityInterface $bundle,
+    $location_id,
+    $zone,
+    $quantity,
+    $unit_cost,
+    $currency_code,
+    $transaction_type_id,
+    array $metadata
+  ) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
     foreach ($bundle->getBundleItems() as $item) {
+      /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $entity */
       $entity = $item->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
       $updater = $service->getStockUpdater();
@@ -47,15 +59,20 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function getTotalStockLevel(PurchasableEntityInterface $bundle, array $locations) {
+  public function getTotalStockLevel(
+    PurchasableEntityInterface $bundle,
+    array $locations
+  ) {
 
     $levels = array_map(function ($bundleItem) use ($bundle, $locations) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
       $quantity = $bundleItem->getQuantity() ?: 1;
-      $entity = $bundleItem->getCurrentVariation();
+
       /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
+      $entity = $bundleItem->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
-      $level = $service->getStockChecker()->getTotalStockLevel($entity, $locations);
+      $level = $service->getStockChecker()
+        ->getTotalStockLevel($entity, $locations);
       return floor($level / $quantity);
     }, $bundle->getBundleItems());
 
@@ -65,7 +82,10 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   /**
    * {@inheritdoc}
    */
-  public function getIsInStock(PurchasableEntityInterface $bundle, array $locations) {
+  public function getIsInStock(
+    PurchasableEntityInterface $bundle,
+    array $locations
+  ) {
 
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
@@ -84,7 +104,9 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   public function getIsAlwaysInStock(PurchasableEntityInterface $bundle) {
 
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
-    foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
+    $entities = $this->getAllPurchasableEntities($bundle);
+    foreach ($entities as $entity) {
+      xdebug_break();
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
       if (!$checker->getIsAlwaysInStock($entity)) {
@@ -124,7 +146,8 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
    *   All purchasable entities.
    */
-  protected function getAllPurchasableEntities(BundleInterface $product_bundle) {
+  protected function getAllPurchasableEntities(BundleInterface $product_bundle
+  ) {
     return array_map(function ($item) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
       return $item->getCurrentVariation();

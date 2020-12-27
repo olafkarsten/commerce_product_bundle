@@ -255,8 +255,6 @@ class ProductBundle extends ContentEntityBase implements BundleInterface {
     return array_search($bundle_item->id(), $this->getBundleItemIds());
   }
 
-
-
   /**
    * {@inheritdoc}
    */

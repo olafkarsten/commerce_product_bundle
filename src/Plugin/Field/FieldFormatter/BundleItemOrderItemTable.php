@@ -7,17 +7,17 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 
 /**
- * Plugin implementation of the 'commerce_product_bundle_item_order_items_table' formatter.
+ * Plugin implementation of the 'cpb_item_order_item_table' formatter.
  *
  * @FieldFormatter(
- *   id = "commerce_product_bundle_item_order_items_table",
+ *   id = "cpb_item_order_item_table",
  *   label = @Translation("commerce product bundle item order items table"),
  *   field_types = {
  *     "entity_reference",
  *   },
  * )
  */
-class BundleItemOrderItemsTable extends FormatterBase {
+class BundleItemOrderItemTable extends FormatterBase {
 
   /**
    * {@inheritdoc}

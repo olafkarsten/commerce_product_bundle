@@ -17,6 +17,15 @@ commerce_product_bundle.commerce_product_bundle_type.*:
     orderItemType:
       type: string
       label: 'Order item type'
+    locked:
+      type: 'boolean'
+      label: 'Locked'
+    traits:
+      type: sequence
+      label: 'Traits'
+      orderby: value
+      sequence:
+        type: string
 
 commerce_product_bundle.commerce_product_bundle_i_type.*:
   type: config_entity
@@ -30,6 +39,15 @@ commerce_product_bundle.commerce_product_bundle_i_type.*:
       label: 'Label'
     uuid:
       type: string
+    description:
+      type: text
+      label: 'Description'
+    traits:
+      type: sequence
+      label: 'Traits'
+      orderby: value
+      sequence:
+        type: string
 
 field.formatter.settings.commerce_product_bundle_add_to_cart:
   type: mapping

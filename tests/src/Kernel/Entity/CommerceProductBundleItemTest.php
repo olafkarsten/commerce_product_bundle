@@ -5,6 +5,7 @@ namespace Drupal\Tests\commerce_product_bundle\Kernel\Entity;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\Product;
 use Drupal\commerce_product\Entity\ProductVariation;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_product_bundle\Entity\ProductBundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
 use Drupal\field\Entity\FieldConfig;
@@ -96,9 +97,11 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $violations = $bundleItem->validate()->getByField("max_quantity");
     $this->assertCount(0, $violations);
 
+    $bundleItem->save();
+    $bundleItem = $this->reloadEntity($bundleItem);
     $bundleItem->setMinimumQuantity(-1);
     $violations = $bundleItem->validate()->getByField("min_quantity");
-    $this->assertCount(1, $violations);
+    $this->assertCount(2, $violations);
 
     $bundleItem->setMinimumQuantity(11);
     $this->assertEquals(11, $bundleItem->getMinimumQuantity());
@@ -171,13 +174,13 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $this->assertNull($bundleItem->getCurrentVariation());
     $this->assertNull($bundleItem->getVariationIds());
     $this->assertFalse($bundleItem->hasProduct());
-
     $variations = [];
     for ($i = 1; $i <= 5; $i++) {
       $variation = ProductVariation::create([
         'type'   => 'default',
         'sku'    => strtolower($this->randomMachineName()),
         'title'  => $this->randomString(),
+        'uid' => $this->user->id(),
         'status' => $i % 2,
       ]);
       $variation->save();
@@ -187,13 +190,16 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $product = Product::create([
       'type'       => 'default',
       'variations' => $variations,
+      'uid' => $this->user->id(),
     ]);
     $product->save();
     $product = $this->reloadEntity($product);
     $bundleItem->setProduct($product);
     $this->assertTrue($bundleItem->hasProduct());
-
     $this->assertEquals($product->id(), $bundleItem->getProductId());
+    $current = $bundleItem->getCurrentVariation();
+    $this->assertInstanceOf(ProductVariationInterface::class, $current);
+
     $this->assertFalse($bundleItem->hasVariations());
     $bundleItem->setVariations($variations);
     // Uncomment after https://www.drupal.org/project/commerce_product_bundle/issues/2837499
@@ -245,16 +251,16 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     ]);
 
     $freshBundleItem->addVariation($otherVariation);
-    $this->assertFalse($freshBundleItem->getProduct());
+    $this->assertNull($freshBundleItem->getProduct());
     $this->assertNull($freshBundleItem->getVariations());
 
-    $this::setExpectedException('\InvalidArgumentException');
+    $this::expectException('\InvalidArgumentException');
     $bundleItem->addVariation($otherVariation);
 
-    $this::setExpectedException('\InvalidArgumentException');
+    $this::expectException('\InvalidArgumentException');
     $bundleItem->setVariations([$otherVariation]);
 
-    $this::setExpectedException('\InvalidArgumentException');
+    $this::expectException('\InvalidArgumentException');
     $bundleItem->setCurrentVariation($otherVariation);
 
   }

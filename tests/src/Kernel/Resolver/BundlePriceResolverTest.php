@@ -41,7 +41,7 @@ class BundlePriceResolverTest extends CommerceProductBundleKernelTestBase {
     self::assertEquals(new Price('0.00', 'USD'), $resolver->resolve($bundle->reveal(), 1, $context));
 
     // Wether the getPrice() method gets called.
-    $this->verifyMockObjects();
+    $bundle->checkProphecyMethodsPredictions();
 
     $bundle = $this->prophesize('Drupal\commerce_product_bundle\Entity\BundleInterface');
     $bundle->getPrice()->willReturn(new Price('5.55', 'USD'))->shouldBeCalledTimes(1);
@@ -55,7 +55,7 @@ class BundlePriceResolverTest extends CommerceProductBundleKernelTestBase {
     $bundle->getBundleItems()->willReturn($items)->shouldBeCalled();
     self::assertEquals(new Price('55.55', 'EUR'), $resolver->resolve($bundle->reveal(), 1, $context));
 
-    self::verifyMockObjects();
+    $bundle->checkProphecyMethodsPredictions();
   }
 
   /**

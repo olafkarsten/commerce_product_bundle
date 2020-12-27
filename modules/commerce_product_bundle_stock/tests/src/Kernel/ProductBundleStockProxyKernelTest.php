@@ -49,7 +49,7 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
       'variations' => $variations,
     ]);
     $product->save();
-    $product1 = $product;
+    $product1 = $this->reloadEntity($product);
 
     $variations = [];
     for ($i = 1; $i <= 3; $i++) {
@@ -68,24 +68,39 @@ class ProductBundleStockProxyKernelTest extends ProductBundleStockKernelTestBase
       'variations' => $variations,
     ]);
     $product->save();
-    $product2 = $product;
+    $product2 = $this->reloadEntity($product);
 
     $bundleItem1 = ProductBundleItem::create([
       'type' => 'default',
       'uid' => $this->user->id(),
-      'title' => 'testBundle',
+      'title' => 'testBundle1',
       'status' => TRUE,
     ]);
     $bundleItem1->setProduct($product1);
-    $bundleItem2 = ProductBundleItem::create(['type' => 'default']);
-    $bundleItem2->setProduct($product2);
+    $bundleItem1->save();
+    $bundleItem1 = $this->reloadEntity($bundleItem1);
 
-    $bundle = ProductBundle::create(['type' => 'default']);
-    $bundle->addBundleItem($bundleItem1);
-    $bundle->addBundleItem($bundleItem2);
+    $bundleItem2 = ProductBundleItem::create([
+      'type' => 'default',
+      'uid' => $this->user->id(),
+      'title' => 'testBundle2',
+      'status' => TRUE,
+    ]);
+    $bundleItem2->setProduct($product2);
+    $bundleItem2->save();
+    $bundleItem2 = $this->reloadEntity($bundleItem2);
+
+    $bundle = ProductBundle::create(
+      [
+        'type' => 'default',
+        'uid' => $this->user->id(),
+        'status' => TRUE,
+      ]);
+
+    $bundle->setBundleItems([$bundleItem1, $bundleItem2]);
     $bundle->save();
-    $this->reloadEntity($bundle);
-    $this->bundle = $bundle;
+    $this->bundle = $this->reloadEntity($bundle);
+
   }
 
   /**

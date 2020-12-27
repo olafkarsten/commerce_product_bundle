@@ -3,6 +3,8 @@
 namespace Drupal\Tests\commerce_product_bundle\Kernel\Entity;
 
 use Drupal\commerce_price\Price;
+use Drupal\commerce_product\Entity\Product;
+use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product_bundle\Entity\Productbundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
 use Drupal\field\Entity\FieldConfig;
@@ -25,20 +27,85 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
    * @covers ::getCreatedTime
    * @covers ::setCreatedTime
    * @covers ::postDelete
+   * @covers ::setBundleItems
+   * @covers ::addBundleItem
+   * @covers ::removeBundleItem
+   * @covers ::getBundleItemIds
+   * @covers ::hasBundleItem
+   * @covers ::hasBundleItems
    */
   public function testBundle() {
 
+    $variations = [];
+    for ($i = 1; $i <= 5; $i++) {
+      $variation = ProductVariation::create([
+        'type' => 'default',
+        'sku' => strtolower($this->randomMachineName()),
+        'title' => $this->randomString(),
+        'status' => $i % 2,
+        'uid' => $this->user->id(),
+      ]);
+      $variation->save();
+      $variations[] = $variation;
+    }
+    $variations = array_reverse($variations);
+    $product = Product::create([
+      'type' => 'default',
+      'variations' => $variations,
+      'uid' => $this->user->id(),
+    ]);
+    $product->save();
+    $product1 = $this->reloadEntity($product);
+
+    $variations = [];
+    for ($i = 1; $i <= 3; $i++) {
+      $variation = ProductVariation::create([
+        'type' => 'default',
+        'sku' => strtolower($this->randomMachineName()),
+        'title' => $this->randomString(),
+        'status' => TRUE,
+        'uid' => $this->user->id(),
+      ]);
+      $variation->save();
+      $variations[] = $variation;
+    }
+    $variations = array_reverse($variations);
+    $product = Product::create([
+      'type' => 'default',
+      'variations' => $variations,
+      'uid' => $this->user->id(),
+    ]);
+    $product->save();
+    $product2 = $this->reloadEntity($product);
+
     $bundleItem = ProductBundleItem::create([
       'type' => 'default',
+      'uid' => $this->user->id(),
+      'title' => 'testBundle1',
+      'status' => TRUE,
     ]);
-    $bundleItem->setUnitPrice(new Price('44.44', 'USD'));
+    $bundleItem->setProduct($product1);
     $bundleItem->save();
+    $bundleItem = $this->reloadEntity($bundleItem);
 
-    $bundle = Productbundle::create([
+    $bundleItem2 = ProductBundleItem::create([
       'type' => 'default',
+      'uid' => $this->user->id(),
+      'title' => 'testBundle2',
+      'status' => TRUE,
     ]);
-    $bundle->save();
+    $bundleItem2->setProduct($product2);
+    $bundleItem2->save();
+    $bundleItem2 = $this->reloadEntity($bundleItem2);
 
+    $bundle = ProductBundle::create(
+      [
+        'type' => 'default',
+        'uid' => $this->user->id(),
+        'status' => TRUE,
+      ]);
+
+    $bundle->save();
     $bundle->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundle->getTitle());
 
@@ -73,6 +140,7 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundle->setOwnerId($this->user->id());
     $this->assertEquals($this->user, $bundle->getOwner());
     $this->assertEquals($this->user->id(), $bundle->getOwnerId());
+    $this->assertFalse($bundle->hasBundleItems());
 
     $bundle->setBundleItems([$bundleItem]);
     $bundle->save();
@@ -80,6 +148,36 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundle = $this->reloadEntity($bundle);
     $items = $bundle->getBundleItems();
     $this->assertEquals($items[0]->Id(), $bundleItem->Id());
+    $this->assertTrue($bundle->hasBundleItems());
+    $this->assertTrue($bundle->hasBundleItem($bundleItem));
+    $this->assertFalse($bundle->hasBundleItem($bundleItem2));
+
+    $bundle->addBundleItem($bundleItem2);
+    $bundle->save();
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
+    $bundle = $this->reloadEntity($bundle);
+    $items = $bundle->getBundleItems();
+    $ids = $bundle->getBundleItemIds();
+    $this->assertEquals($bundleItem->Id(), $items[0]->Id());
+    $this->assertEquals($bundleItem->Id(), $ids[0]);
+    $this->assertEquals($bundleItem2->Id(), $items[1]->Id());
+    $this->assertEquals($bundleItem2->Id(), $ids[1]);
+    $this->assertTrue($bundle->hasBundleItem($bundleItem2));
+
+    $test = array_map(function ($item) {
+      /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
+      $test_item = $item->getCurrentVariation();
+      return $test_item;
+    }, $items);
+
+    $bundle->removeBundleItem($bundleItem);
+    $bundle->save();
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
+    $bundle = $this->reloadEntity($bundle);
+    $items = $bundle->getBundleItems();
+    $this->assertEquals(1, count($items));
+    $this->assertEquals($bundleItem2->Id(), $items[0]->Id());
+    $this->assertFalse($bundle->hasBundleItem($bundleItem));
 
     $this->assertNull($bundle->getPrice());
     // 0.00 is a valid Price. Check that we don't inadvertently filter it by some
@@ -90,8 +188,8 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $this->assertEquals($bundle->getPrice(), new Price('3.33', 'USD'));
 
     $bundle->delete();
-    $this->assertFalse(ProductBundle::load($bundle->Id()));
-    $this->assertFalse(ProductBundleItem::load($bundleItem->Id()));
+    $this->assertNull(ProductBundle::load($bundle->Id()));
+    $this->assertNull(ProductBundleItem::load($bundleItem2->Id()));
 
   }
 
