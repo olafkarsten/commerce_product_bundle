@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class ProductBundleItemTypeForm.
+ * Provides the product bundle item type form.
  *
  * @package Drupal\commerce_product_bundle\Form
  */

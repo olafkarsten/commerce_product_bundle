@@ -239,7 +239,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public function setQuantity($quantity) {
 
-    // @ToDo We need to check against the min/max constraints
+    // @todo We need to check against the min/max constraints
     // @see https://www.drupal.org/node/2847809
     $this->activeQuantity = (float) $quantity;
 
@@ -464,7 +464,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    *
-   * @todo: Figure out how to get the currently selected variation
+   * @todo Figure out how to get the currently selected variation
    * without holding state in this object.
    * @see https://www.drupal.org/node/2831613
    */
@@ -632,7 +632,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
 
     // Variations added in commerce_product_bundle.module.
     // @see commerce_product_bundle_add_variations_field().
-
     $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Minimum Quantity'))
       ->setDescription(t('The minimum quantity.'))

@@ -4,7 +4,8 @@ namespace Drupal\commerce_product_bundle;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Link;;
+use Drupal\Core\Link;
+;
 use Drupal\Core\Url;
 
 /**
@@ -27,7 +28,7 @@ class ProductBundleItemListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\commerce_product_bundle\Entity\ProductBundleItem */
+    /** @var \Drupal\commerce_product_bundle\Entity\ProductBundleItem $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::fromTextAndUrl(
       $entity->label(),

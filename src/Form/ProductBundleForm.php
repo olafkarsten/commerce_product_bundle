@@ -16,7 +16,7 @@ class ProductBundleForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\commerce_product_bundle\Entity\ProductBundle */
+    /** @var \Drupal\commerce_product_bundle\Entity\ProductBundle $entity */
     $form = parent::buildForm($form, $form_state);
 
     return $form;

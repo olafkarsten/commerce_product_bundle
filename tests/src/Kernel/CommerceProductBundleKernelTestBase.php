@@ -64,7 +64,12 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
     $this->installEntitySchema('profile');
     $this->installEntitySchema('commerce_order');
     $this->installEntitySchema('commerce_order_item');
-    $this->installConfig(['commerce_number_pattern', 'commerce_order', 'commerce_product', 'commerce_product_bundle']);
+    $this->installConfig([
+      'commerce_number_pattern',
+      'commerce_order',
+      'commerce_product',
+      'commerce_product_bundle',
+    ]);
 
     $user = $this->createUser([], ['view commerce_product']);
     $this->user = $this->reloadEntity($user);
@@ -87,7 +92,8 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
    */
   protected function createEntity($entity_type, array $values) {
     /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
-    $storage = \Drupal::service('entity_type.manager')->getStorage($entity_type);
+    $storage = \Drupal::service('entity_type.manager')
+      ->getStorage($entity_type);
     $entity = $storage->create($values);
     $status = $entity->save();
     $this->assertEquals(SAVED_NEW, $status, new FormattableMarkup('Created %label entity %type.', [

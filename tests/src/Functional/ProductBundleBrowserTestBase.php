@@ -102,7 +102,7 @@ abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
         ]);
         $variation->save();
         // Not sure yet, whether we need to keep the variations.
-        // @ToDo Remove the comment or refactor.
+        // @todo Remove the comment or refactor.
         $this->variations[] = $variation;
       }
       $variations = array_reverse($variations);

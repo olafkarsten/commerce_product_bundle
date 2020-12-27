@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ProductBundleTypeForm.
+ * Provides the product bundle type form.
  *
  * @package Drupal\commerce_product_bundle\Form
  */

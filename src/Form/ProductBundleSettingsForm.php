@@ -6,9 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class ProductBundleSettingsForm.
- *
- * @package Drupal\commerce_product_bundle\Form
+ * Provides the product bundle settings form.
  *
  * @ingroup commerce_product_bundle
  */

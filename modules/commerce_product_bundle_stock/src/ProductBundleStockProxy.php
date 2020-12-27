@@ -146,8 +146,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * @return \Drupal\commerce_product\Entity\ProductVariationInterface[]
    *   All purchasable entities.
    */
-  protected function getAllPurchasableEntities(BundleInterface $product_bundle
-  ) {
+  protected function getAllPurchasableEntities(BundleInterface $product_bundle) {
     return array_map(function ($item) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
       return $item->getCurrentVariation();

@@ -12,7 +12,7 @@ use Drupal\Core\Url;
  *
  * @ingroup commerce_product_bundle
  *
- * @ToDo Replace the LinkGeneratorTrait with \Drupal\Core\Link
+ * @todo Replace the LinkGeneratorTrait with \Drupal\Core\Link
  */
 class ProductBundleListBuilder extends EntityListBuilder {
 
@@ -29,7 +29,7 @@ class ProductBundleListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\commerce_product_bundle\Entity\ProductBundle */
+    /** @var \Drupal\commerce_product_bundle\Entity\ProductBundle $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::fromTextAndUrl(
       $entity->label(),

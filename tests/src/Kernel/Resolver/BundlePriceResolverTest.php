@@ -62,7 +62,7 @@ class BundlePriceResolverTest extends CommerceProductBundleKernelTestBase {
    * Wether the service gets collected by the chain price resolver.
    */
   public function testServiceIsRegistered() {
-    /* @var \Drupal\commerce_price/Resolver/ChainPriceResolver $chainPriceResolver */
+    /** @var \Drupal\commerce_price/Resolver/ChainPriceResolver $chainPriceResolver */
     $chainPriceResolver = \Drupal::service('commerce_price.chain_price_resolver');
     $resolvers = $chainPriceResolver->getResolvers();
     self::assertContains('bundle_price_resolver', array_keys($resolvers));

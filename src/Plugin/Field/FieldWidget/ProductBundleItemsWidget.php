@@ -403,9 +403,9 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase {
       // Cast values to string like OrderItem does for other fields.
       // Value type (string) and order are required when matching order items.
       // @see \Drupal\commerce_cart\OrderItemMatcher
-      /* @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
+      /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
       $variation = $this->variationStorage->load($selection['variation']);
-      /* @var  \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
+      /** @var  \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
       $bundle_item = $selection['bundle_item'];
 
       $bundle_order_item = $this->bundleItemOrderItemStorage->create([
