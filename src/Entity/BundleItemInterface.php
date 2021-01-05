@@ -6,6 +6,7 @@ use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -13,7 +14,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup commerce_product_bundle
  */
-interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterface {
+interface BundleItemInterface extends EntityChangedInterface, EntityOwnerInterface, EntityPublishedInterface {
 
   /**
    * Gets the product bundle item title.

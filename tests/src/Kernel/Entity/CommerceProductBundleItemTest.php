@@ -8,8 +8,8 @@ use Drupal\commerce_product\Entity\ProductVariation;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_product_bundle\Entity\ProductBundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * Test the Product Bundle Item entity.
@@ -45,13 +45,6 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
 
     $bundleItem->save();
 
-    // Confirm the attached fields are there.
-    $this->assertTrue($bundleItem->hasField('variations'));
-    $created_field = $bundleItem->getFieldDefinition('variations');
-    $this->assertInstanceOf(FieldConfig::class, $created_field);
-    $this->assertEquals('commerce_product_variation', $created_field->getSetting('target_type'));
-    $this->assertEquals('default:commerce_product_variation', $created_field->getSetting('handler'));
-
     $bundleItem->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundleItem->getTitle());
 
@@ -82,8 +75,16 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundleItem->setOwner($this->user);
     $this->assertEquals($this->user, $bundleItem->getOwner());
     $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());
+
     $bundleItem->setOwnerId(0);
-    $this->assertEquals(NULL, $bundleItem->getOwner());
+    $this->assertInstanceOf(UserInterface::class, $bundleItem->getOwner());
+    $this->assertTrue($bundleItem->getOwner()->isAnonymous());
+    // Whether non existend user returns anonymous.
+    $bundleItem->setOwnerId(99);
+    $this->assertInstanceOf(UserInterface::class, $bundleItem->getOwner());
+    $this->assertTrue($bundleItem->getOwner()->isAnonymous());
+    $this->assertEquals(99, $bundleItem->getOwnerId());
+
     $bundleItem->setOwnerId($this->user->id());
     $this->assertEquals($this->user, $bundleItem->getOwner());
     $this->assertEquals($this->user->id(), $bundleItem->getOwnerId());

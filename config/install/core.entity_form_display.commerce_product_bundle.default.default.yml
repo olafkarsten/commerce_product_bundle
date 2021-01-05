@@ -61,4 +61,10 @@ content:
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
+  path:
+      type: path
+      weight: 7
+      settings: {  }
+      third_party_settings: {  }
+      region: content
 hidden: {  }

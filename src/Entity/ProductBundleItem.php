@@ -2,15 +2,18 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
+use Drupal\commerce\Entity\CommerceContentEntityBase;
+use Drupal\commerce\EntityOwnerTrait;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Entity\EntityPublishedTrait;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\user\UserInterface;
+use Drupal\Core\Url;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Defines the product bundle item entity.
@@ -29,7 +32,8 @@ use Drupal\user\UserInterface;
  *   ),
  *   bundle_label = @Translation("Product bundle item type"),
  *   handlers = {
- *     "access" = "Drupal\commerce_product_bundle\ProductBundleItemAccessControlHandler",
+ *     "access" = "Drupal\commerce_product_bundle\BundleItemAccessControlHandler",
+ *     "permission_provider" = "Drupal\commerce_product_bundle\BundleItemPermissionProvider",
  *     "storage" = "Drupal\commerce_product_bundle\ProductBundleItemStorage",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleItemListBuilder",
@@ -39,35 +43,49 @@ use Drupal\user\UserInterface;
  *       "default" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
  *       "edit" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
+ *       "duplicate" = "Drupal\commerce_product_bundle\Form\ProductBundleItemForm",
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleItemDeleteForm",
  *     },
+ *    "local_task_provider" = {
+ *       "default" = "Drupal\entity\Menu\DefaultEntityLocalTaskProvider",
+ *     },
  *     "inline_form" = "Drupal\commerce_product_bundle\Form\ProductBundleItemInlineForm",
+ *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "route_provider" = {
- *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "default" = "Drupal\commerce_product_bundle\ProductBundleItemRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
- *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
  *   base_table = "commerce_product_bundle_i",
  *   data_table = "commerce_product_bundle_i_field_data",
  *   fieldable = TRUE,
  *   translatable = TRUE,
- *   admin_permission = "administer commerce_product_bundle_i",
+ *   translation = {
+ *     "content_translation" = {
+ *       "access_callback" = "content_translation_translate_access"
+ *     },
+ *   },
+ *   admin_permission = "administer commerce_product_bundle",
  *   entity_keys = {
  *     "id" = "bundle_item_id",
  *     "bundle" = "type",
  *     "label" = "title",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "owner" = "uid",
  *     "langcode" = "langcode",
+ *     "published" = "status",
  *   },
  *   links = {
- *     "canonical" = "/product-bundle-items/{commerce_product_bundle_i}",
- *     "add-page" = "/product-bundle-items/add",
- *     "add-form" = "/product-bundle-items/add/{commerce_product_bundle_i_type}",
- *     "edit-form" = "/product-bundle-items/{commerce_product_bundle_i}/edit",
- *     "delete-form" = "/product-bundle-items/{commerce_product_bundle_i}/delete",
- *     "collection" = "/product-bundle-items",
+ *     "add-form" = "/product-bundle/{commerce_product_bundle}/bundle-items/add",
+ *     "edit-form" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/edit",
+ *     "duplicate-form" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/duplicate",
+ *     "delete-form" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/delete",
+ *     "collection" = "/product-bundle/{commerce_product_bundle}/bundle-items",
+ *     "drupal:content-translation-overview" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/translations",
+ *     "drupal:content-translation-add" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/translations/add/{source}/{target}",
+ *     "drupal:content-translation-edit" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/translations/edit/{language}",
+ *     "drupal:content-translation-delete" = "/product-bundle/{commerce_product_bundle}/bundle-items/{commerce_product_bundle_i}/translations/delete/{language}",
  *   },
  *   constraints = {
  *     "MinQtyLessThanOrEqualMaxQty" = {}
@@ -76,9 +94,11 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "entity.commerce_product_bundle_i_type.edit_form"
  * )
  */
-class ProductBundleItem extends ContentEntityBase implements BundleItemInterface {
+class ProductBundleItem extends CommerceContentEntityBase implements BundleItemInterface {
 
   use EntityChangedTrait;
+  use EntityOwnerTrait;
+  use EntityPublishedTrait;
 
   /**
    * The parent product bundle.
@@ -105,31 +125,50 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
-    return $this->get('uid')->entity;
+  protected function urlRouteParameters($rel) {
+    $uri_route_parameters = parent::urlRouteParameters($rel);
+    $uri_route_parameters['commerce_product_bundle'] = $this->getBundleId();
+    return $uri_route_parameters;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
-    $this->set('uid', $uid);
+  public function toUrl($rel = 'canonical', array $options = []) {
+    // Product bundle item URLs depend on the parent product bundle.
+    if (!$this->getBundleId()) {
+      // RouteNotFoundException tells EntityBase::uriRelationships()
+      // to skip this product bundle items link relationships.
+      throw new RouteNotFoundException();
+    }
 
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOwnerId() {
-    return $this->get('uid')->target_id;
+    // StringFormatter assumes 'revision' is always a valid link template.
+    if (in_array($rel, ['canonical', 'revision'])) {
+      $route_name = 'entity.commerce_product_bundle.canonical';
+      $route_parameters = [
+        'commerce_product_bundle' => $this->getBundleId(),
+      ];
+      $options += [
+        'query' => [
+          'v' => $this->id(),
+        ],
+        'entity_type' => 'commerce_product_bundle',
+        'entity' => $this->getBundle(),
+        // Display links by default based on the current language.
+        'language' => $this->language(),
+      ];
+      return new Url($route_name, $route_parameters, $options);
+    }
+    else {
+      return parent::toUrl($rel, $options);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getBundle() {
-    return $this->get('bundle_id')->entity;
+    return $this->getTranslatedReferencedEntity('bundle_id');
   }
 
   /**
@@ -167,15 +206,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public function setCreatedTime($timestamp) {
     $this->set('created', $timestamp);
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setOwner(UserInterface $account) {
-    $this->set('uid', $account->id());
 
     return $this;
   }
@@ -420,7 +450,8 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   protected function getEnabledVariations() {
-    $variationStorage = $this->entityTypeManager()->getStorage('commerce_product_variation');
+    $variationStorage = $this->entityTypeManager()
+      ->getStorage('commerce_product_variation');
     return $variationStorage->loadEnabled($this->getProduct());
   }
 
@@ -501,7 +532,10 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
+  public static function preCreate(
+    EntityStorageInterface $storage_controller,
+    array &$values
+  ) {
     parent::preCreate($storage_controller, $values);
     $values += [
       'uid' => \Drupal::currentUser()->id(),
@@ -513,31 +547,14 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::publishedBaseFieldDefinitions($entity_type);
+    $fields += static::ownerBaseFieldDefinitions($entity_type);
 
-    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+    $fields['uid']
       ->setLabel(t('Author'))
-      ->setDescription(t('The user ID of author of the product bundle item entity.'))
-      ->setSetting('target_type', 'user')
-      ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\commerce_product_bundle\Entity\ProductBundleItem::getCurrentUserId')
-      ->setDisplayOptions('view', [
-        'title'  => 'hidden',
-        'type'   => 'author',
-        'weight' => 0,
-      ])
-      ->setDisplayOptions('form', [
-        'type'     => 'entity_reference_autocomplete',
-        'weight'   => 5,
-        'settings' => [
-          'match_operator'    => 'CONTAINS',
-          'size'              => '60',
-          'autocomplete_type' => 'tags',
-          'match_limit' => 10,
-          'placeholder'       => '',
-        ],
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDescription(t('The author of the product bundle item.'))
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
@@ -545,17 +562,17 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
       ->setSettings([
-        'max_length'      => 128,
+        'max_length' => 128,
         'text_processing' => 0,
       ])
       ->setDefaultValue('')
       ->setDisplayOptions('view', [
-        'label'  => 'hidden',
-        'type'   => 'string',
+        'label' => 'hidden',
+        'type' => 'string',
         'weight' => -4,
       ])
       ->setDisplayOptions('form', [
-        'type'   => 'string_textfield',
+        'type' => 'string_textfield',
         'weight' => -4,
       ])
       ->setDisplayConfigurable('form', TRUE)
@@ -593,12 +610,12 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setLabel(t('Unit price'))
       ->setDescription(t('The unit price, if overridden, of the variation selected from this bundle item.'))
       ->setDisplayOptions('view', [
-        'label'  => 'above',
-        'type'   => 'commerce_price_default',
+        'label' => 'above',
+        'type' => 'commerce_price_default',
         'weight' => 0,
       ])
       ->setDisplayOptions('form', [
-        'type'   => 'commerce_price_default',
+        'type' => 'commerce_price_default',
         'weight' => 0,
       ])
       ->setDisplayConfigurable('form', TRUE)
@@ -630,8 +647,20 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    // Variations added in commerce_product_bundle.module.
-    // @see commerce_product_bundle_add_variations_field().
+    $fields['variations'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Variations'))
+      ->setDescription(t('The product variations.'))
+      ->setSetting('target_type', 'commerce_product_variation')
+      ->setSetting('handler', 'default')
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
+      ->setDisplayOptions('view', [
+        'type' => 'commerce_add_to_cart',
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
     $fields['min_quantity'] = BaseFieldDefinition::create('decimal')
       ->setLabel(t('Minimum Quantity'))
       ->setDescription(t('The minimum quantity.'))
@@ -640,7 +669,7 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setRequired(TRUE)
       ->setDefaultValue(1)
       ->setDisplayOptions('form', [
-        'type'   => 'number',
+        'type' => 'number',
         'weight' => 1,
       ])
       ->setDisplayConfigurable('form', TRUE)
@@ -659,11 +688,22 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setRequired(TRUE)
       ->setDefaultValue(1)
       ->setDisplayOptions('form', [
-        'type'   => 'number',
+        'type' => 'number',
         'weight' => 1,
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+
+    $fields['status']
+      ->setLabel(t('Published'))
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 90,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -674,55 +714,6 @@ class ProductBundleItem extends ContentEntityBase implements BundleItemInterface
       ->setDescription(t('The time that the entity was last edited.'));
 
     return $fields;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-
-    foreach (array_keys($this->getTranslationLanguages()) as $langcode) {
-      $translation = $this->getTranslation($langcode);
-
-      // If no owner has been set explicitly, make the anonymous user the owner.
-      if (!$translation->getOwner()) {
-        $translation->setOwnerId(0);
-      }
-    }
-  }
-
-  /**
-   * Ensures that the provided entities are in the current entity's language.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
-   *   The entities to process.
-   *
-   * @return \Drupal\Core\Entity\ContentEntityInterface[]
-   *   The processed entities.
-   */
-  protected function ensureTranslations(array $entities) {
-    $langcode = $this->language()->getId();
-    foreach ($entities as $index => $entity) {
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      if ($entity->hasTranslation($langcode)) {
-        $entities[$index] = $entity->getTranslation($langcode);
-      }
-    }
-
-    return $entities;
-  }
-
-  /**
-   * Default value callback for 'uid' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return array
-   *   An array of default values.
-   */
-  public static function getCurrentUserId() {
-    return [\Drupal::currentUser()->id()];
   }
 
 }

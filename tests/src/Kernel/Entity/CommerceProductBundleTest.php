@@ -9,6 +9,7 @@ use Drupal\commerce_product_bundle\Entity\Productbundle;
 use Drupal\commerce_product_bundle\Entity\ProductBundleItem;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Tests\commerce_product_bundle\Kernel\CommerceProductBundleKernelTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * Test the Product Bundle Item entity.
@@ -109,19 +110,6 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundle->setTitle('My testtitle');
     $this->assertEquals('My testtitle', $bundle->getTitle());
 
-    // Confirm the attached fields are there.
-    $this->assertTrue($bundle->hasField('bundle_items'));
-    $created_field = $bundle->getFieldDefinition('bundle_items');
-    $this->assertInstanceOf(FieldConfig::class, $created_field);
-    $this->assertEquals('commerce_product_bundle_i', $created_field->getSetting('target_type'));
-    $this->assertEquals('default:commerce_product_bundle_i', $created_field->getSetting('handler'));
-
-    $this->assertTrue($bundle->hasField('stores'));
-    $created_field = $bundle->getFieldDefinition('stores');
-    $this->assertInstanceOf(FieldConfig::class, $created_field);
-    $this->assertEquals('commerce_store', $created_field->getSetting('target_type'));
-    $this->assertEquals('default:commerce_store', $created_field->getSetting('handler'));
-
     $this->assertTrue($bundle->hasField('body'));
     $created_field = $bundle->getFieldDefinition('body');
     $this->assertInstanceOf(FieldConfig::class, $created_field);
@@ -135,13 +123,20 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $bundle->setOwner($this->user);
     $this->assertEquals($this->user, $bundle->getOwner());
     $this->assertEquals($this->user->id(), $bundle->getOwnerId());
+
     $bundle->setOwnerId(0);
-    $this->assertEquals(NULL, $bundle->getOwner());
+    $this->assertInstanceOf(UserInterface::class, $bundle->getOwner());
+    $this->assertTrue($bundle->getOwner()->isAnonymous());
+    // Whether non existend user returns anonymous.
+    $bundle->setOwnerId(99);
+    $this->assertInstanceOf(UserInterface::class, $bundle->getOwner());
+    $this->assertTrue($bundle->getOwner()->isAnonymous());
+    $this->assertEquals(99, $bundle->getOwnerId());
+
     $bundle->setOwnerId($this->user->id());
     $this->assertEquals($this->user, $bundle->getOwner());
     $this->assertEquals($this->user->id(), $bundle->getOwnerId());
     $this->assertFalse($bundle->hasBundleItems());
-
     $bundle->setBundleItems([$bundleItem]);
     $bundle->save();
     /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
@@ -191,6 +186,30 @@ class CommerceProductBundleTest extends CommerceProductBundleKernelTestBase {
     $this->assertNull(ProductBundle::load($bundle->Id()));
     $this->assertNull(ProductBundleItem::load($bundleItem2->Id()));
 
+  }
+
+  /**
+   * Tests bundle item's canonical URL.
+   */
+  public function testCanonicalBundleItemLink() {
+    $bundle_item = ProductBundleItem::create([
+      'type' => 'default',
+      'uid' => $this->user->id(),
+      'title' => 'testBundle1',
+      'status' => TRUE,
+    ]);
+    $bundle_item->save();
+    $bundle = ProductBundle::create(
+      [
+        'type' => 'default',
+        'bundle_items' => [$bundle_item],
+        'status' => TRUE,
+      ]);
+    $bundle->save();
+
+    $bundle_url = $bundle->toUrl()->toString();
+    $bundle_item_url = $bundle_item->toUrl()->toString();
+    $this->assertEquals($bundle_url . '?v=' . $bundle_item->id(), $bundle_item_url);
   }
 
 }

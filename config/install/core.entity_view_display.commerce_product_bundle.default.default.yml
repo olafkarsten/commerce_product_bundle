@@ -9,6 +9,7 @@ dependencies:
   module:
     - commerce_price
     - text
+    - path
 id: commerce_product_bundle.default.default
 targetEntityType: commerce_product_bundle
 bundle: default

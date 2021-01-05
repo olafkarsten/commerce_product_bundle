@@ -71,7 +71,13 @@ abstract class CommerceProductBundleKernelTestBase extends CommerceKernelTestBas
       'commerce_product_bundle',
     ]);
 
-    $user = $this->createUser([], ['view commerce_product']);
+    // Create uid: 1 here so that it's skipped in test cases.
+    $admin_user = $this->createUser();
+
+    $user = $this->createUser([], [
+      'view commerce_product_bundle',
+      'view commerce_product',
+    ]);
     $this->user = $this->reloadEntity($user);
     $this->drupalSetCurrentUser($this->user);
   }

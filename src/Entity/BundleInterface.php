@@ -4,7 +4,9 @@ namespace Drupal\commerce_product_bundle\Entity;
 
 use Drupal\commerce\PurchasableEntityInterface;
 use Drupal\commerce_price\Price;
+use Drupal\commerce_store\Entity\EntityStoresInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -12,7 +14,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup commerce_product_bundle
  */
-interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, PurchasableEntityInterface {
+interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, PurchasableEntityInterface, EntityPublishedInterface, EntityStoresInterface {
 
   /**
    * Gets the product bundle type.
@@ -69,27 +71,6 @@ interface BundleInterface extends EntityChangedInterface, EntityOwnerInterface, 
    *   The called product bundle entity.
    */
   public function setCreatedTime($timestamp);
-
-  /**
-   * Returns the product bundle published status indicator.
-   *
-   * Unpublished product bundle are only visible to restricted users.
-   *
-   * @return bool
-   *   TRUE if the product bundle is published.
-   */
-  public function isPublished();
-
-  /**
-   * Sets the published status of a product bundle.
-   *
-   * @param bool $published
-   *   TRUE to set this product bundle to published, FALSE to set it to unpublished.
-   *
-   * @return \Drupal\commerce_product_bundle\Entity\BundleInterface
-   *   The called product bundle entity.
-   */
-  public function setPublished($published);
 
   /**
    * Returns the bundle items of that bundle.

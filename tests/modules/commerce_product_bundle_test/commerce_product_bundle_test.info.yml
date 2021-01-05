@@ -1,0 +1,7 @@
+name: Commerce Product Bundle Test
+type: module
+description: 'Test module for Commerce Product Bundle.'
+package: Testing
+core_version_requirement: ^8.8 || ^9
+dependencies:
+  - commerce:commerce_product_bundle

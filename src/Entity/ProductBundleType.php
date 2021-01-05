@@ -22,6 +22,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "form" = {
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeForm",
  *       "edit" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeForm",
+ *       "duplicate" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeForm",
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeDeleteForm"
  *     },
  *     "route_provider" = {
@@ -41,13 +42,16 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   config_export = {
  *     "id",
  *     "label",
- *     "traits",
  *     "locked",
+ *     "description",
+ *     "bundleItemType",
+ *     "orderItemType",
  *   },
  *   links = {
  *     "canonical" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}",
  *     "add-form" = "/admin/commerce/config/product-bundle-types/add",
  *     "edit-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/edit",
+ *    "duplicate-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/duplicate",
  *     "delete-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/delete",
  *     "collection" = "/admin/commerce/config/product-bundle-types"
  *   }

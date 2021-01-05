@@ -42,12 +42,6 @@ commerce_product_bundle.commerce_product_bundle_i_type.*:
     description:
       type: text
       label: 'Description'
-    traits:
-      type: sequence
-      label: 'Traits'
-      orderby: value
-      sequence:
-        type: string
 
 field.formatter.settings.commerce_product_bundle_add_to_cart:
   type: mapping

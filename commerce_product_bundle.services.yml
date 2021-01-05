@@ -1,7 +1,29 @@
 services:
+  access_check.bundle_item_collection:
+    class: Drupal\commerce_product_bundle\Access\BundleItemCollectionAccessCheck
+    arguments: [ '@entity_type.manager' ]
+    tags:
+      - { name: access_check, applies_to: _bundle_item_collection_access }
+  access_check.bundle_item_create:
+    class: Drupal\commerce_product_bundle\Access\BundleItemCreateAccessCheck
+    arguments: [ '@entity_type.manager' ]
+    tags:
+      - { name: access_check, applies_to: _bundle_item_create_access }
   commerce_product_bundle.lazy_builders:
     class: Drupal\commerce_product_bundle\ProductBundleLazyBuilders
     arguments: ['@entity_type.manager', '@form_builder']
+
+  commerce_product_bundle.product_bundle_route_context:
+    class: Drupal\commerce_product_bundle\ContextProvider\ProductBundleRouteContext
+    arguments: [ '@current_route_match', '@entity_type.manager' ]
+    tags:
+      - { name: 'context_provider' }
+
+  commerce_product_bundle.product_bundle_item_route_context:
+    class: Drupal\commerce_product_bundle\ContextProvider\ProductBundleItemContext
+    arguments: [ '@current_route_match', '@entity_type.manager' ]
+    tags:
+      - { name: 'context_provider' }
 
   commerce_product_bundle.bundle_price_resolver:
       class: Drupal\commerce_product_bundle\Resolver\BundlePriceResolver

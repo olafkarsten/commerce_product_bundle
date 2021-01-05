@@ -2,16 +2,20 @@
 
 namespace Drupal\commerce_product_bundle\Form;
 
-use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\entity\Form\EntityDuplicateFormTrait;
+use Drupal\language\Entity\ContentLanguageSettings;
 
 /**
  * Provides the product bundle item type form.
  *
  * @package Drupal\commerce_product_bundle\Form
  */
-class ProductBundleItemTypeForm extends EntityForm {
+class ProductBundleItemTypeForm extends BundleEntityFormBase {
+
+  use EntityDuplicateFormTrait;
 
   /**
    * {@inheritdoc}
@@ -44,6 +48,23 @@ class ProductBundleItemTypeForm extends EntityForm {
       '#default_value' => $product_bundle_item_type->getDescription(),
     ];
 
+    if ($this->moduleHandler->moduleExists('language')) {
+      $form['language'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Language settings'),
+        '#group' => 'additional_settings',
+      ];
+      $form['language']['language_configuration'] = [
+        '#type' => 'language_configuration',
+        '#entity_information' => [
+          'entity_type' => 'commerce_product_bundle_i',
+          'bundle' => $product_bundle_item_type->id(),
+        ],
+        '#default_value' => ContentLanguageSettings::loadByEntityTypeBundle('commerce_product_bundle_i', $product_bundle_item_type->id()),
+      ];
+      $form['#submit'][] = 'language_configuration_element_submit';
+    }
+
     return $form;
   }
 
@@ -53,6 +74,7 @@ class ProductBundleItemTypeForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $product_bundle_item_type = $this->entity;
     $status = $product_bundle_item_type->save();
+    $this->postSave($product_bundle_item_type, $this->operation);
 
     switch ($status) {
       case SAVED_NEW:
@@ -67,9 +89,6 @@ class ProductBundleItemTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($product_bundle_item_type->toUrl('collection'));
-    if ($status == SAVED_NEW) {
-      commerce_product_bundle_add_variations_field($product_bundle_item_type);
-    }
   }
 
 }
