@@ -4,8 +4,9 @@
  * @file
  */
 
-use Drupal\Core\Entity\Sql\SqlContentEntityStorageException;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorageException;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_install().
@@ -62,8 +63,7 @@ function commerce_product_bundle_update_8001() {
       try {
         $table = $table_mapping->getFieldTableName($field_name);
         $selected_qty_field = $table_mapping->getFieldColumnName($field_storage_definition, $column_id);
-      }
-      catch (SqlContentEntityStorageException $e) {
+      } catch (SqlContentEntityStorageException $e) {
         continue;
       }
       // See if the field has a revision table.
