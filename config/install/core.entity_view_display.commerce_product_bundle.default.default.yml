@@ -4,8 +4,6 @@ dependencies:
   config:
     - commerce_product_bundle.commerce_product_bundle_type.default
     - field.field.commerce_product_bundle.default.body
-    - field.field.commerce_product_bundle.default.bundle_items
-    - field.field.commerce_product_bundle.default.stores
   module:
     - commerce_price
     - text

@@ -5,8 +5,6 @@ dependencies:
     - commerce_product_bundle.commerce_product_bundle_type.default
     - core.entity_view_mode.commerce_product_bundle.summary
     - field.field.commerce_product_bundle.default.body
-    - field.field.commerce_product_bundle.default.bundle_items
-    - field.field.commerce_product_bundle.default.stores
 id: commerce_product_bundle.default.summary
 targetEntityType: commerce_product_bundle
 bundle: default
