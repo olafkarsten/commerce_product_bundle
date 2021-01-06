@@ -4,8 +4,6 @@ dependencies:
   config:
     - commerce_product_bundle.commerce_product_bundle_type.default
     - field.field.commerce_product_bundle.default.body
-    - field.field.commerce_product_bundle.default.bundle_items
-    - field.field.commerce_product_bundle.default.stores
   module:
     - commerce_price
     - inline_entity_form
@@ -16,35 +14,29 @@ bundle: default
 mode: default
 content:
   body:
-    type: text_textarea_with_summary
-    weight: 1
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
-  bundle_items:
-    type: inline_entity_form_complex
-    weight: 3
-    settings:
-      form_mode: default
-      label_singular: ''
-      label_plural: ''
-      allow_new: true
-      match_operator: CONTAINS
-      override_labels: false
-      allow_existing: false
-    third_party_settings: {  }
+   type: text_textarea_with_summary
+     weight: 2
+     settings:
+       rows: 9
+       summary_rows: 3
+       placeholder: ''
+     third_party_settings: {  }
+     region: content
   bundle_price:
     type: commerce_price_default
     weight: 2
     settings: {  }
     third_party_settings: {  }
   stores:
-    type: options_buttons
-    weight: 4
-    settings: {  }
+    type: commerce_entity_select
+    weight: 0
+    settings:
+      hide_single_entity: true
+      autocomplete_threshold: 7
+      autocomplete_size: 60
+      autocomplete_placeholder: ''
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 0
@@ -67,4 +59,5 @@ content:
       settings: {  }
       third_party_settings: {  }
       region: content
-hidden: {  }
+hidden:
+  bundle_items: true
