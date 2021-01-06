@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - commerce_product_bundle.commerce_product_bundle_i_type.default
-    - field.field.commerce_product_bundle_i.default.variations
   module:
     - commerce_price
 id: commerce_product_bundle_i.default.default
