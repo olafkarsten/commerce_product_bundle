@@ -9,12 +9,6 @@ entity.commerce_product_bundle.collection:
   description: 'Manage your product bundles.'
   parent: 'commerce.admin_commerce'
 
-entity.commerce_product_bundle_i.collection:
-  title: 'Product bundle items'
-  route_name: entity.commerce_product_bundle_i.collection
-  description: 'Manage your product bundle items.'
-  parent: 'commerce.admin_commerce'
-
 entity.commerce_product_bundle_type.collection:
   title: 'Bundle types'
   route_name: entity.commerce_product_bundle_type.collection
