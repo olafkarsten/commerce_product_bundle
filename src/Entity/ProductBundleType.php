@@ -2,7 +2,7 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
-use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
+use Drupal\commerce\Entity\CommerceBundleEntityBase;
 
 /**
  * Defines the product bundle type entity.
@@ -48,6 +48,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "description",
  *     "bundleItemType",
  *     "orderItemType",
+ *     "traits",
+ *     "locked",
  *   },
  *   links = {
  *     "add-form" = "/admin/commerce/config/product-bundle-types/add",
@@ -58,7 +60,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   }
  * )
  */
-class ProductBundleType extends ConfigEntityBundleBase implements BundleTypeInterface {
+class ProductBundleType extends CommerceBundleEntityBase implements BundleTypeInterface {
 
   /**
    * The product bundle type ID.

@@ -2,13 +2,14 @@
 
 namespace Drupal\commerce_product_bundle\Entity;
 
+use Drupal\commerce\Entity\CommerceBundleEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityDescriptionInterface;
 
 /**
  * Provides an interface for defining product bundle type entities.
  */
-interface BundleTypeInterface extends ConfigEntityInterface, EntityDescriptionInterface {
+interface BundleTypeInterface extends ConfigEntityInterface, EntityDescriptionInterface, CommerceBundleEntityInterface {
 
   /**
    * Gets the product bundle type's matching bundle item type ID.

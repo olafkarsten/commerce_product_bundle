@@ -3,8 +3,9 @@
 namespace Drupal\commerce_product_bundle\Form;
 
 use Drupal\commerce\EntityHelper;
+use Drupal\commerce\EntityTraitManagerInterface;
+use Drupal\commerce\Form\CommerceBundleEntityFormBase;
 use Drupal\commerce_order\Entity\OrderItemTypeInterface;
-use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\commerce_product_bundle\Form
  */
-class ProductBundleTypeForm extends BundleEntityFormBase {
+class ProductBundleTypeForm extends CommerceBundleEntityFormBase {
 
   use EntityDuplicateFormTrait;
 
@@ -31,12 +32,18 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
   /**
    * ProductBundleTypeForm constructor.
    *
+   * @param \Drupal\commerce\EntityTraitManagerInterface $trait_manager
+   *   The entity trait manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    EntityTraitManagerInterface $trait_manager,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    parent::__construct($trait_manager);
     $this->bundleItemTypeStorage = $entity_type_manager->getStorage('commerce_product_bundle_i_type');
   }
 
@@ -45,6 +52,7 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('plugin.manager.commerce_entity_trait'),
       $container->get('entity_type.manager')
     );
   }
@@ -148,6 +156,8 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
       $form['#submit'][] = 'language_configuration_element_submit';
     }
 
+    $form = $this->buildTraitForm($form, $form_state);
+
     return $form;
   }
 
@@ -155,6 +165,7 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    $this->validateTraitForm($form, $form_state);
     if (empty($form_state->getValue('bundleItemType'))) {
       $id = $form_state->getValue('id');
       if (!empty($this->entityTypeManager->getStorage('commerce_product_bundle_i_type')
@@ -186,7 +197,9 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
   protected function getOrderItemTypes() {
     $order_item_type_storage = $this->entityTypeManager->getStorage('commerce_order_item_type');
     $order_item_types = $order_item_type_storage->loadMultiple();
-    return array_filter($order_item_types, function (OrderItemTypeInterface $type) {
+    return array_filter($order_item_types, function (
+      OrderItemTypeInterface $type
+    ) {
       return $type->getPurchasableEntityTypeId() == 'commerce_product_bundle';
     });
 
@@ -226,6 +239,8 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
     if ($this->operation == 'add') {
       commerce_product_bundle_add_body_field($product_bundle_type);
     }
+
+    $this->submitTraitForm($form, $form_state);
 
     $this->messenger()
       ->addMessage($this->t('The product bundle type %label has been successfully saved.', ['%label' => $product_bundle_type->label()]));
