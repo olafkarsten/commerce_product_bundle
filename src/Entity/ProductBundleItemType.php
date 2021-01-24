@@ -31,7 +31,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
  *   },
  *   config_prefix = "commerce_product_bundle_i_type",
- *   admin_permission = "administer commerce_product_bundle_i_type",
+ *   admin_permission = "administer commerce_product_bundle_type",
  *   bundle_of = "commerce_product_bundle_i",
  *   entity_keys = {
  *     "id" = "id",

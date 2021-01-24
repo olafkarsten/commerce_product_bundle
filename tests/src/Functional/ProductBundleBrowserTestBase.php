@@ -4,9 +4,8 @@ namespace Drupal\Tests\commerce_product_bundle\Functional;
 
 use Drupal\commerce_product\Entity\Product;
 use Drupal\commerce_product\Entity\ProductVariation;
-use Drupal\commerce_store\StoreCreationTrait;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\Tests\commerce\Functional\CommerceBrowserTestBase;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 
 /**
  * Defines base class to use in commerce_product_bundle
@@ -16,7 +15,6 @@ use Drupal\Tests\commerce\Functional\CommerceBrowserTestBase;
  */
 abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
 
-  use StoreCreationTrait;
   use EntityReferenceTestTrait;
 
   /**
@@ -25,7 +23,6 @@ abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
    * @var array
    */
   public static $modules = [
-    'commerce_store',
     'commerce_product',
     'commerce_order',
     'commerce_product_bundle',
@@ -67,14 +64,14 @@ abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
     return array_merge([
       'administer commerce_product',
       'administer commerce_product_bundle',
+      'administer commerce_product_bundle fields',
       'administer commerce_product_bundle_type',
-      'administer commerce_product_bundle_i',
-      'administer commerce_product_bundle_i_type',
+      'manage default commerce_product_bundle_i',
       'administer commerce_product_type',
       'administer commerce_product fields',
       'administer commerce_product_variation fields',
       'administer commerce_product_variation display',
-      'access commerce_product overview',
+      'access commerce_product_bundle overview',
     ], parent::getAdministratorPermissions());
   }
 
@@ -89,15 +86,21 @@ abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
       $this->stores[] = $this->createStore();
     }
 
+    // The stores must be reloaded all at once because createStore() sets
+    // the last store as the default, removing the flag from the previous one.
+    foreach ($this->stores as $index => $store) {
+      $this->stores[$index] = $this->reloadEntity($store);
+    }
+
     // Create some products to test against.
     for ($j = 1; $j <= 2; $j++) {
 
       $variations = [];
       for ($i = 1; $i <= 5; $i++) {
         $variation = ProductVariation::create([
-          'type'   => 'default',
-          'sku'    => strtolower($this->randomMachineName()),
-          'title'  => $this->randomString(),
+          'type' => 'default',
+          'sku' => strtolower($this->randomMachineName()),
+          'title' => $this->randomString(),
           'status' => $i % 2,
         ]);
         $variation->save();
@@ -107,7 +110,7 @@ abstract class ProductBundleBrowserTestBase extends CommerceBrowserTestBase {
       }
       $variations = array_reverse($variations);
       $product = Product::create([
-        'type'       => 'default',
+        'type' => 'default',
         'variations' => $variations,
       ]);
       $product->save();

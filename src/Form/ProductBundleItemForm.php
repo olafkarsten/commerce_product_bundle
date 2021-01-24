@@ -4,6 +4,8 @@ namespace Drupal\commerce_product_bundle\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\entity\Form\EntityDuplicateFormTrait;
 
 /**
  * Form controller for product bundle item edit forms.
@@ -11,6 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup commerce_product_bundle
  */
 class ProductBundleItemForm extends ContentEntityForm {
+
+  use EntityDuplicateFormTrait;
 
   /**
    * {@inheritdoc}
@@ -25,23 +29,41 @@ class ProductBundleItemForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
-    $entity = &$this->entity;
-    $status = parent::save($form, $form_state);
-
-    switch ($status) {
-      case SAVED_NEW:
-        $this->messenger()->addStatus($this->t('Created the %label product bundle item.', [
-          '%label' => $entity->label(),
-        ]));
-        break;
-
-      default:
-        $this->messenger()->addStatus($this->t('Saved the %label product bundle item.', [
-          '%label' => $entity->label(),
-        ]));
+  public function getEntityFromRouteMatch(
+    RouteMatchInterface $route_match,
+    $entity_type_id
+  ) {
+    if ($route_match->getRawParameter('commerce_product_bundle_i') !== NULL) {
+      $entity = $route_match->getParameter('commerce_product_bundle_i');
     }
-    $form_state->setRedirect('entity.commerce_product_bundle_i.canonical', ['commerce_product_bundle_i' => $entity->id()]);
+    else {
+      /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $product_bundle */
+      $product_bundle = $route_match->getParameter('commerce_product_bundle');
+      /** @var \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type */
+      $product_bundle_type = $this->entityTypeManager->getStorage('commerce_product_bundle_type')
+        ->load($product_bundle->bundle());
+      $values = [
+        'type' => $product_bundle_type->getBundleItemTypeId(),
+        'bundle_id' => $product_bundle->id(),
+      ];
+      $entity = $this->entityTypeManager->getStorage('commerce_product_bundle_i')
+        ->create($values);
+    }
+
+    return $entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    $this->entity->save();
+    $this->postSave($this->entity, $this->operation);
+    $this->messenger()
+      ->addStatus($this->t('Saved the %label product bundle item.', [
+        '%label' => $this->entity->label(),
+      ]));
+    $form_state->setRedirectUrl($this->entity->toUrl('collection'));
   }
 
 }

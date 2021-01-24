@@ -28,7 +28,7 @@ interface ProductBundleItemStorageInterface extends ContentEntityStorageInterfac
    *   The current product bundle.
    *
    * @return \Drupal\commerce_product_bundle\Entity\BundleItemInterface
-   *   The product variation.
+   *   The product bundle item or NULL.
    */
   public function loadFromContext(BundleInterface $product_bundle);
 

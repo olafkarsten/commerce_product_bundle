@@ -18,6 +18,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     plural = "@count product bundle types",
  *   ),
  *   handlers = {
+ *     "access" = "Drupal\commerce\CommerceBundleAccessControlHandler",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleTypeListBuilder",
  *     "form" = {
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeForm",
@@ -26,10 +27,12 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *       "delete" = "Drupal\commerce_product_bundle\Form\ProductBundleTypeDeleteForm"
  *     },
  *     "route_provider" = {
- *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "default" = "Drupal\entity\Routing\DefaultHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
- *     "permission_provider" = "Drupal\commerce_product_bundle\EntityPermissionProvider",
+ *     "local_task_provider" = {
+ *       "default" = "Drupal\entity\Menu\DefaultEntityLocalTaskProvider",
+ *     },
  *   },
  *   config_prefix = "commerce_product_bundle_type",
  *   admin_permission = "administer commerce_product_bundle_type",
@@ -42,16 +45,14 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   config_export = {
  *     "id",
  *     "label",
- *     "locked",
  *     "description",
  *     "bundleItemType",
  *     "orderItemType",
  *   },
  *   links = {
- *     "canonical" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}",
  *     "add-form" = "/admin/commerce/config/product-bundle-types/add",
  *     "edit-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/edit",
- *    "duplicate-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/duplicate",
+ *     "duplicate-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/duplicate",
  *     "delete-form" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}/delete",
  *     "collection" = "/admin/commerce/config/product-bundle-types"
  *   }

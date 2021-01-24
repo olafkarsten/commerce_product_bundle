@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -75,9 +74,9 @@ class ProductBundleItemListBuilder extends EntityListBuilder implements FormInte
 
     $this->formBuilder = $form_builder;
     $this->productBundle = $route_match->getParameter('commerce_product_bundle');
-    // The product might not be available when the list builder is
+    // The product bundle might not be available when the list builder is
     // instantiated by Views to build the list of operations.
-    if (!empty($this->product)) {
+    if (!empty($this->productBundle)) {
       $this->productBundle = $entity_repository->getTranslationFromContext($this->productBundle);
     }
   }
@@ -111,7 +110,7 @@ class ProductBundleItemListBuilder extends EntityListBuilder implements FormInte
   public function load() {
     $bundleItems = $this->productBundle->getBundleItems();
     foreach ($bundleItems as $delta => $bundleItem) {
-      $this->bundleItemDeltas[$bundleItems->id()] = $delta;
+      $this->bundleItemDeltas[$bundleItem->id()] = $delta;
     }
     return $bundleItems;
   }
@@ -138,14 +137,7 @@ class ProductBundleItemListBuilder extends EntityListBuilder implements FormInte
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $entity */
     $row['id'] = $entity->id();
-    $row['title'] = Link::fromTextAndUrl(
-      $entity->label(),
-      new Url(
-        'entity.commerce_product_bundle_i.edit_form', [
-          'commerce_product_bundle_i' => $entity->id(),
-        ]
-      )
-    );
+    $row['title'] = $entity->label();
     $row['minqty'] = $entity->getMinimumQuantity();
     $row['maxqty'] = $entity->getMaximumQuantity();
     $row['price'] = $entity->getUnitPrice();

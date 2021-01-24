@@ -1,12 +1,12 @@
-entity.commerce_product_bundle.add_form:
+entity.commerce_product_bundle.add_page:
   route_name: 'entity.commerce_product_bundle.add_page'
   title: 'Add product bundle'
   appears_on:
     - entity.commerce_product_bundle.collection
 
 entity.commerce_product_bundle_i.add_form:
-  route_name: 'entity.commerce_product_bundle_i.add_page'
-  title: 'Add product bundle item'
+  route_name: 'entity.commerce_product_bundle_i.add_form'
+  title: 'Add bundle item'
   appears_on:
     - entity.commerce_product_bundle_i.collection
 

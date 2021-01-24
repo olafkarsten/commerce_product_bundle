@@ -2,14 +2,13 @@
 
 namespace Drupal\commerce_product_bundle\Form;
 
-use Drupal\Core\Entity\EntityConfirmFormBase;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\commerce\Form\CommerceBundleEntityDeleteFormBase;
 use Drupal\Core\Url;
 
 /**
  * Builds the form to delete product bundle item type entities.
  */
-class ProductBundleItemTypeDeleteForm extends EntityConfirmFormBase {
+class ProductBundleItemTypeDeleteForm extends CommerceBundleEntityDeleteFormBase {
 
   /**
    * {@inheritdoc}
@@ -30,22 +29,6 @@ class ProductBundleItemTypeDeleteForm extends EntityConfirmFormBase {
    */
   public function getConfirmText() {
     return $this->t('Delete');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->entity->delete();
-
-    $this->messenger()->addStatus($this->t('content @type: deleted @label.',
-      [
-        '@type' => $this->entity->bundle(),
-        '@label' => $this->entity->label(),
-      ]
-    ));
-
-    $form_state->setRedirectUrl($this->getCancelUrl());
   }
 
 }

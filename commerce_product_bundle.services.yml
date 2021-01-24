@@ -11,7 +11,7 @@ services:
       - { name: access_check, applies_to: _bundle_item_create_access }
   commerce_product_bundle.lazy_builders:
     class: Drupal\commerce_product_bundle\ProductBundleLazyBuilders
-    arguments: ['@entity_type.manager', '@form_builder']
+    arguments: ['@entity_type.manager', '@form_builder', '@entity.repository']
 
   commerce_product_bundle.product_bundle_route_context:
     class: Drupal\commerce_product_bundle\ContextProvider\ProductBundleRouteContext

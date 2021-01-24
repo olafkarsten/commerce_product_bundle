@@ -154,3 +154,39 @@ function commerce_product_bundle_field_widget_form_alter(&$element, FormStateInt
     $element['alias']['#description'] = t('The alternative URL for this product. Use a relative path. For example, "/my-product-bundle".');
   }
 }
+
+/**
+ * Implements hook_search_api_views_handler_mapping_alter().
+ *
+ * Search API views filters do not use the options filter by default
+ * for all entity bundle fields.
+ *
+ * @see https://www.drupal.org/project/search_api/issues/2847994
+ */
+function commerce_product_bundle_search_api_views_handler_mapping_alter(array &$mapping) {
+  $mapping['entity:commerce_product_bundle_type'] = [
+    'argument' => [
+      'id' => 'search_api',
+    ],
+    'filter' => [
+      'id' => 'search_api_options',
+      'options callback' => 'commerce_product_bundle_type_labels',
+    ],
+    'sort' => [
+      'id' => 'search_api',
+    ],
+  ];
+}
+
+/**
+ * Gets the list of available product bundle type labels.
+ *
+ * @return string[]
+ *   The product bundle type labels, keyed by product bundle type ID.
+ */
+function commerce_product_bundle_type_labels() {
+  $product_bundle_type_storage = \Drupal::entityTypeManager()->getStorage('commerce_product_bundle_type');
+  $product_bundle_types = $product_bundle_type_storage->loadMultiple();
+
+  return EntityHelper::extractLabels($product_bundle_types);
+}

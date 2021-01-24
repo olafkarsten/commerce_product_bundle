@@ -99,9 +99,15 @@ class ProductBundleItemStorage extends CommerceContentEntityStorage implements P
    * {@inheritdoc}
    */
   public function loadFromContext(BundleInterface $product_bundle) {
+    if (!$product_bundle->hasBundleItems()) {
+      return NULL;
+    }
+
     $current_request = $this->requestStack->getCurrentRequest();
+
     $bundle_item_ids = $product_bundle->getBundleItemIds();
     $bundle_item_id = $current_request->query->get('v');
+
     if ($bundle_item_id) {
       if (in_array($bundle_item_id, $bundle_item_ids)) {
         /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface */
@@ -111,6 +117,7 @@ class ProductBundleItemStorage extends CommerceContentEntityStorage implements P
         }
       }
     }
+
     return $this->load($bundle_item_ids[0]);
   }
 

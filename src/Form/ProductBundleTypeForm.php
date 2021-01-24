@@ -2,6 +2,8 @@
 
 namespace Drupal\commerce_product_bundle\Form;
 
+use Drupal\commerce\EntityHelper;
+use Drupal\commerce_order\Entity\OrderItemTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -57,9 +59,23 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
     $product_bundle_type = $this->entity;
 
     $bundle_item_types = $this->bundleItemTypeStorage->loadMultiple();
-    $bundle_item_types = array_map(function ($bundle_item_type) {
-      return $bundle_item_type->label();
-    }, $bundle_item_types);
+    $bundle_item_types = EntityHelper::extractLabels($bundle_item_types);
+
+    // Create an empty product to get the default status value.
+    // @todo Clean up once https://www.drupal.org/node/2318187 is fixed.
+    if (in_array($this->operation, ['add', 'duplicate'])) {
+      $product_bundle = $this->entityTypeManager->getStorage('commerce_product_bundle')
+        ->create(['type' => $product_bundle_type->uuid()]);
+      $product_bundles_exist = FALSE;
+    }
+    else {
+      $storage = $this->entityTypeManager->getStorage('commerce_product_bundle');
+      $product_bundle = $storage->create(['type' => $product_bundle_type->id()]);
+      $product_bundles_exist = $storage->getQuery()
+        ->condition('type', $product_bundle_type->id())
+        ->execute();
+    }
+    $form_state->set('original_entity', $this->entity->createDuplicate());
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -84,40 +100,35 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
       '#description' => $this->t('This text will be displayed on the <em>Add product bundle</em> page.'),
       '#default_value' => $product_bundle_type->getDescription(),
     ];
-    $form['bundle_item_type'] = [
+    $form['bundleItemType'] = [
       '#type' => 'select',
       '#title' => $this->t('Product bundle item type'),
       '#default_value' => $product_bundle_type->getBundleItemTypeId(),
       '#options' => $bundle_item_types,
-      '#required' => TRUE,
-      '#disabled' => !$product_bundle_type->isNew(),
+      '#disabled' => $product_bundles_exist,
     ];
     if ($product_bundle_type->isNew()) {
-      $form['bundle_item_type']['#empty_option'] = $this->t('- Create new -');
-      $form['bundle_item_type']['#description'] = $this->t('If an existing product bundle item type is not selected, a new one will be created.');
+      $form['bundleItemType']['#empty_option'] = $this->t('- Create new -');
+      $form['bundleItemType']['#description'] = $this->t('If an existing product bundle item type is not selected, a new one will be created.');
     }
 
     if ($this->moduleHandler->moduleExists('commerce_order')) {
       // Prepare a list of order item types used to purchase product bundles.
-      $order_item_type_storage = $this->entityTypeManager->getStorage('commerce_order_item_type');
-      $order_item_types = $order_item_type_storage->loadMultiple();
-      $order_item_types = array_filter($order_item_types, function (
-        $order_item_type
-      ) {
-        return $order_item_type->getPurchasableEntityTypeId() == 'commerce_product_bundle';
-      });
-      $order_item_types = array_map(function ($order_item_type) {
-        return $order_item_type->label();
-      }, $order_item_types);
+      $order_item_types = $this->getOrderItemTypes();
+      $order_item_types = EntityHelper::extractLabels($order_item_types);
+      reset($order_item_types);
 
-      $form['order_item_type'] = [
+      $form['orderItemType'] = [
         '#type' => 'select',
         '#title' => $this->t('Order item type'),
         '#default_value' => $product_bundle_type->getOrderItemTypeId(),
         '#options' => $order_item_types,
         '#empty_value' => '',
-        '#required' => TRUE,
       ];
+      if (count($order_item_types) == 1) {
+        $form['orderItemType']['#disabled'] = TRUE;
+        $form['orderItemType']['#value'] = key($order_item_types);
+      }
     }
 
     if ($this->moduleHandler->moduleExists('language')) {
@@ -129,10 +140,10 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
       $form['language']['language_configuration'] = [
         '#type' => 'language_configuration',
         '#entity_information' => [
-          'entity_type' => 'commerce_product',
+          'entity_type' => 'commerce_product_bundle',
           'bundle' => $product_bundle_type->id(),
         ],
-        '#default_value' => ContentLanguageSettings::loadByEntityTypeBundle('commerce_product', $product_bundle_type->id()),
+        '#default_value' => ContentLanguageSettings::loadByEntityTypeBundle('commerce_product_bundle', $product_bundle_type->id()),
       ];
       $form['#submit'][] = 'language_configuration_element_submit';
     }
@@ -144,17 +155,41 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $this->validateTraitForm($form, $form_state);
-
-    if (empty($form_state->getValue('bundle_item_type'))) {
+    if (empty($form_state->getValue('bundleItemType'))) {
       $id = $form_state->getValue('id');
       if (!empty($this->entityTypeManager->getStorage('commerce_product_bundle_i_type')
         ->load($id))) {
-        $form_state->setError($form['bundle_item_type'], $this->t('A product bundle item type with the machine name @id already exists. Select an existing product bundle item type or change the machine name for this product bundle type.', [
+        $form_state->setError($form['bundleItemType'], $this->t('A product bundle item type with the machine name @id already exists. Select an existing product bundle item type or change the machine name for this product bundle type.', [
           '@id' => $id,
         ]));
       }
     }
+
+    if ($this->moduleHandler->moduleExists('commerce_order')) {
+      $order_item_type_ids = array_keys($this->getOrderItemTypes());
+      if (empty($order_item_type_ids)) {
+        $form_state->setError($form['orderItemType'], $this->t('A new product bundle type cannot be created, because no order item types were found. Select an existing product bundle type or retry after creating a new order item type.'));
+      }
+    }
+
+  }
+
+  /**
+   * Provides available order item types.
+   *
+   * @return Drupal\commerce_order\Entity\OrderItemTypeInterface[]
+   *   The order item types available.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function getOrderItemTypes() {
+    $order_item_type_storage = $this->entityTypeManager->getStorage('commerce_order_item_type');
+    $order_item_types = $order_item_type_storage->loadMultiple();
+    return array_filter($order_item_types, function (OrderItemTypeInterface $type) {
+      return $type->getPurchasableEntityTypeId() == 'commerce_product_bundle';
+    });
+
   }
 
   /**
@@ -166,7 +201,7 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type */
     $product_bundle_type = $this->entity;
     // Create a new product bundle item type.
-    if (empty($form_state->getValue('bundle_item_type'))) {
+    if (empty($form_state->getValue('bundleItemType'))) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemTypeInterface $bundle_item_type */
       $bundle_item_type = $this->entityTypeManager->getStorage('commerce_product_bundle_i_type')
         ->create([
@@ -184,26 +219,17 @@ class ProductBundleTypeForm extends BundleEntityFormBase {
   public function save(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleTypeInterface $product_bundle_type */
     $product_bundle_type = $this->entity;
-    $status = $product_bundle_type->save();
 
-    switch ($status) {
-      case SAVED_NEW:
-        $this->messenger()
-          ->addStatus($this->t('Created the %label product bundle type.', [
-            '%label' => $product_bundle_type->label(),
-          ]));
-        break;
+    $product_bundle_type->save();
+    $this->postSave($product_bundle_type, $this->operation);
 
-      default:
-        $this->messenger()
-          ->addStatus($this->t('Saved the %label product bundle type.', [
-            '%label' => $product_bundle_type->label(),
-          ]));
-    }
-    $form_state->setRedirectUrl($product_bundle_type->toUrl('collection'));
-    if ($status == SAVED_NEW) {
+    if ($this->operation == 'add') {
       commerce_product_bundle_add_body_field($product_bundle_type);
     }
+
+    $this->messenger()
+      ->addMessage($this->t('The product bundle type %label has been successfully saved.', ['%label' => $product_bundle_type->label()]));
+    $form_state->setRedirect('entity.commerce_product_bundle_type.collection');
   }
 
 }

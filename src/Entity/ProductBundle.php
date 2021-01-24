@@ -15,28 +15,26 @@ use Drupal\Core\Field\BaseFieldDefinition;
 /**
  * Defines the product bundle entity.
  *
- * @ingroup commerce_product_bundle
- *
  * @ContentEntityType(
  *   id = "commerce_product_bundle",
  *   label = @Translation("Product bundle"),
  *   label_collection = @Translation("Product bundles"),
- *   label_singular = @Translation("Product bundle"),
- *   label_plural = @Translation("Product bundles"),
+ *   label_singular = @Translation("product bundle"),
+ *   label_plural = @Translation("product bundles"),
  *   label_count = @PluralTranslation(
  *     singular = "@count product bundle",
  *     plural = "@count product bundles",
  *   ),
  *   bundle_label = @Translation("Product bundle type"),
  *   handlers = {
- *     "access" = "Drupal\entity\EntityAccessControlHandler",
+ *     "access" = "\Drupal\entity\EntityAccessControlHandler",
  *     "query_access" = "Drupal\entity\QueryAccess\QueryAccessHandler",
  *     "storage" = "Drupal\commerce_product_bundle\ProductBundleStorage",
  *     "permission_provider" = "Drupal\entity\EntityPermissionProvider",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_product_bundle\ProductBundleListBuilder",
- *     "views_data" = "Drupal\commerce_product_bundle\Entity\ProductBundleViewsData",
- *     "translation" = "Drupal\commerce_product\ProductBundleTranslationHandler",
+ *     "views_data" = "Drupal\commerce_product_bundle\ProductBundleViewsData",
+ *     "translation" = "Drupal\commerce_product_bundle\ProductBundleTranslationHandler",
  *     "form" = {
  *       "default" = "Drupal\commerce_product_bundle\Form\ProductBundleForm",
  *       "add" = "Drupal\commerce_product_bundle\Form\ProductBundleForm",
@@ -46,6 +44,9 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "route_provider" = {
  *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
+ *     },
+ *    "local_task_provider" = {
+ *        "default" = "Drupal\entity\Menu\DefaultEntityLocalTaskProvider",
  *     },
  *   },
  *   base_table = "commerce_product_bundle",
@@ -268,19 +269,6 @@ class ProductBundle extends CommerceContentEntityBase implements BundleInterface
     }
 
     return $item_ids;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function preCreate(
-    EntityStorageInterface $storage_controller,
-    array &$values
-  ) {
-    parent::preCreate($storage_controller, $values);
-    $values += [
-      'uid' => \Drupal::currentUser()->id(),
-    ];
   }
 
   /**

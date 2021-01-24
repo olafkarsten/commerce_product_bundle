@@ -3,7 +3,7 @@
 namespace Drupal\Tests\commerce_product_bundle_stock\Functional;
 
 use Drupal\commerce_store\StoreCreationTrait;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\Tests\commerce_product_bundle\Functional\ProductBundleBrowserTestBase;
 
 /**

@@ -1,8 +1,14 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+    config:
+       - commerce_order.commerce_order_item_type.commerce_product_bundle_default
+    enforced:
+      module:
+       - commerce_product_bundle
+       - commerce_order
 id: default
 label: Default
 description: 'The default product bundle type.'
 bundleItemType: default
-orderItemType: null
+orderItemType: commerce_product_bundle_default

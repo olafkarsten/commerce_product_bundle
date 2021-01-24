@@ -17,7 +17,11 @@ class BundleItemAccessControlHandler extends EntityAccessControlHandlerBase {
   /**
    * {@inheritdoc}
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  protected function checkAccess(
+    EntityInterface $entity,
+    $operation,
+    AccountInterface $account
+  ) {
     if ($account->hasPermission($this->entityType->getAdminPermission())) {
       return AccessResult::allowed()->cachePerPermissions();
     }
@@ -36,7 +40,12 @@ class BundleItemAccessControlHandler extends EntityAccessControlHandlerBase {
     }
     else {
       $bundle = $entity->bundle();
-      $result = AccessResult::allowedIfHasPermission($account, "manage $bundle commerce_product_bundle_i")->cachePerPermissions();
+      $result = AccessResult::allowedIfHasPermission($account,
+        "manage $bundle commerce_product_bundle_i",
+                  'access commerce_product_bundle overview'
+      )
+
+        ->cachePerPermissions();
     }
     return $result;
   }
@@ -44,7 +53,11 @@ class BundleItemAccessControlHandler extends EntityAccessControlHandlerBase {
   /**
    * {@inheritdoc}
    */
-  protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+  protected function checkCreateAccess(
+    AccountInterface $account,
+    array $context,
+    $entity_bundle = NULL
+  ) {
     // Create access depends on the "manage" permission because the full entity
     // is not passed, making it impossible to determine the parent product.
     $result = AccessResult::allowedIfHasPermissions($account, [

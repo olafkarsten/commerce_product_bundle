@@ -7,6 +7,7 @@ use Drupal\commerce\EntityOwnerTrait;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\ProductInterface;
 use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -532,6 +533,24 @@ class ProductBundleItem extends CommerceContentEntityBase implements BundleItemI
   /**
    * {@inheritdoc}
    */
+  public function getCacheContexts() {
+    return Cache::mergeContexts(parent::getCacheContexts(), ['store']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTagsToInvalidate() {
+    $tags = parent::getCacheTagsToInvalidate();
+    // Invalidate the variations view builder and product caches.
+    return Cache::mergeTags($tags, [
+      'commerce_product_bundle:' . $this->getBundleId(),
+    ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function preCreate(
     EntityStorageInterface $storage_controller,
     array &$values
@@ -540,6 +559,37 @@ class ProductBundleItem extends CommerceContentEntityBase implements BundleItemI
     $values += [
       'uid' => \Drupal::currentUser()->id(),
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    // Ensure there's a reference on the parent product bundle.
+    $product_bundle = $this->getBundle();
+    if ($product_bundle && !$product_bundle->hasBundleItem($this)) {
+      $product_bundle->addBundleItem($this);
+      $product_bundle->save();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface[] $entities */
+    foreach ($entities as $bundleItem) {
+      // Remove the reference from the parent product bundle.
+      $product_bundle = $bundleItem->getBundle();
+      if ($product_bundle && $product_bundle->hasBundleItems($bundleItem)) {
+        $product_bundle->removeVariation($bundleItem);
+        $product_bundle->save();
+      }
+    }
   }
 
   /**

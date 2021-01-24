@@ -4,9 +4,8 @@ dependencies:
   enforced:
     module:
       - commerce_product_bundle
+      - commerce_order
 label: 'Product Bundle Default Order Item'
 id: commerce_product_bundle_default
 purchasableEntityType: commerce_product_bundle
 orderType: default
-traits: {  }
-locked: true

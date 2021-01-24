@@ -1,5 +1,5 @@
 entity.commerce_product_bundle_i.collection:
   route_name: entity.commerce_product_bundle_i.collection
-  base_route: entity.commerce_product.canonical
+  base_route: entity.commerce_product_bundle.canonical
   title: 'Bundle Items'
   weight: 15
