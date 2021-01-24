@@ -14,13 +14,6 @@ use Drupal\commerce_product_bundle\Entity\ProductBundleType;
 class ProductBundleTypeTest extends ProductBundleBrowserTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
    * Tests whether the default product type was created.
    */
   public function testDefault() {

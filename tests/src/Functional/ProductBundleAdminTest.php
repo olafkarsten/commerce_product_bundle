@@ -15,13 +15,6 @@ use Drupal\user\RoleInterface;
 class ProductBundleAdminTest extends ProductBundleBrowserTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
    * Tests creating a product bundle.
    */
   public function testCreateProductBundle() {
