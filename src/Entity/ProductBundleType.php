@@ -43,6 +43,9 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "label",
  *     "traits",
  *     "locked",
+ *     "description"
+ *     "bundleItemType",
+ *     "orderItemType"
  *   },
  *   links = {
  *     "canonical" = "/admin/commerce/config/product-bundle-types/{commerce_product_bundle_type}",
