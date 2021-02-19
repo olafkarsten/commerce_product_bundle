@@ -43,7 +43,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "label",
  *     "traits",
  *     "locked",
- *     "description"
+ *     "description",
  *     "bundleItemType",
  *     "orderItemType"
  *   },
