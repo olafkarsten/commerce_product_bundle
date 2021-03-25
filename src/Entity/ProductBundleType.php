@@ -50,6 +50,9 @@ use Drupal\commerce\Entity\CommerceBundleEntityBase;
  *     "orderItemType",
  *     "traits",
  *     "locked",
+ *     "description",
+ *     "bundleItemType",
+ *     "orderItemType"
  *   },
  *   links = {
  *     "add-form" = "/admin/commerce/config/product-bundle-types/add",
