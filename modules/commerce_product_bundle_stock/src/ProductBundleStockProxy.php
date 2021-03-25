@@ -106,7 +106,6 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     $entities = $this->getAllPurchasableEntities($bundle);
     foreach ($entities as $entity) {
-      xdebug_break();
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
       if (!$checker->getIsAlwaysInStock($entity)) {
