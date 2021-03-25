@@ -6,5 +6,5 @@ package: Commerce Product Bundle
 dependencies:
   - commerce:commerce
   - commerce:commerce_product
-  - commerce:commerce_stock
+  - commerce_stock:commerce_stock
   - commerce:commerce_product_bundle
