@@ -584,9 +584,10 @@ class ProductBundleItem extends CommerceContentEntityBase implements BundleItemI
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface[] $entities */
     foreach ($entities as $bundleItem) {
       // Remove the reference from the parent product bundle.
+      /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $product_bundle */
       $product_bundle = $bundleItem->getBundle();
       if ($product_bundle && $product_bundle->hasBundleItems($bundleItem)) {
-        $product_bundle->removeVariation($bundleItem);
+        $product_bundle->removeBundleItem($bundleItem);
         $product_bundle->save();
       }
     }

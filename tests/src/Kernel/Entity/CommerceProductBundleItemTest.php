@@ -161,6 +161,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
    * @covers ::addVariation
    * @covers ::setCurrentVariation
    * @covers ::getCurrentVariation
+   * @covers ::postDelete
    */
   public function testVariationsAndProductMethods() {
 
@@ -221,6 +222,8 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $bundle->save();
     $bundleItem = $this->reloadEntity($bundleItem);
     $this->assertEquals($bundle->id(), $bundleItem->getBundleId());
+    $bundleItem->delete();
+    $this->assertNull(ProductBundleItem::load($bundleItem->Id()));
 
     // Wether setting the variations sets the product reference.
     $bundleItem = ProductBundleItem::create([
@@ -235,7 +238,7 @@ class CommerceProductBundleItemTest extends CommerceProductBundleKernelTestBase 
     $freshBundleItem = ProductBundleItem::create([
       'type' => 'default',
     ]);
-    $bundleItem->save();
+    $freshBundleItem->save();
 
     $values = [
       'id' => strtolower($this->randomMachineName(8)),
