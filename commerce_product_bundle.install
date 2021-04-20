@@ -148,3 +148,61 @@ function commerce_product_bundle_update_8001() {
   }
 
 }
+
+/**
+ * Issue #3209648 Fatal errors thrown after updating configurable fields, to
+ * base fields.
+ *
+ *
+ * Converts 'commerce_product_bundle' and 'commerce_product_bundle_i'
+ * configurable fields into base fields.
+ *
+ * @see https://www.drupal.org/project/commerce_product_bundle/issues/3209648
+ * Modified from commerce_product_update_8208
+ */
+function commerce_product_bundle_update_8002(&$sandbox) {
+  _convert_fields('commerce_product_bundle', 'stores');
+  _convert_fields('commerce_product_bundle', 'bundle_items');
+  _convert_fields('commerce_product_bundle_i', 'variations');
+}
+
+function _convert_fields($entity_type, $field_name) {
+  $bundle_info = \Drupal::service('entity_type.bundle.info')
+    ->getBundleInfo($entity_type);
+  $product_types = array_keys($bundle_info);
+  $config_factory = \Drupal::configFactory();
+  $config_manager = \Drupal::service('config.manager');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+
+  $entity_type_manager->clearCachedDefinitions();
+  $entity_field_manager->clearCachedFieldDefinitions();
+
+  $key = "$entity_type.field_storage_definitions";
+  $entity_definitions_installed = \Drupal::keyValue('entity.definitions.installed');
+  $definitions = $entity_definitions_installed->get($key);
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $base_field_definitions */
+  $base_field_definitions = $entity_field_manager->getBaseFieldDefinitions($entity_type);
+  $definitions[$field_name] = $base_field_definitions[$field_name]->getFieldStorageDefinition();
+  $entity_definitions_installed->set($key, $definitions);
+
+  $configuration_to_delete = [];
+  foreach ($product_types as $bundle) {
+    $configuration_to_delete[] = "field.field.$entity_type.$bundle.$field_name";
+  }
+  $configuration_to_delete[] = "field.storage.$entity_type.$field_name";
+
+  $dependents = $config_manager->findConfigEntityDependents('config', $configuration_to_delete);
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $config_entity */
+  foreach ($dependents as $config_name => $config_entity) {
+    $config_entity = $config_factory->getEditable($config_name);
+    $dependencies = $config_entity->get('dependencies.config');
+    $dependencies = array_diff($dependencies, $configuration_to_delete);
+    $config_entity->set('dependencies.config', $dependencies);
+    $config_entity->save();
+  }
+
+  foreach ($configuration_to_delete as $config) {
+    $config_factory->getEditable($config)->delete();
+  }
+}
