@@ -198,7 +198,7 @@ function _convert_fields($entity_type, $field_name) {
     $config_entity = $config_factory->getEditable($config_name);
     $dependencies = $config_entity->get('dependencies.config');
     $dependencies = array_diff($dependencies, $configuration_to_delete);
-    $config_entity->set('dependencies.config', $dependencies);
+    $config_entity->set('dependencies.config', array_values($dependencies));
     $config_entity->save();
   }
 
