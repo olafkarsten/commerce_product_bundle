@@ -17,13 +17,13 @@ class MinQtyLessThanOrEqualMaxQtyConstraintValidator extends ConstraintValidator
     if (!isset($entity)) {
       return;
     }
-    $max = $entity->getMaximumQuantity();
-    $min = $entity->getMinimumQuantity();
+    $maxQuantity = $entity->getMaximumQuantity();
+    $minQuantity = $entity->getMinimumQuantity();
 
-    if ($min > $max) {
+    if ($minQuantity > $maxQuantity) {
       $this->context->buildViolation($constraint->message)
-        ->setParameter('%min', $min)
-        ->setParameter('%max', $max)
+        ->setParameter('%min', $minQuantity)
+        ->setParameter('%max', $maxQuantity)
         ->addViolation();
     }
   }

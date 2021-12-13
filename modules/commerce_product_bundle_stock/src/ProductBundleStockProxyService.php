@@ -35,12 +35,12 @@ class ProductBundleStockProxyService implements StockServiceInterface {
    * Constructs a new ProductBundleStockProxyService object.
    */
   public function __construct() {
-    // The service manager is not injected into the constructor because the
-    // it needs to load before being used here.
+    // The service manager is not injected into the constructor because it
+    // needs to load before being used here.
     $stock_service_manager = \Drupal::service('commerce_stock.service_manager');
     $this->stockChecker = new ProductBundleStockProxy($stock_service_manager);
     $this->stockUpdater = $this->stockChecker;
-    $this->stockServiceConfig = new StockServiceConfig($this->stockChecker);
+    $this->stockServiceConfig = new StockServiceConfig();
   }
 
   /**
