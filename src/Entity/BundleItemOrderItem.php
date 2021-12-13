@@ -90,6 +90,13 @@ class BundleItemOrderItem extends CommerceContentEntityBase implements BundleIte
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function setTitle($title) {
+    return $this->set('title', $title);
+  }
+
+  /**
    * Sets the order item unit price.
    *
    * Drupal\commerce_price\Price $unit_price

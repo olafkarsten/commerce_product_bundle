@@ -2,22 +2,28 @@
 
 namespace Drupal\commerce_product_bundle;
 
-use Drupal\commerce\EntityManagerBridgeTrait;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Sql\TableMappingInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\entity\BundleFieldDefinition;
 use Drupal\views\EntityViewsData;
 use Drupal\views\EntityViewsDataInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides Views data for product bundle entities.
  */
 class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataInterface {
 
-  use EntityManagerBridgeTrait;
+  /**
+   * The entity type bundle info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
 
   /**
    * The table mapping.
@@ -25,6 +31,15 @@ class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataI
    * @var \Drupal\Core\Entity\Sql\DefaultTableMapping
    */
   protected $tableMapping;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    $instance = parent::createInstance($container, $entity_type);
+    $instance->entityTypeBundleInfo = $container->get('entity_type.bundle.info');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -40,7 +55,7 @@ class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataI
       $data[$revision_table]['table']['entity revision'] = TRUE;
     }
     // Add missing reverse relationships. Workaround for core issue #2706431.
-    $base_fields = $this->getEntityFieldManager()
+    $base_fields = $this->entityFieldManager
       ->getBaseFieldDefinitions($entity_type_id);
     $entity_reference_fields = array_filter($base_fields, function (
       BaseFieldDefinition $field
@@ -59,10 +74,9 @@ class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataI
     // Add views integration for bundle plugin fields.
     // Workaround for core issue #2898635.
     if ($this->entityType->hasHandlerClass('bundle_plugin')) {
-      $bundles = $this->getEntityTypeBundleInfo()
-        ->getBundleInfo($entity_type_id);
+      $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type_id);
       foreach (array_keys($bundles) as $bundle) {
-        $field_definitions = $this->getEntityFieldManager()
+        $field_definitions = $this->entityFieldManager
           ->getFieldDefinitions($entity_type_id, $bundle);
         foreach ($field_definitions as $field_definition) {
           if ($field_definition instanceof BundleFieldDefinition) {
@@ -427,8 +441,7 @@ class ProductBundleViewsData extends EntityViewsData implements EntityViewsDataI
 
     foreach ($fields as $field) {
       $target_entity_type_id = $field->getSettings()['target_type'];
-      $target_entity_type = $this->getEntityTypeManager()
-        ->getDefinition($target_entity_type_id);
+      $target_entity_type = $this->entityTypeManager->getDefinition($target_entity_type_id);
       if (!($target_entity_type instanceof ContentEntityType)) {
         continue;
       }

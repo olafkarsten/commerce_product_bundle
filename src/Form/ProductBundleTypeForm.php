@@ -188,7 +188,7 @@ class ProductBundleTypeForm extends CommerceBundleEntityFormBase {
   /**
    * Provides available order item types.
    *
-   * @return Drupal\commerce_order\Entity\OrderItemTypeInterface[]
+   * @return array Drupal\commerce_order\Entity\OrderItemTypeInterface[]
    *   The order item types available.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

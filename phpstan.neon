@@ -10,7 +10,7 @@ parameters:
     drupal_root: %currentWorkingDirectory%/web
   customRulesetUsed: true
   reportUnmatchedIgnoredErrors: false
-  level: 3
+  level: 1
   ignoreErrors:
     - '#\Drupal calls should be avoided in classes, use dependency injection instead#'
     - '#\Call to an undefined method Drupal\\Tests\\WebAssert::#'

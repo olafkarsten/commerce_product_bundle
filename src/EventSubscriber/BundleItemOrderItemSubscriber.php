@@ -12,6 +12,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class BundleItemOrderItemSubscriber implements EventSubscriberInterface {
 
   /**
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   *   The storage.
+   */
+  protected $bundleItemOrderItemStorage;
+
+  /**
    * BundleItemOrderItemSubscriber constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager

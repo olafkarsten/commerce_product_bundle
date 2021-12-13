@@ -56,7 +56,7 @@ interface BundleItemOrderItemInterface extends ContentEntityInterface, EntityCha
    * Sets the bundle item order item title.
    *
    * @param string $title
-   *   The order item title
+   *   The order item title.
    */
   public function setTitle($title);
 

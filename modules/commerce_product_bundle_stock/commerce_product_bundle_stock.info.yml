@@ -1,7 +1,7 @@
 name: Commerce Product Bundle Stock
 type: module
 description: Provides integration between Commerce Product Bundle and Commerce Stock.
-core: 8.x
+core_version_requirement: ^8 || ^9
 package: Commerce Product Bundle
 dependencies:
   - commerce:commerce
