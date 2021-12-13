@@ -7,6 +7,7 @@ use Drupal\commerce_product_bundle\Entity\BundleInterface;
 use Drupal\commerce_stock\StockCheckInterface;
 use Drupal\commerce_stock\StockServiceManagerInterface;
 use Drupal\commerce_stock\StockUpdateInterface;
+use InvalidArgumentException;
 
 /**
  * Provides a stock service for product bundles.
@@ -19,6 +20,12 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * @var \Drupal\commerce_stock\StockServiceManagerInterface
    */
   protected $stockServiceManager;
+
+  /**
+   * @var array int
+   *   Array of transaction ids in case we did call createTransaction.
+   */
+  protected $transactionIds = [];
 
   /**
    * Constructs a new ProductBundleStockProxy object.
@@ -34,6 +41,13 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
 
   /**
    * {@inheritdoc}
+   *
+   * Note: The $bundle parameter must implement the Drupal\commerce_product_bundle\Entity\BundleInterface.
+   * We can't change the signature for the constructor, as the interface is defined in
+   * commerce stock.
+   *
+   * We don't have a single transaction id to return, like the StockUpdaterInterface requested. You can access the transaction ids from
+   * the latest createTransaction call through $this->transactionIds.
    */
   public function createTransaction(
     PurchasableEntityInterface $bundle,
@@ -45,6 +59,8 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
     $transaction_type_id,
     array $metadata
   ) {
+    $this->assertBundleInterface($bundle);
+    $this->transactionIds = [];
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
     foreach ($bundle->getBundleItems() as $item) {
       /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $entity */
@@ -52,8 +68,9 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
       $service = $this->stockServiceManager->getService($entity);
       $updater = $service->getStockUpdater();
       $item_quantity = $quantity * $item->getQuantity();
-      $updater->createTransaction($entity, $location_id, $zone, $item_quantity, $unit_cost, $currency_code, $transaction_type_id, $metadata);
+      $this->transactionIds[] = $updater->createTransaction($entity, $location_id, $zone, $item_quantity, $unit_cost, $currency_code, $transaction_type_id, $metadata);
     }
+    return 0;
   }
 
   /**
@@ -63,11 +80,10 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
     PurchasableEntityInterface $bundle,
     array $locations
   ) {
-
+    $this->assertBundleInterface($bundle);
+    /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
     $levels = array_map(function ($bundleItem) use ($bundle, $locations) {
-      /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
       $quantity = $bundleItem->getQuantity() ?: 1;
-
       /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
       $entity = $bundleItem->getCurrentVariation();
       $service = $this->stockServiceManager->getService($entity);
@@ -86,7 +102,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
     PurchasableEntityInterface $bundle,
     array $locations
   ) {
-
+    $this->assertBundleInterface($bundle);
     /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($this->getAllPurchasableEntities($bundle) as $entity) {
       $service = $this->stockServiceManager->getService($entity);
@@ -102,9 +118,9 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * {@inheritdoc}
    */
   public function getIsAlwaysInStock(PurchasableEntityInterface $bundle) {
-
-    /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
+    $this->assertBundleInterface($bundle);
     $entities = $this->getAllPurchasableEntities($bundle);
+    /** @var \Drupal\commerce\PurchasableEntityInterface $entity */
     foreach ($entities as $entity) {
       $service = $this->stockServiceManager->getService($entity);
       $checker = $service->getStockChecker();
@@ -113,27 +129,6 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
       }
     }
     return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getIsStockManaged(PurchasableEntityInterface $bundle) {
-    // @todo Rethink this.
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLocationList($return_active_only = TRUE) {
-    $services = $this->stockServiceManager->listServices();
-    $locations = [];
-    /** @var \Drupal\commerce_stock\StockServiceInterface $service */
-    foreach ($services as $service) {
-      $locations += $service->getStockChecker()->getLocationList();
-    }
-    return $locations;
   }
 
   /**
@@ -146,10 +141,26 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    *   All purchasable entities.
    */
   protected function getAllPurchasableEntities(BundleInterface $product_bundle) {
+
     return array_map(function ($item) {
       /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $item */
       return $item->getCurrentVariation();
     }, $product_bundle->getBundleItems());
+  }
+
+  /**
+   * We can't change the signature of the above methods,
+   * so we need to check explicit for the BundleInterface.
+   *
+   * @param \Drupal\commerce\PurchasableEntityInterface $entity
+   *
+   * @throws \InvalidArgumentException
+   *   In case the entity has not implemented the Drupal\commerce_product_bundle\Entity\BundleInterface.
+   */
+  protected function assertBundleInterface(PurchasableEntityInterface $entity){
+    if (!($entity instanceof BundleInterface)) {
+      throw new InvalidArgumentException('Bundle must implement Drupal\commerce_product_bundle\Entity\BundleInterface');
+    }
   }
 
 }
