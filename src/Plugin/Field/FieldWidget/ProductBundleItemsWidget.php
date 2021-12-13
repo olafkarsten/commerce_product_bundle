@@ -97,14 +97,14 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $product_bundle */
-    $bundle = $form_state->get('product_bundle');
+    $product_bundle = $form_state->get('product_bundle');
     $element['bundle'] = [
       '#type' => 'value',
-      '#value' => $bundle->id(),
+      '#value' => $product_bundle->id(),
     ];
     $element['bundle_items'] = [];
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundle_item */
-    foreach ($bundle->getBundleItems() as $bundle_item) {
+    foreach ($product_bundle->getBundleItems() as $bundle_item) {
       $parents = [$items->getName(), $delta, 'bundle_items', $bundle_item->id()];
       $element['bundle_items'][$bundle_item->id()] = $this->getBundleItemForm($bundle_item, $form, $form_state, $parents);
     }
@@ -365,7 +365,7 @@ class ProductBundleItemsWidget extends ProductBundleWidgetBase {
    * @param callable|null $callback
    *   An optional callback to use for filtering the list.
    *
-   * @return array[]
+   * @return array
    *   The attribute values, keyed by attribute ID.
    */
   protected function getAttributeValues(array $variations, $field_name, callable $callback = NULL) {

@@ -203,19 +203,18 @@ class ProductBundleItemInlineForm extends EntityInlineForm {
       $product = Product::load($productId);
       if (isset($product)) {
         $variationsIds = $product->getVariationIds();
+        if (!empty($formVariationsIds) && $formVariationsIds[0] != '_none') {
+          foreach ($formVariationsIds as $value) {
+            if (!in_array($value, $variationsIds)) {
+              $message = t("Each bundle items's variations must belong to the same product");
+              $form_state->setError($entity_form, $message);
+            }
+          }
+        }
       }
       else {
         $form_state->setError($entity_form, "The product $productId didn't exist");
       }
     }
-    if (!empty($formVariationsIds) && $formVariationsIds[0] != '_none') {
-      foreach ($formVariationsIds as $value) {
-        if (!in_array($value, $variationsIds)) {
-          $message = t("Each bundle items's variations must belong to the same product");
-          $form_state->setError($entity_form, $message);
-        }
-      }
-    }
   }
-
 }

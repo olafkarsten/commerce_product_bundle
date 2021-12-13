@@ -34,6 +34,7 @@ class ProductBundleTranslationHandler extends ContentTranslationHandler {
       $form['content_translation']['created']['#access'] = FALSE;
     }
 
+    /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
     $form_object = $form_state->getFormObject();
     $form_langcode = $form_object->getFormLangcode($form_state);
     $translations = $entity->getTranslationLanguages();

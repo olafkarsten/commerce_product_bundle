@@ -139,7 +139,6 @@ abstract class ProductBundleWidgetBase extends WidgetBase implements ContainerFa
     $ajax_renderer = \Drupal::service('main_content_renderer.ajax');
     $request = \Drupal::request();
     $route_match = \Drupal::service('current_route_match');
-    /** @var \Drupal\Core\Ajax\AjaxResponse $response */
     $variation_parents = array_slice($form_state->getTriggeringElement()['#array_parents'], 0, 5);
     $variation_form = NestedArray::getValue($form, $variation_parents);
     $response = $ajax_renderer->renderResponse($variation_form, $request, $route_match);

@@ -110,13 +110,14 @@ class BundleItemSelection extends FieldItemBase {
    * {@inheritdoc}
    */
   public function setValue($values, $notify = TRUE) {
+
     /** @var \Drupal\commerce_product_bundle\Entity\BundleItemInterface $bundleItem */
     $bundleItem = $this->bundleItemStorage->load($values['bundle_item']);
-    $purchasableEntity = $this->variationStorage->load($values['purchasable_entity']);
-    $bundleItem->setCurrentVariation($purchasableEntity);
-    /** @var \Drupal\commerce_product_bundle\Entity\BundleInterface $bundle */
-    /** @var \Drupal\commerce\PurchasableEntityInterface $purchasableEntity */
 
+    /** @var \Drupal\commerce\PurchasableEntityInterface $purchasableEntity */
+    $purchasableEntity = $this->variationStorage->load($values['purchasable_entity']);
+
+    $bundleItem->setCurrentVariation($purchasableEntity);
     parent::setValue($values, $notify);
   }
 
