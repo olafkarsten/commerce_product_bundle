@@ -1,7 +1,7 @@
 name: Commerce Product Bundle Cart Integration
 type: module
 description: Provides commerce cart integration for commerce product bundles.
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8.9 || ^9
 package: Commerce Product Bundle
 dependencies:
   - commerce:commerce_product_bundle
