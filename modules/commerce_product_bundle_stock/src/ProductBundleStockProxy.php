@@ -7,7 +7,6 @@ use Drupal\commerce_product_bundle\Entity\BundleInterface;
 use Drupal\commerce_stock\StockCheckInterface;
 use Drupal\commerce_stock\StockServiceManagerInterface;
 use Drupal\commerce_stock\StockUpdateInterface;
-use InvalidArgumentException;
 
 /**
  * Provides a stock service for product bundles.
@@ -22,7 +21,7 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
   protected $stockServiceManager;
 
   /**
-   * @var array int
+   * @var int[]
    *   Array of transaction ids in case we did call createTransaction.
    */
   protected $transactionIds = [];
@@ -157,9 +156,9 @@ class ProductBundleStockProxy implements StockCheckInterface, StockUpdateInterfa
    * @throws \InvalidArgumentException
    *   In case the entity has not implemented the Drupal\commerce_product_bundle\Entity\BundleInterface.
    */
-  protected function assertBundleInterface(PurchasableEntityInterface $entity){
+  protected function assertBundleInterface(PurchasableEntityInterface $entity) {
     if (!($entity instanceof BundleInterface)) {
-      throw new InvalidArgumentException('Bundle must implement Drupal\commerce_product_bundle\Entity\BundleInterface');
+      throw new \InvalidArgumentException('Bundle must implement Drupal\commerce_product_bundle\Entity\BundleInterface');
     }
   }
 
